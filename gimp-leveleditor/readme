@@ -1,0 +1,6 @@
+you need gimptool2.0 and gimp dev libs to compile this.
+
+to compile do:
+gimptool-2.0 --install gimp-sdlball.c
+the plugin will be placed in ~/.gimp/plug-ins/ and be loaded automatically.
+Start gimp from a terminal in order to record the output from the plugin (you need that)

@@ -1,0 +1,251 @@
+<html>
+  <head>
+    <title>SDL-Ball LevelEditor v 0.1</title>
+    <script type="text/javascript">
+      var bricks = new Array();
+      var i;
+      var typeSelected="1";
+      var powerupSelected="J";
+      
+      function initLevel()
+      {
+        for(i=0; i <598; i++)
+        {
+          bricks[i] = new Array();
+          bricks[i][0] = "0";
+          bricks[i][1] = "0";
+        }
+      }
+      
+      function brickGfx(brickType)
+      {
+        var bd="<img src=\"gfx/";
+        if(brickType=="0")
+          bd+="blank.png";
+        else if(brickType=="1")
+          bd+="blue.png";
+        else if(brickType=="2")
+          bd+="yellow.png";
+        else if(brickType=="3")
+          bd+="cement.png";
+        else if(brickType=="4")
+          bd+="glass.png";
+        else if(brickType=="5")
+          bd+="green.png";
+        else if(brickType=="6")
+          bd+="steel.png";
+        else if(brickType=="7")
+          bd+="purple.png";
+        else if(brickType=="8")
+          bd+="white.png";
+        else if(brickType=="9")
+          bd+="invisible.png";
+        else if(brickType=="A")
+          bd+="red.png";
+        else if(brickType=="B")
+          bd+="explosive.png";
+        else if(brickType=="C")
+          bd+="doom.png";
+        else if(brickType=="D")
+          bd+="custom.png";
+        bd+="\" border=0 width=32 height=16>";
+        return(bd);
+      }
+      
+      function setTypeSelected(charType)
+      {
+        document.getElementById("html_selectedBrickType").innerHTML="Selected Brick Type: "+brickGfx(charType);
+        typeSelected=charType;
+      }
+      
+      function setPowerupSelected()
+      {
+        powerupSelected=document.getElementById("html_powerupType").options[document.getElementById("html_powerupType").selectedIndex].value;
+        document.getElementById("html_powerupTypeSelected").innerHTML="Powerup Selected: "+powerupSelected;
+      }
+      
+      function changeBrick(brickNum)
+      {
+        if(bricks[brickNum][1] == typeSelected)
+        {
+          bricks[brickNum][0]="0";
+          bricks[brickNum][1]="0";
+        } else {
+          bricks[brickNum][0] = powerupSelected;
+          bricks[brickNum][1]= typeSelected;
+        }
+        
+
+        
+        document.getElementById("brick"+brickNum).innerHTML = brickGfx(bricks[brickNum][1]);
+      }
+      
+      function putBrick(brickType, brickNum)
+      {
+        var bd="<a href=\"#Brick"+brickNum+"\" onclick=\"changeBrick('"+brickNum+"');\" id=\"brick"+brickNum+"\">";
+        
+        bd+=brickGfx(brickType);
+        bd+="</a>";
+        
+        return(bd);
+      }
+      
+      function drawLevel()
+      {
+        var col=0;
+        
+        
+        //Update leveldata and draw level
+        var htmlData="";
+        var levelData="** Start **\n";
+        for(i=0; i < 598; i++)
+        {
+          if(col==26)
+          {
+            htmlData+="<br>";
+            levelData+='\n';
+            col=0;
+          }
+          col++;
+          
+          htmlData+=putBrick(bricks[i][1], i);
+          
+          levelData+=bricks[i][0];
+          levelData+=bricks[i][1];
+        }
+        levelData +="\n** Stop **";
+        
+        document.getElementById("html_lvl").innerHTML=htmlData;
+        document.getElementById("html_leveldata").value=levelData;
+      }
+      
+      function loadData()
+      {
+        //Read html_lvl and put in bricks[] array.
+        var ch=0;
+        var Data=document.getElementById("html_leveldata").value;
+         Data = Data.substr(12,Data.length);
+         Data = Data.replace(/\n/g, "");
+        for(i=0; i < 598; i++)
+        {
+          bricks[i][0] = Data[ch];
+          bricks[i][1] = Data[ch+1];
+          ch+=2;
+        }
+          drawLevel();
+      }
+    </script>
+    </head>
+  <body>
+  <a href="#" onclick="initLevel(); drawLevel();">Clear All / New Level</a>
+  <br>
+  <table border=1>
+  <tr>
+    <td colspan=2 bgcolor=black>
+      <div id="html_lvl">
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <a href="#" onclick="drawLevel();">Board-&gt;Data</a> - - <a href="#" onclick="loadData();">Data-&gt;Board</a><br>
+      <textarea id="html_leveldata" rows=24 cols=52>
+** Start **
+000000JB00000000000000J6J6J6J60000000000000000000000
+0000JBJBJB0000000000J6J6J6J6J6J600000000000000JB0000
+000000JB0000000000J6J6J6J6J6J6J6J60000000000JBJBJB00
+000000000000000000J6J6J6J6J6J6J6J6000000000000JB0000
+0000000000000000J6J6J6J6J6J6J6J6J6J60000000000000000
+0000000000000000J6J6J6J6J6J6J6J6J6J60000000000000000
+0000000000000000J6J6J6J6J6J6J6J6J6J60000000000000000
+0000000000J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J70000000000
+0000J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J70000
+00J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J700
+0000J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J70000
+000000000000J7J7J7J7J7J7J7J7J7J7J7J7J700000000000000
+0000000000000000000000000000000000000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000
+J5J5JAJ5J5JBJ5J5JAJ5J5JBJ5J5JAJ5J5JAJ5J5JAJ5J5JBJ5J5
+J4J2J2J4J4J2J2J4J4J2J2J4J4J2J2J4J4J2J2J4J4J2J2J4J4J2
+JBJ1JBJBJ1J1JBJBJ1J1JBJBJ1J1JBJBJ1J1JBJBJ1J1JBJBJ1JB
+** Stop **
+      </textarea>
+    </td>
+    <td valign="top">
+      <div id="html_selectedBrickType">Selected Brick Type: <img src="gfx/blue.png" border=0 width=32 height=16></div><br>
+      <a href="#" onclick="setTypeSelected('1');"><img src="gfx/blue.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('2');"><img src="gfx/yellow.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('3');"><img src="gfx/cement.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('4');"><img src="gfx/glass.png" border=0></a><br>
+      <a href="#" onclick="setTypeSelected('5');"><img src="gfx/green.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('6');"><img src="gfx/steel.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('7');"><img src="gfx/purple.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('8');"><img src="gfx/white.png" border=0></a><br>
+      <a href="#" onclick="setTypeSelected('9');"><img src="gfx/invisible.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('A');"><img src="gfx/red.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('B');"><img src="gfx/explosive.png" border=0></a>
+      <a href="#" onclick="setTypeSelected('C');"><img src="gfx/doom.png" border=0></a>
+      <!--<a href="#" onclick="setTypeSelected('D');"><img src="gfx/custom.png" border=0></a>-->
+      <br>
+      <hr>
+      <br>
+      
+      <div id="html_powerupTypeSelected">Powerup Selected: J</div>
+      <select id="html_powerupType" onChange="setPowerupSelected();">
+        <option value="L">Random (5%)</option>
+        <option value="K">Random (100%)</option>
+        <option value="J">Random (10%)</option>
+        <option value="M">Random (2%)</option>
+        <option value="N">Random (1%)</option>
+        <option value="0">No Powerup</option>
+        <option value="Q">Random Evil (100%)</option>
+        
+        <option value="1">Extrude</option>
+        <option value="2">Shrink</option>
+        <option value="4">Glue</option>
+        <option value="5">Multiball</option>
+        <option value="6">Go-Thru</option>
+        <!-- <option value="7">Faster ball</option> -->
+        <!-- <option value="8">All bricks destructable</option> -->
+        <!--<option value="9">Next Level</option>-->
+        <!--<option value="A">Slower ball</option>-->
+        <option value="B">Explosive ball</option>
+        <!--<option value="C">Detonate all explosive</option>-->
+        <option value="E">Gravity</option>
+        <option value="F">Big ball</option>
+        <option value="G">Normal ball</option>
+        <option value="H">Small ball</option>
+        <option value="I">Aim</option>
+        <option value="O">Extra Life</option>
+        <!--<option value="S">Die</option>-->
+        <option value="P">Gun</option>
+        <option value="R">LaserSight</option> 
+      </select><br>
+      The selected powerup will be<br>applied to every brick you place.
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan=2>
+    <b>Instructions:</b>
+    Click clear to clean up the board.<br>
+    This editor do NOT support creation/loading of custom colored bricks.<br>
+    To load/edit a existing level, copy/paste it into the textarea and click Data->Board<br>
+    When you have made a level, click Board->Data and copy/paste the text into data/levels.txt<br>
+    </td>
+  </table>  
+  <div id="html_debug">
+  </div>
+      <script type="text/javascript">
+      initLevel();
+      loadData();
+//       drawLevel();
+    </script>
+  </body>
+</html>

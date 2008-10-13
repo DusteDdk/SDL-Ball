@@ -1,0 +1,293 @@
+class controllerClass {
+  private:
+  paddle_class *paddle;
+  bulletsClass *bullet;
+  ballManager *bMan;
+  int shotTime;
+  float accel;
+  SDL_Joystick *joystick;
+  Sint16 joystickx;
+  Uint8 joystickbtnA;
+  GLfloat joystickLeftX; //There are two because the calibrated values differ
+  GLfloat joystickRightX;
+  int calMin, calMax, calLowJitter, calHighJitter;
+
+  #ifdef WITH_WIIUSE
+  wiimote** wiimotes;
+  float motePitch;
+  GLfloat moteAccel;
+  #endif
+
+  public:
+  controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm);
+  ~controllerClass();
+  void movePaddle(GLfloat px);
+  void btnPress();
+  void get();
+  void calibrate();
+  #ifdef WITH_WIIUSE
+  bool connectMote();
+  #endif
+};
+
+controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm)
+{
+  paddle = pc;
+  bullet = bu;
+  bMan = bm;
+  shotTime=200;
+
+  //Try to open a joystick.
+  if(setting.joyEnabled && SDL_NumJoysticks() > 0)
+  {
+    joystickLeftX = setting.controlMaxSpeed / setting.JoyCalMin;
+    joystickRightX = setting.controlMaxSpeed / setting.JoyCalMax;
+    joystick = NULL;
+    joystick = SDL_JoystickOpen(0);
+    if(SDL_JoystickOpened(0))
+    {
+      cout << "Using joystick: '"<<SDL_JoystickName(0)<<"' as "<<(setting.joyIsDigital ? "digital":"analog")<<"."<<endl;
+      SDL_JoystickEventState( SDL_ENABLE );
+    } else {
+      cout << "Failed to open joystick: '"<<SDL_JoystickName(0)<<"'"<<endl;
+    }
+  }
+
+  #ifdef WITH_WIIUSE
+  var.wiiConnect=0;
+  moteAccel = setting.controlMaxSpeed / 90.0;
+  #endif
+
+}
+
+controllerClass::~controllerClass()
+{
+  SDL_JoystickClose(0);
+
+  #ifdef WITH_WIIUSE
+  if(var.wiiConnect)
+  {
+    wiiuse_cleanup(wiimotes, MAX_WIIMOTES);
+  }
+  #endif
+}
+
+void controllerClass::movePaddle(GLfloat px)
+{
+  if(!var.paused)
+  {
+    paddle->posx = px;
+    if(paddle->posx > 1.66-paddle->width-0.06)
+    {
+      paddle->posx=1.66-paddle->width-0.06;
+    }
+    else if(paddle->posx < -1.66+paddle->width+0.06)
+    {
+      paddle->posx=-1.66+paddle->width+0.06;
+    }
+  }
+}
+
+void controllerClass::btnPress()
+{
+  struct pos p;
+  if(shotTime > 150)
+  {
+    shotTime=0;
+    if(!var.menu && !var.paused)
+    {
+      bMan->unglue();
+      var.startedPlaying=1;
+      if(player.powerup[PO_GUN])
+      {
+        p.x = paddle->posx-paddle->width/1.5;
+        p.y = paddle->posy;
+        bullet->shoot(p);
+        p.x = paddle->posx+paddle->width/1.5;
+        bullet->shoot(p);
+      }
+    }
+  }
+}
+
+void controllerClass::get()
+{
+  Uint8 *keyStates;
+  Uint8 keyDown[3]; //Need this since its not a good idea to write to keyStates for some reason
+  shotTime += globalTicks;
+  SDL_PumpEvents();
+  keyStates = SDL_GetKeyState( NULL );
+  keyDown[0] = keyStates[setting.keyLeft];
+  keyDown[1] = keyStates[setting.keyRight];
+  keyDown[2] = keyStates[setting.keyShoot];
+  //Read joystick here so we can override keypresses if the joystick is digital
+  //We shouldn't need to check if the joystick is enabled, since it won't be opened if its not enabled anyway.
+  if(setting.joyEnabled && SDL_JoystickOpened(0))
+  {
+    joystickx = SDL_JoystickGetAxis(joystick, 0);
+    joystickbtnA = SDL_JoystickGetButton(joystick, 0);
+
+
+    if(joystickbtnA)
+    {
+      keyDown[2] = 1;
+    }
+
+    if(setting.joyIsDigital)
+    {
+      if(joystickx < -200)
+      {
+        keyDown[0]=1;
+      } else if(joystickx > 200)
+      {
+        keyDown[1]=1;
+      }
+    } else {
+      GLfloat x; //This is the actual traveling speed of the paddle
+      if(joystickx > setting.JoyCalHighJitter)
+      {
+        x = joystickRightX * joystickx;
+      } else if(joystickx < setting.JoyCalLowJitter)
+      {
+        x = -(joystickLeftX * joystickx);
+      }
+
+      //Move the paddle:
+      movePaddle( paddle->posx += (x*globalMilliTicks) );
+    }
+  }
+
+  #ifdef WITH_WIIUSE
+  if(var.wiiConnect)
+  {
+    if (wiiuse_poll(wiimotes, MAX_WIIMOTES)) {
+      switch(wiimotes[0]->event)
+      {
+        case WIIUSE_EVENT:
+          if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_TWO))
+          {
+            keyDown[2]=1;
+          } else if(WIIUSE_USING_ACC(wiimotes[0]))
+          {
+            motePitch = wiimotes[0]->orient.pitch;
+            motePitch *=-1;
+	  }
+
+        break;
+        case WIIUSE_DISCONNECT:
+        case WIIUSE_UNEXPECTED_DISCONNECT:
+          var.wiiConnect=0;
+          cout << "WiiMote disconnected." << endl;
+          wiiuse_cleanup(wiimotes, MAX_WIIMOTES);
+        break;
+      }
+    }
+    if(motePitch < -0.2 || motePitch > 0.2)
+    {
+      movePaddle( paddle->posx += ( moteAccel*motePitch)*globalMilliTicks );
+    }
+  }
+  #endif
+
+  //React to keystates here, this way, if joyisdig it will press keys
+  if(keyDown[0])
+  {
+    accel+=globalMilliTicks*setting.controlAccel;
+    if(accel > setting.controlMaxSpeed)
+      accel=setting.controlMaxSpeed;
+    movePaddle( paddle->posx - ( accel*globalMilliTicks) );
+  } else if(keyDown[1])
+  {
+    accel+=globalMilliTicks*setting.controlAccel;
+    if(accel > setting.controlMaxSpeed)
+      accel=setting.controlMaxSpeed;
+    movePaddle( paddle->posx + ( accel*globalMilliTicks) );
+  } else {
+      accel = setting.controlStartSpeed;
+  }
+
+  if(keyDown[2])
+  {
+    btnPress();
+  }
+}
+
+void controllerClass::calibrate()
+{
+
+  Sint16 x=0;
+  if(SDL_JoystickOpened(0))
+  {
+
+    x = SDL_JoystickGetAxis(joystick, 0);
+
+    if(SDL_JoystickGetButton(joystick, 0) && var.menuJoyCalStage != 5)
+      var.menuJoyCalStage++;
+  }
+
+  switch(var.menuJoyCalStage)
+  {
+    case 0:
+      calMin=0;
+      calMax=0;
+      calLowJitter=0;
+      calHighJitter=0;
+    break;
+    case 1:
+      if(x < calLowJitter)
+        calLowJitter=x;
+      else if(x > calHighJitter)
+        calHighJitter=x;
+    break;
+    case 2:
+      if(x < calMin)
+        calMin=x;
+    break;
+    case 3:
+      if(x > calMax)
+        calMax=x;
+    break;
+    case 4:
+      setting.JoyCalMin=calMin;
+      setting.JoyCalMax=calMax;
+      setting.JoyCalLowJitter=calLowJitter;
+      setting.JoyCalHighJitter=calHighJitter;
+      cout << "Joystick calibration report:" << endl;
+      cout << "calMin: " << calMin << endl << "calMax: " << calMax << endl;
+      cout << "lowJit: " << calLowJitter << endl << "higJit: " << calHighJitter << endl;
+      var.menuJoyCalStage++;
+      writeSettings();
+    break;
+    #ifdef WITH_WIIUSE
+    case -1: //We do this to make it draw a frame before freezing (searching)
+      var.menuJoyCalStage--;
+    break;
+    case -2:
+      wiimotes =  wiiuse_init(MAX_WIIMOTES);
+      if(wiiuse_find(wiimotes, MAX_WIIMOTES, 4))
+      {
+        var.wiiConnect=1;
+      } else {
+        var.wiiConnect=0;
+      }
+      if(var.wiiConnect)
+      {
+        var.wiiConnect=0;
+        if(wiiuse_connect(wiimotes, MAX_WIIMOTES))
+        {
+          var.wiiConnect=1;
+          wiiuse_set_leds(wiimotes[0], WIIMOTE_LED_1);
+          wiiuse_rumble(wiimotes[0], 1);
+          usleep(500000);
+          wiiuse_rumble(wiimotes[0], 0);
+          wiiuse_motion_sensing(wiimotes[0], 1);
+        }
+        var.menuJoyCalStage=-3;
+      } else {
+        var.menuJoyCalStage=-4;
+      }
+    break;
+    #endif
+  }
+}
+

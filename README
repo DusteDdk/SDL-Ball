@@ -1,0 +1,154 @@
+-- SDL-Ball --
+ - A DX-Ball/MegaBall/Breakout clone for linux+friends
+   with pretty graphics.
+
+-- Index --
+1.0 SDL-Ball Info
+1.1 Objective
+1.2 Configuration
+1.2.1 Mouse
+1.2.2 Keyboard
+1.2.3 Digital Joystick
+1.2.4 Analog Joystick
+1.2.5 WiiMote
+1.2.6 Config options explained
+
+2.0 Compiling
+2.1  Without sound
+2.2  With WiiMote support
+2.3  For system-wide installation
+
+------------------------------------
+
+1.0 SDL-Ball Info
+Author: Jimmy Christensen
+Project page: https://sourceforge.net/projects/sdl-ball/
+Web site: http://sdl-ball.sourceforge.net/
+License: Code is GPLv3, See data/snd/License.txt for sound license,
+graphics is Common-Creatives-share-alike.
+
+SDL-Ball is my hobby project, I'm using it to learn C++ and
+how not to design software, I learn by trial and error, thats
+what makes it fun for me, so please, spare me the lessons.
+If you want to clean it up, I'll gladly accept your patches.
+
+------------------------------------
+
+1.1 Objective
+The objective of the game is to control the paddle in order to keep
+the ball from falling down, by precise controlling you are able to
+reflect the ball into bricks. Hitting bricks gives points and powerups.
+Collecting powerups make the game easier or harder depending on the type.
+When all breakable bricks are destroyed, the level ends, and next level is on.
+When all levels are completed, game start from level1 again, but with twice the score.
+
+------------------------------------
+
+1.2 Configuration
+~/ means your home-directory.
+The game saves its configuration in ~/.config/sdl-ball/settings.cfg
+If you choose an unsupported resolution you can correct it in that file, see 1.2.6.
+If you want to clear the highscores list, delete ~/.config/sdl-ball/highscores.txt
+If you want to clear savegames, delete ~/.config/sdl-ball/savegame.sav
+Edit this file with any text-editor to change options that are not reached from the menu.
+
+1.2.1 Mouse
+The mouse have no configuration options, you might want to adjust
+your mousespeed from your window-manager.
+
+1.2.2 Keyboard
+p = pause/unpause
+esc = show/hide menu
+F11 = toggle
+Use the arrow keys to control the paddle, up to shoot and launch the ball.
+You can change theese in the config file with the options:
+leftkey, rightkey and shootkey however, you have to use SDLK numbers (see link in 1.2.6.)
+You might want to tweak controlmaxspeed, controlaccel and controlstartspeed,
+which are also explained in 1.2.6.
+
+1.2.3 Digital Joystick
+A digital joystick is a stick connected to 4 buttons, therefore it provides
+very poor control, ie. its either ON or OFF, therefore, if you use such a joystick
+be sure to choose "Digital Joystick" in the joystick options menu. You can tweak
+tweak controlmaxspeed, controlaccel and controlstartspeed. (explained in 1.2.6.)
+
+1.2.4 Analog Joystick
+A analog joystick provides accurate control, if you use a analog joystick you
+need to choose "Analog Joystick" in the joystick options menu, then make sure
+the stick is centered, press "Callibrate", push joystick button shortly,then
+push the stick left, press button shortly, and finally push the stick right and press
+button shortly.
+You can tweak controlmaxspeed (explained in 1.2.6.) it acts as sensitivity.
+Callibration values are saved to config so you won't need to callibrate again.
+
+1.2.5 WiiMote
+You need to compile sdl-ball with support for libwiiuse, read more about this under 2.2.
+You need to connect the wiimote every time you start the game.
+To connect the wiimote simply press "w" then press 1 and 2 on the WiiMote.
+You can run sdl-ball from a terminal to see some debugging message from libwiiuse.
+You can tweak controlmaxspeed (explained in 1.2.6) it acts as sensitivity.
+
+1.2.6 Config options explained
+clearscreen [0/1] - clears the scene before drawing (looks pretty funny if you dont)
+eyecandy [0/1] - turns on nice particle effects and trails, saves a few cpu cycles to turn it off
+resx - horizontal resolution
+resy - vertical resolution
+showbg [0/1] - show the background image
+fullscreen [0/1] - use full-screen mode
+particlecollide [0/1] - use collision detection for particles, looks nice but might a cpu hog
+sound [0/1] - use sound effects (sound effects will allways be loaded) (requires compiled with sound support)
+stereo [0/1] - use stereo, some people don't like stereo, might save a few cpu cycles to turn it off
+controlmaxspeed - the max speed the paddle can travel with when using non-mouse controllers.
+                  10 is VERY fast, this acts as sensitivity for WiiMote and analog joystick.
+controlaccel - the acceleration that the paddle gains when using digital joystick or keyboard for controlling.
+controlstartspeed - the starting speed (the "lowest" speed) of the paddle when using digital joystick or keyboard.
+rightkey - SDLK number of the key that makes the paddle travel right
+leftkey - same as above, but left.
+shootkey - the key that makes the guns shoot and releases the ball.
+Check this site for sdl key numbers: http://kobesearch.cpan.org/htdocs/SDL_Perl/SDL/Constants.pm.html#SDLK_0-
+joyisdigital [0/1] - if this is 1, the joystick acts as a "dump"/digital joystick (behaving excatly like the keyboard)
+                     if this is 0, the joystick acts as a analog/precise joystick.
+joycal* - callibration values from the joystick callibration process.
+joyenabled [1/0] - if 1 then joystick is enabled (set to 0 if you experience random movement/controlling error)
+
+------------------------------------------------------------------------------------------------------------
+
+
+2.0 Compiling
+The basic requirements for compiling sdl-ball is the following libs AND THEIR DEVELOPMENT FILES:
+OpenGL
+LibGLU
+SDL1.2
+SDL-image1.2
+SDL-ttf1.2
+SDL-mixer1.2
+Make, a working C++ compiler and stdlibc++6
+
+To compile, extract the SDL-Ball tarball (since you're reading this I figure you allready did) and cd into the dir.
+Type make and press enter.
+
+2.1 Without sound
+If you don't have a soundcard/have a very weak computer/don't have SDL-mixer you can compile without sound support.
+This removes SDL-mixer dependancy.
+To turn off sound support, you need to edit two files:
+Makefile: remove -lSDL_mixer
+main.cpp: remove #define WITH_SOUND
+
+2.2 With WiiMote support
+To enable WiiMote support you need to have a working installation of
+libwiiuse ( http://www.wiiuse.net/ ) I won't get into installing that.
+You also need a working blue-tooth dongle w/driver and all, if you can't run the
+example-program from wiiuse, you need to fix those problems before trying to compile sdl-ball.
+You need to have a systemwide install of wiiuse ( sudo make install in the wiiuse dir ).
+You need to edito two files to enable WiiMote support:
+Makefile: add -lwiiuse to LDFLAGS
+main.cpp: remove the // in front of #define WITH_WIIUSE
+
+2.3  For systemwide installation
+Because every linux dist is diffrent, I can't know where it would be nice
+to put the datafiles for sdl-ball, you might want to use a dir like /usr/local/share/sdl-ball/data
+In that case, make a directory there, and put the data dir into it.
+Then edit main.cpp: Change #define DATADIR "data/" to whatever you want, like:
+#define DATADIR "/usr/local/share/sdl-ball/data/"
+Notice the trailing /
+
