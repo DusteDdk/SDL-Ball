@@ -3748,7 +3748,7 @@ int main (int argc, char *argv[]) {
 
   difficulty = static_difficulty;
 
-  cout << "SDL-Ball v 0.12-CVS" << endl;
+  cout << "SDL-Ball v 0.12-SVN" << endl;
 
 #ifdef WIN32
   privFile.programRoot = ""; // default to ./ on win32

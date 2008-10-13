@@ -151,13 +151,13 @@ setting.joyEnabled added.
 
 0.12
 Sound is on by default.
+3 new levels.
 
 Todo:
 If compiled without sound, don't show the sound settings in the menu.
 Make bricks align exactly with the border.
 Get more liniar increase in difficulty by sorting/adding/removing levels.
 Fix bugs found in 0.11
-More levels!!
 
 May never get fixed:
 Fix problem with framerate not being smooth
