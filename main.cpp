@@ -3702,6 +3702,59 @@ bool checkDir(string & dir)
 
 #include "input.cpp"
 
+bool screenShot()
+{
+  FILE *fscreen;
+  
+  char cName[64];
+  int i = 0;
+  bool found=0;
+  while(!found)
+  {
+    sprintf(cName, "sdl-ball_%i.tga",i);
+    fscreen = fopen(cName,"rb");
+    if(fscreen==NULL)
+      found=1;
+      else
+      fclose(fscreen);
+      i++;
+  }
+  int nS = setting.resx * setting.resy * 3;
+  GLubyte *px = new GLubyte[nS];
+  glPixelStorei(GL_PACK_ALIGNMENT,1);
+  if(px == NULL)
+  {
+    cout << "Alloc err" <<endl;
+    return 0;
+  }
+  fscreen = fopen(cName,"wb");
+  glReadPixels(0, 0, setting.resx, setting.resy, GL_RGB, GL_UNSIGNED_BYTE, px);
+  
+//convert to BGR format    
+    unsigned char temp;
+    i = 0;
+    while (i < nS)
+    {
+        temp = px[i];       //grab blue
+        px[i] = px[i+2];//assign red to blue
+        px[i+2] = temp;     //assign blue to red
+
+        i += 3;     //skip to next blue byte
+    }
+
+   unsigned char TGAheader[12]={0,0,2,0,0,0,0,0,0,0,0,0};
+   unsigned char header[6] = {setting.resx%256,setting.resx/256,setting.resy%256,setting.resy/256,24,0};
+   fwrite(TGAheader, sizeof(unsigned char), 12, fscreen);
+   fwrite(header, sizeof(unsigned char), 6, fscreen);
+
+  fwrite(px, sizeof(GLubyte), nS, fscreen);
+  fclose(fscreen);
+  delete [] px;
+  return 1;
+  
+  
+}
+
 int main (int argc, char *argv[]) {
   var.quit=0;
   var.clearScreen=1;
@@ -4458,6 +4511,9 @@ int main (int argc, char *argv[]) {
           {
             var.quit=1;
           }
+          
+          if( sdlevent.key.keysym.sym == SDLK_s )
+            screenShot();
 
           #ifdef WITH_WIIUSE
           if( sdlevent.key.keysym.sym == SDLK_w )

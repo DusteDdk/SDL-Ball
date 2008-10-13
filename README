@@ -57,9 +57,10 @@ The mouse have no configuration options, you might want to adjust
 your mousespeed from your window-manager.
 
 1.2.2 Keyboard
-p = pause/unpause
+p   = pause/unpause
 esc = show/hide menu
 F11 = toggle
+s   = screenshot
 Use the arrow keys to control the paddle, up to shoot and launch the ball.
 You can change theese in the config file with the options:
 leftkey, rightkey and shootkey however, you have to use SDLK numbers (see link in 1.2.6.)
