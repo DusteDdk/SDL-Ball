@@ -188,6 +188,7 @@ struct privFileStruct {
   string settingsFile;
   string saveGameFile;
   string highScoreFile;
+  string screenshotDir;
 };
 struct privFileStruct privFile;
 
@@ -3706,16 +3707,16 @@ bool screenShot()
 {
   FILE *fscreen;
   
-  char cName[64];
+  char cName[256];
   int i = 0;
   bool found=0;
   while(!found)
   {
-    sprintf(cName, "sdl-ball_%i.tga",i);
+    sprintf(cName, "%s/sdl-ball_%i.tga",privFile.screenshotDir.data(),i);
     fscreen = fopen(cName,"rb");
     if(fscreen==NULL)
       found=1;
-      else
+    else
       fclose(fscreen);
       i++;
   }
@@ -3723,7 +3724,7 @@ bool screenShot()
   GLubyte *px = new GLubyte[nS];
   if(px == NULL)
   {
-    cout << "Alloc err" <<endl;
+    cout << "Alloc err, screenshot failed." <<endl;
     return 0;
   }
   fscreen = fopen(cName,"wb");
@@ -3739,6 +3740,7 @@ bool screenShot()
   fwrite(px, sizeof(GLubyte), nS, fscreen);
   fclose(fscreen);
   delete [] px;
+  cout << "Wrote screenshot to '" << cName << "'" <<endl;
   return 1;
   
   
@@ -3797,9 +3799,12 @@ int main (int argc, char *argv[]) {
 #else
   privFile.programRoot = getenv("HOME");
 #endif
+
+  //Default places if it can't place files another place.
   privFile.saveGameFile = "./savegames.sav";
   privFile.settingsFile ="./settings.cfg";
   privFile.highScoreFile = "./highscores.txt";
+  privFile.screenshotDir = "./";
 
   if(privFile.programRoot.length()==0)
   {
@@ -3818,6 +3823,15 @@ int main (int argc, char *argv[]) {
         privFile.saveGameFile.append("/savegame.sav");
         privFile.settingsFile.append("/settings.cfg");
         privFile.highScoreFile.append("/highscores.txt");
+        
+        privFile.screenshotDir = privFile.programRoot;
+        privFile.screenshotDir.append("/screenshots");
+        if( !checkDir(privFile.screenshotDir) )
+        {
+          cout << "Screenshots are saved in current directory." << endl;
+          privFile.screenshotDir = "./";
+        }
+        
       }
     }
   }

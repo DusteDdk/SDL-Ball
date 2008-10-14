@@ -152,9 +152,10 @@ setting.joyEnabled added.
 0.12
 Sound is on by default.
 3 new levels.
-Screenshot function (press s to capture, saves to current dir)
-Corrected minor bug that made loading highscore-background impossible if compiled with non-standard datadir path.
+Screenshot function (press s to capture, saves in ~/.config/sdl-ball/screenshots/)
+Fixed minor bug, highscore-background datapath was hardcoded.
 Added GPL header and real name of author to relevant sourcefiles.
+Updated Readme
 
 Todo:
 If compiled without sound, don't show the sound settings in the menu.
