@@ -1,6 +1,6 @@
 /* ************************************************************************* *
     SDL-Ball - DX-Ball/Breakout remake with openGL and SDL for Linux
-    Copyright (C) 2008 DusteD.dk
+    Copyright (C) 2008 Jimmy Christensen ( dusted at dusted dot dk )
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ public:
     glGenTextures(1, &tex[30].prop.texture);
     glGenTextures(1, &tex[31].prop.texture);
     glGenTextures(1, &tex[32].prop.texture);
-    texMgr.load("data/gfx/menu/highscorebg.png", tex[33]);
+    texMgr.load(DATADIR"/gfx/menu/highscorebg.png", tex[33]);
     glGenTextures(1, &tex[34].prop.texture);
     glGenTextures(1, &tex[35].prop.texture);
 

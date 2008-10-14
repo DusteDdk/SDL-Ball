@@ -1,6 +1,6 @@
 /* ************************************************************************* * 
     SDL-Ball - DX-Ball/Breakout remake with openGL and SDL for Linux 
-    Copyright (C) 2008 DusteD.dk
+    Copyright (C) 2008 Jimmy Christensen ( dusted at dusted dot dk )
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

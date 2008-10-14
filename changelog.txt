@@ -153,6 +153,8 @@ setting.joyEnabled added.
 Sound is on by default.
 3 new levels.
 Screenshot function (press s to capture, saves to current dir)
+Corrected minor bug that made loading highscore-background impossible if compiled with non-standard datadir path.
+Added GPL header and real name of author to relevant sourcefiles.
 
 Todo:
 If compiled without sound, don't show the sound settings in the menu.
