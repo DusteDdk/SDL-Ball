@@ -1,6 +1,0 @@
-SDL-Ball v 0.11
-Could not locate home directory defaulting to ./
-No config file found, using default settings.
-Creating savegame slots in './savegames.sav'.
-Read 34 levels from 'data//levels.txt'
-Thank you for playing sdl-ball ;)
