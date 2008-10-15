@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-c -Wall
 #append -lwiiuse if compiling WITH_WIIUSE
 #remove -lSDL_mixer if NOT compiling WITH_SOUND
-LDFLAGS=-lGL -lGLU -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer -lwiiuse
+LDFLAGS=-lGL -lGLU -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer
 
 SOURCES=main.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)

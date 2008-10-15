@@ -77,7 +77,6 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[])
   ticksSinceLastSpawn=100;
   texMgr.load(DATADIR"/gfx/title/title.png", texTitle);
   
-  
   texMgr.load(DATADIR"/gfx/title/glue.png", texText[PO_GLUE]);
   texMgr.load(DATADIR"/gfx/title/gravity.png", texText[PO_GRAVITY]);
   texMgr.load(DATADIR"/gfx/title/multiball.png", texText[PO_MULTIBALL]);
