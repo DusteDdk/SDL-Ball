@@ -1,6 +1,9 @@
 CC=g++
+
+#append -DWITH_WIIUSE to compile with WIIUSE support!
 CFLAGS=-c -Wall
-#append -lwiiuse if compiling WITH_WIIUSE
+
+#append -lwiiuse to compile with WIIUSE support
 #remove -lSDL_mixer if NOT compiling WITH_SOUND
 LDFLAGS=-lGL -lGLU -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer
 
