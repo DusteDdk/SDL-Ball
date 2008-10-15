@@ -193,6 +193,7 @@ struct privFileStruct {
 struct privFileStruct privFile;
 
 struct vars {
+  bool titleScreenShow;
   int frame;
   int halfresx;
   int halfresy;
@@ -1129,7 +1130,7 @@ void brick::hit(effectManager & fxMan, pos poSpawnPos, pos poSpawnVel, bool ball
           fxMan.set(FX_VAR_COLDET,1);
           fxMan.set(FX_VAR_LIFE, 1200);
           fxMan.set(FX_VAR_NUM, 10);
-          fxMan.set(FX_VAR_SIZE, 0.1f);
+          fxMan.set(FX_VAR_SIZE, 0.08f);
           fxMan.set(FX_VAR_SPEED, 0.4f);
           fxMan.set(FX_VAR_GRAVITY, -1.3f);
 
@@ -3123,8 +3124,8 @@ void mkDLscene(GLuint *dl,textureClass tex)
     glEnd( );
     glBegin( GL_QUADS );
       //venstre kant
-      glTexCoord2f(0.0f,0.0f);glVertex3f( -1.66, 1.23, 0.0 );
-      glTexCoord2f(1.0f,0.0f);glVertex3f( -1.60, 1.23, 0.0 );
+      glTexCoord2f(0.0f,0.0f);glVertex3f( -1.66, 1.25, 0.0 );
+      glTexCoord2f(1.0f,0.0f);glVertex3f( -1.60, 1.25, 0.0 );
       glTexCoord2f(1.0f,-1.0f);glVertex3f( -1.60,-1.25, 0.0 );
       glTexCoord2f(0.0f,-1.0f);glVertex3f( -1.66,-1.25, 0.0 );
       //højre kant
@@ -3702,7 +3703,7 @@ bool checkDir(string & dir)
 }
 
 #include "input.cpp"
-
+#include "title.cpp"
 bool screenShot()
 {
   FILE *fscreen;
@@ -3749,6 +3750,7 @@ bool screenShot()
 int main (int argc, char *argv[]) {
   var.quit=0;
   var.clearScreen=1;
+  var.titleScreenShow=1;
   setting.eyeCandy = 1;
   setting.showBg = 0;
   setting.particleCollide=0;
@@ -4120,6 +4122,7 @@ int main (int argc, char *argv[]) {
   #endif
 
   controllerClass control(&paddle, &bullet, &bMan);
+  titleScreenClass titleScreen(&fxMan);
 
   announce.write("SDL-BALL",2000, fonts[0]);
   soundMan.add(SND_START,0);
@@ -4148,347 +4151,356 @@ int main (int argc, char *argv[]) {
 
     gVar.deadTime += globalTicks;
 
-    if(gVar.deadTime > 30000) //½ minutes since the ball hit something meaningfull
+    //really ugly... but easy
+    if(!var.titleScreenShow)
     {
-      gVar.deadTime=0;
-      bMan.powerup(PO_EXPLOSIVE); //give the balls explosive ability, in order to blow up cement block and get on with the game
-    }
-
-    if(bMan.activeBalls == 0 && !gVar.newLevel) //check kun om vi er døde hvis vi faktisk er kommet igang med at spille
-    {
-      player.lives--;
-      if(player.lives >= 1)
+  
+      if(gVar.deadTime > 20000)
       {
-        resetPlayerPowerups();
-        gVar.newLife=1;
-        if(!paddle.dead)
-          player.explodePaddle=1;
-        pMan.die(fxMan);
-      } else if(!gVar.gameOver) {
-        gVar.gameOver=1;
-        pauseGame();
-        if( hKeeper.isHighScore() )
+        gVar.deadTime=0;
+        bMan.powerup(PO_EXPLOSIVE); //give the balls explosive ability, in order to blow up cement block and get on with the game
+      }
+  
+      if(bMan.activeBalls == 0 && !gVar.newLevel) //check kun om vi er døde hvis vi faktisk er kommet igang med at spille
+      {
+        player.lives--;
+        if(player.lives >= 1)
         {
-          announce.write("Highscore!", 3000,fonts[0]);
-          var.showHighScores=1;
-          soundMan.add(SND_HIGHSCORE, 0);
+          resetPlayerPowerups();
+          gVar.newLife=1;
+          if(!paddle.dead)
+            player.explodePaddle=1;
+          pMan.die(fxMan);
+        } else if(!gVar.gameOver) {
+          gVar.gameOver=1;
+          pauseGame();
+          if( hKeeper.isHighScore() )
+          {
+            announce.write("Highscore!", 3000,fonts[0]);
+            var.showHighScores=1;
+            soundMan.add(SND_HIGHSCORE, 0);
+          } else {
+            announce.write("GameOver!", 3000,fonts[0]);
+            soundMan.add(SND_GAMEOVER, 0);
+            initNewGame();
+            menu.genHsTex();
+            var.menu = 7;
+          }
+        }
+      }
+  
+      if(gVar.nextlevel)
+      {
+        if(var.transiteffectnum == -1)
+        {
+  
+          announce.write("Well Done!", 1000, fonts[2]);
+          soundMan.add(SND_NEXTLEVEL, 0);
+  
+          if(bMan.activeBalls > 1)
+          {
+            sprintf(txt, "Bonus: %i", bMan.activeBalls*150);
+            player.score += (bMan.activeBalls*150)*player.multiply;
+            announce.write(txt, 2000, fonts[2]);
+          }
+  
+          fxMan.set(FX_VAR_TYPE, FX_TRANSIT);
+          fxMan.set(FX_VAR_LIFE, 1600);
+          fxMan.set(FX_VAR_COLOR, 0.0,0.0,0.0);
+          p.x = 0.0;
+          p.y = 0.0;
+  
+            //Kør en transition effekt
+          var.transiteffectnum = fxMan.spawn(p);
+  
+          var.idiotlock = 0;
+  
         } else {
-          announce.write("GameOver!", 3000,fonts[0]);
-          soundMan.add(SND_GAMEOVER, 0);
-          initNewGame();
-          menu.genHsTex();
-          var.menu = 7;
+          if(var.transition_half_done)
+          {
+  
+            if(!var.idiotlock)
+            {
+              var.idiotlock=1;
+  
+              //If player completed all levels, restart the game with higher multiplier
+              player.level++;
+              if(player.level == var.numlevels)
+              {
+                player.multiply += player.multiply*3;
+                player.level=0;
+                announce.write("Finished!",3500,fonts[2]);
+              }
+  
+              sprintf(txt, "Level %i",player.level+1); //+1 fordi levels starter fra 0
+              announce.write(txt,1500,fonts[2]);
+  
+              //check om vi skal fjerne powerups
+              if(player.difficulty > EASY)
+              {
+                resetPlayerPowerups();
+              }
+              gVar.newLevel = 1;
+              var.paused=0;
+            }
+  
+          }
+  
+          if(!fxMan.isActive(var.transiteffectnum))
+          {
+            var.transiteffectnum = -1; //nulstil så den er klar igen
+            gVar.nextlevel = 0;
+            var.paused = 0;
+            var.idiotlock=0;
+          }
         }
       }
-    }
-
-    if(gVar.nextlevel)
-    {
-      if(var.transiteffectnum == -1)
+  
+      if(gVar.newLevel)
       {
-
-        announce.write("Well Done!", 1000, fonts[2]);
-        soundMan.add(SND_NEXTLEVEL, 0);
-
-        if(bMan.activeBalls > 1)
+        var.bricksHit = 1;
+        gVar.newLevel=0;
+        loadlevel(levelfile, bricks,player.level);
+        initlevels(bricks,texLvl);
+        gVar.gameOver=0;
+        gVar.newLife=1;
+        pMan.clear();
+        bullet.clear();
+        paddle.posx = 0.0;
+        var.startedPlaying=0;
+        bg.init(texMgr);
+      }
+  
+      if(gVar.newLife)
+      {
+        gVar.newLife=0;
+        paddle.init();
+  
+        p.x=paddle.posx;
+  
+        p.y=paddle.posy+paddle.height+0.025;
+  
+        bMan.clear();
+        bMan.spawn(p,1,paddle.width,difficulty.ballspeed[player.difficulty],1.57100000f); //Not exactly 90 degree, so the ball will always fall a bit to the side
+      }
+  
+      if(frameAge >= maxFrameAge)
+      {
+  
+        if(var.clearScreen)
         {
-          sprintf(txt, "Bonus: %i", bMan.activeBalls*150);
-          player.score += (bMan.activeBalls*150)*player.multiply;
-          announce.write(txt, 2000, fonts[2]);
+          glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-
-        fxMan.set(FX_VAR_TYPE, FX_TRANSIT);
-        fxMan.set(FX_VAR_LIFE, 1600);
-        fxMan.set(FX_VAR_COLOR, 0.0,0.0,0.0);
-        p.x = 0.0;
-        p.y = 0.0;
-
-          //Kør en transition effekt
-        var.transiteffectnum = fxMan.spawn(p);
-
-        var.idiotlock = 0;
-
+  
+        //Update player score
+        scoreboard.update(player.score);
+  
+        //background
+        if(setting.showBg)
+          bg.draw();
+        //borders
+        glCallList(sceneDL);
+  
+        for(i=0; i < 4; i++)
+        {
+          if(var.scrollInfo.direction[i])
+          {
+            if( (SDL_GetTicks() - var.scrollInfo.lastTick[i] ) > var.scrollInfo.speed[i] )
+            {
+              var.scrollInfo.lastTick[i]=SDL_GetTicks();
+              moveBoard(bricks, i);
+            }
+          }
+        }
+  
+        if(gVar.bricksleft==1)
+        {
+          player.powerup[PO_AIMHELP]=1;
+        }
+      }
+  
+      bullet.move();
+  
+      gVar.bricksleft=0;
+  
+      //Update nbrick here
+      if(var.bricksHit)
+      {
+        memcpy(nbrick, updated_nbrick, sizeof(updated_nbrick));
+        var.bricksHit = 0;
+      }
+  
+      for(i=0; i <598; i++)
+      {
+        if(bricks[i].active)
+        {
+          if(bricks[i].destroytowin)
+          {
+            gVar.bricksleft++;
+          }
+  
+          if(bricks[i].collide)
+          {
+            bMan.bcoldet(bricks[i], fxMan);
+            //bullets
+            if(player.powerup[PO_GUN])
+            {
+              bullet.coldet(bricks[i], fxMan);
+            }
+  
+            //check kollision på effekterne
+            if(setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
+              fxMan.coldet(bricks[i]);
+          }
+          if(frameAge >= maxFrameAge)
+              bricks[i].draw(bricks,fxMan);
+        } //aktiv brik
+      } // for loop
+  
+      //Collission between paddle and balls
+      if( bMan.pcoldet(paddle, fxMan) )
+      {
+        if(player.powerup[PO_DROP])
+        {
+          moveBoard(bricks, 3);
+        }
+      }
+  
+        bMan.move();
+  
+      if(setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
+        fxMan.pcoldet(paddle);
+  
+      pMan.move();
+      if(pMan.coldet(paddle, fxMan, bMan))
+      {
+        if(player.powerup[PO_DETONATE])
+        {
+          player.powerup[PO_DETONATE]=0;
+          detonateExplosives(bricks, fxMan);
+        }
+  
+        if(player.powerup[PO_EASYBRICK])
+        {
+          player.powerup[PO_EASYBRICK]=0;
+          easyBrick(bricks);
+        }
+  
+        if(player.powerup[PO_NEXTLEVEL])
+        {
+          player.powerup[PO_NEXTLEVEL]=0;
+          gVar.nextlevel=1;
+        }
+  
+        if(player.powerup[PO_EXPLOSIVE_GROW])
+        {
+          player.powerup[PO_EXPLOSIVE_GROW]=0;
+          explosiveGrow(bricks);
+        }
+      }
+  
+      if(frameAge >= maxFrameAge)
+      {
+  
+        soundMan.play();
+  
+        if(player.explodePaddle)
+        {
+          player.explodePaddle=0;
+          soundMan.add(SND_DIE,0);
+          if(setting.eyeCandy)
+          {
+            fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
+  
+            p.x=paddle.width*2;
+            p.y=paddle.height*2;
+            fxMan.set(FX_VAR_RECTANGLE, p);
+  
+            p.x=paddle.posx;
+            p.y=paddle.posy;
+  
+            fxMan.set(FX_VAR_LIFE, 2000);
+            fxMan.set(FX_VAR_NUM, 20);
+            fxMan.set(FX_VAR_SIZE, 0.025f);
+            fxMan.set(FX_VAR_SPEED, 0.35f);
+            fxMan.set(FX_VAR_GRAVITY, -0.7f);
+            fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
+            fxMan.spawn(p);
+            fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
+            fxMan.spawn(p);
+            fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
+            fxMan.spawn(p);
+            fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
+            fxMan.spawn(p);
+  
+            fxMan.set(FX_VAR_NUM, 32);
+            fxMan.set(FX_VAR_SIZE, 0.05f);
+            fxMan.set(FX_VAR_LIFE, 1500);
+            fxMan.set(FX_VAR_SPEED, 0.7f);
+            fxMan.set(FX_VAR_GRAVITY, 0.0f);
+  
+            fxMan.set(FX_VAR_COLOR, 0.5f, 0.5f, 0.5f);
+            fxMan.spawn(p);
+            fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 1.0f);
+            fxMan.spawn(p);
+          }
+        }
+  
+        bMan.updatelast();
+        glColor3d(255,255,255);
+        bullet.draw();
+        paddle.draw();
+  
+        pMan.draw();
+        bMan.draw(paddle);
+        fxMan.draw();
+        scoreboard.draw();
+        speedo.draw();
+        hud.draw();
+  
+        if(var.showHighScores)
+          hKeeper.draw();
+  
+        if(var.menu>0)
+        {
+          if(var.menu==10 || var.menu==11)
+          {
+            control.calibrate();
+          }
+          menu.doMenu();
+        }
+  
+        announce.draw();
+  
+        SDL_GL_SwapBuffers( );
+  
+        frameAge = 0;
+  
+        globalTicksSinceLastDraw=0;
+        globalMilliTicksSinceLastDraw=0;
+      #ifdef performanceTimer
+          cout << "FrameAge:";
       } else {
-        if(var.transition_half_done)
-        {
-
-          if(!var.idiotlock)
-          {
-            var.idiotlock=1;
-
-            //If player completed all levels, restart the game with higher multiplier
-            player.level++;
-            if(player.level == var.numlevels)
-            {
-              player.multiply += player.multiply*3;
-              player.level=0;
-              announce.write("Finished!",3500,fonts[2]);
-            }
-
-            sprintf(txt, "Level %i",player.level+1); //+1 fordi levels starter fra 0
-            announce.write(txt,1500,fonts[2]);
-
-            //check om vi skal fjerne powerups
-            if(player.difficulty > EASY)
-            {
-              resetPlayerPowerups();
-            }
-            gVar.newLevel = 1;
-            var.paused=0;
-          }
-
-        }
-
-        if(!fxMan.isActive(var.transiteffectnum))
-        {
-          var.transiteffectnum = -1; //nulstil så den er klar igen
-          gVar.nextlevel = 0;
-          var.paused = 0;
-          var.idiotlock=0;
-        }
+        cout << "LoopAge:";
       }
-    }
-
-    if(gVar.newLevel)
-    {
-      var.bricksHit = 1;
-      gVar.newLevel=0;
-      loadlevel(levelfile, bricks,player.level);
-      initlevels(bricks,texLvl);
-      gVar.gameOver=0;
-      gVar.newLife=1;
-      pMan.clear();
-      bullet.clear();
-      paddle.posx = 0.0;
-      var.startedPlaying=0;
-      bg.init(texMgr);
-    }
-
-    if(gVar.newLife)
-    {
-      gVar.newLife=0;
-      paddle.init();
-
-      p.x=paddle.posx;
-
-      p.y=paddle.posy+paddle.height+0.025;
-
-      bMan.clear();
-      bMan.spawn(p,1,paddle.width,difficulty.ballspeed[player.difficulty],1.57100000f); //Not exactly 90 degree, so the ball will always fall a bit to the side
-    }
-
-    if(frameAge >= maxFrameAge)
-    {
-
-      if(var.clearScreen)
-      {
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      gettimeofday(&timeStop, NULL);
+      renderTime = timeStop.tv_usec - timeStart.tv_usec;
+      cout << renderTime << endl;
+      #else
       }
-
-      //Update player score
-      scoreboard.update(player.score);
-
-      //background
-      if(setting.showBg)
-        bg.draw();
-      //borders
-      glCallList(sceneDL);
-
-      for(i=0; i < 4; i++)
+    #endif
+  
+  
+      if(!gVar.bricksleft)
       {
-        if(var.scrollInfo.direction[i])
-        {
-          if( (SDL_GetTicks() - var.scrollInfo.lastTick[i] ) > var.scrollInfo.speed[i] )
-          {
-            var.scrollInfo.lastTick[i]=SDL_GetTicks();
-            moveBoard(bricks, i);
-          }
-        }
-      }
-
-      if(gVar.bricksleft==1)
-      {
-        player.powerup[PO_AIMHELP]=1;
-      }
-    }
-
-    bullet.move();
-
-    gVar.bricksleft=0;
-
-    //Update nbrick here
-    if(var.bricksHit)
-    {
-      memcpy(nbrick, updated_nbrick, sizeof(updated_nbrick));
-      var.bricksHit = 0;
-    }
-
-    for(i=0; i <598; i++)
-    {
-      if(bricks[i].active)
-      {
-        if(bricks[i].destroytowin)
-        {
-          gVar.bricksleft++;
-        }
-
-        if(bricks[i].collide)
-        {
-          bMan.bcoldet(bricks[i], fxMan);
-          //bullets
-          if(player.powerup[PO_GUN])
-          {
-            bullet.coldet(bricks[i], fxMan);
-          }
-
-          //check kollision på effekterne
-           if(setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
-             fxMan.coldet(bricks[i]);
-        }
-        if(frameAge >= maxFrameAge)
-            bricks[i].draw(bricks,fxMan);
-      } //aktiv brik
-    } // for loop
-
-    //Collission between paddle and balls
-    if( bMan.pcoldet(paddle, fxMan) )
-    {
-      if(player.powerup[PO_DROP])
-      {
-        moveBoard(bricks, 3);
-      }
-    }
-
-      bMan.move();
-
-    if(setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
-       fxMan.pcoldet(paddle);
-
-    pMan.move();
-    if(pMan.coldet(paddle, fxMan, bMan))
-    {
-      if(player.powerup[PO_DETONATE])
-      {
-        player.powerup[PO_DETONATE]=0;
-        detonateExplosives(bricks, fxMan);
-      }
-
-      if(player.powerup[PO_EASYBRICK])
-      {
-        player.powerup[PO_EASYBRICK]=0;
-        easyBrick(bricks);
-      }
-
-      if(player.powerup[PO_NEXTLEVEL])
-      {
-        player.powerup[PO_NEXTLEVEL]=0;
         gVar.nextlevel=1;
+        var.paused=1;
       }
-
-      if(player.powerup[PO_EXPLOSIVE_GROW])
-      {
-        player.powerup[PO_EXPLOSIVE_GROW]=0;
-        explosiveGrow(bricks);
-      }
-    }
-
-    if(frameAge >= maxFrameAge)
-    {
-
-      soundMan.play();
-
-      if(player.explodePaddle)
-      {
-        player.explodePaddle=0;
-        soundMan.add(SND_DIE,0);
-        if(setting.eyeCandy)
-        {
-          fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
-
-          p.x=paddle.width*2;
-          p.y=paddle.height*2;
-          fxMan.set(FX_VAR_RECTANGLE, p);
-
-          p.x=paddle.posx;
-          p.y=paddle.posy;
-
-          fxMan.set(FX_VAR_LIFE, 2000);
-          fxMan.set(FX_VAR_NUM, 20);
-          fxMan.set(FX_VAR_SIZE, 0.025f);
-          fxMan.set(FX_VAR_SPEED, 0.35f);
-          fxMan.set(FX_VAR_GRAVITY, -0.7f);
-          fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
-          fxMan.spawn(p);
-          fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
-          fxMan.spawn(p);
-          fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
-          fxMan.spawn(p);
-          fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
-          fxMan.spawn(p);
-
-          fxMan.set(FX_VAR_NUM, 32);
-          fxMan.set(FX_VAR_SIZE, 0.05f);
-          fxMan.set(FX_VAR_LIFE, 1500);
-          fxMan.set(FX_VAR_SPEED, 0.7f);
-          fxMan.set(FX_VAR_GRAVITY, 0.0f);
-
-          fxMan.set(FX_VAR_COLOR, 0.5f, 0.5f, 0.5f);
-          fxMan.spawn(p);
-          fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 1.0f);
-          fxMan.spawn(p);
-        }
-      }
-
-      bMan.updatelast();
-      glColor3d(255,255,255);
-      bullet.draw();
-      paddle.draw();
-
-      pMan.draw();
-      bMan.draw(paddle);
-      fxMan.draw();
-      scoreboard.draw();
-      speedo.draw();
-      hud.draw();
-
-      if(var.showHighScores)
-        hKeeper.draw();
-
-      if(var.menu>0)
-      {
-        if(var.menu==10 || var.menu==11)
-        {
-          control.calibrate();
-        }
-        menu.doMenu();
-      }
-
-      announce.draw();
-
-      SDL_GL_SwapBuffers( );
-
-      frameAge = 0;
-
-      globalTicksSinceLastDraw=0;
-      globalMilliTicksSinceLastDraw=0;
-     #ifdef performanceTimer
-        cout << "FrameAge:";
     } else {
-      cout << "LoopAge:";
+    //Show the title screen
+      titleScreen.draw(&frameAge);
     }
-    gettimeofday(&timeStop, NULL);
-    renderTime = timeStop.tv_usec - timeStart.tv_usec;
-    cout << renderTime << endl;
-    #else
-    }
-  #endif
-
-
-    if(!gVar.bricksleft)
-    {
-      gVar.nextlevel=1;
-      var.paused=1;
-    }
+    
 
     control.get(); //Check for keypresses and joystick events
     while (SDL_PollEvent(&sdlevent) )
@@ -4531,6 +4543,8 @@ int main (int argc, char *argv[]) {
         //Toggle menu
         if( sdlevent.key.keysym.sym == SDLK_ESCAPE)
         {
+          if(var.titleScreenShow)
+            var.titleScreenShow=0;
           switch(var.menu)
           {
             case 0:
@@ -4543,6 +4557,14 @@ int main (int argc, char *argv[]) {
             default:
               var.menu=1;
               break;
+          }
+        } else if( sdlevent.key.keysym.sym == SDLK_F1 )
+        {
+          if(!var.titleScreenShow)
+          {
+            var.titleScreenShow=1;
+          } else {
+            var.titleScreenShow=0;
           }
         }
 #ifndef WIN32
@@ -4596,7 +4618,6 @@ int main (int argc, char *argv[]) {
           }
 
           control.btnPress();
-
         }
       }
 

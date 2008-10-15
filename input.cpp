@@ -108,6 +108,12 @@ void controllerClass::movePaddle(GLfloat px)
 
 void controllerClass::btnPress()
 {
+  if(var.titleScreenShow)
+  {
+    SDL_WarpMouse(var.halfresx,0);
+    var.titleScreenShow=0;
+    return;
+  }
   struct pos p;
   if(shotTime > 150)
   {

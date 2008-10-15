@@ -156,9 +156,12 @@ Screenshot function (press s to capture, saves in ~/.config/sdl-ball/screenshots
 Fixed minor bug, highscore-background datapath was hardcoded.
 Added GPL header and real name of author to relevant sourcefiles.
 Updated Readme
+Faster timeout (now is 20 seconds instead of 30)
+If compiled without sound, don't show the sound settings in the menu.
 
 Todo:
-If compiled without sound, don't show the sound settings in the menu.
+Intro screen with powerup explanations.
+Powerup themes
 Make bricks align exactly with the border.
 Get more liniar increase in difficulty by sorting/adding/removing levels.
 Fix bugs found in 0.11

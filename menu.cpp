@@ -486,13 +486,15 @@ public:
 
       //sound
       glTranslatef(0.0,-0.22,0.0f);
+      #ifdef WITH_SOUND
       if(var.menuItem==5)
         glCallList(dl+2);
       else
         glCallList(dl+1);
       glBindTexture(GL_TEXTURE_2D, tex[16].prop.texture);
       glCallList(dl+3);
-
+      #endif
+      
       //Calibrate
       glTranslatef(0.0,-0.22,0.0f);
       if(SDL_JoystickOpened(0))

@@ -56,8 +56,9 @@ but you can also use your keyboard, joystick or wiimote (wiimote, see 1.4.5 2.0 
 
 1.2.1 Keyboard controls
 p   - Pause
-ESC - Pause and Show Menu
 s   - Take Screenshot (saves in ~/.config/sdl-ball/screenshots/)
+ESC - Pause and Show Menu
+F1  - Show titlescreen
 F11 - Toggle Fullscreen
 Arrow Up - Shoot/Launch ball
 Arrow Left and Right - Move paddle left or right (See 1.4.2)
