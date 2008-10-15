@@ -69,25 +69,25 @@
 #define PO_NORMALBALL 2
 #define PO_SMALLBALL  3
 #define PO_EXPLOSIVE  4
-#define PO_GLUE 7
-#define PO_MULTIBALL 8
-#define PO_GROWPADDLE 9
-#define PO_SHRINKPADDLE 10
-#define PO_AIM 11
-#define PO_GUN 12
-#define PO_THRU 13
-#define PO_LASER 14
-#define PO_LIFE 15
-#define PO_DIE 16
-#define PO_DROP 17
-#define PO_DETONATE 18
-#define PO_EXPLOSIVE_GROW 19
-#define PO_EASYBRICK 20
-#define PO_NEXTLEVEL 21
-#define PO_AIMHELP 22
+#define PO_GLUE 5
+#define PO_MULTIBALL 6
+#define PO_GROWPADDLE 7
+#define PO_SHRINKPADDLE 8
+#define PO_AIM 9
+#define PO_GUN 10
+#define PO_THRU 11
+#define PO_LASER 12
+#define PO_LIFE 13
+#define PO_DIE 14
+#define PO_DROP 15
+#define PO_DETONATE 16
+#define PO_EXPLOSIVE_GROW 17
+#define PO_EASYBRICK 18
+#define PO_NEXTLEVEL 19
+#define PO_AIMHELP 20
 
 //"Max powerups"
-#define MAXPOTEXTURES 23
+#define MAXPOTEXTURES 21
 
 #define EASY 0
 #define NORMAL 1
@@ -2017,8 +2017,8 @@ class powerupClass : public moving_object {
       posy=0.0;
       xvel=0.0;
       yvel=0.0;
-      width=0.05;
-      height=0.05;
+      width=0.055;
+      height=0.055;
     }
 
     void move()
@@ -4122,7 +4122,7 @@ int main (int argc, char *argv[]) {
   #endif
 
   controllerClass control(&paddle, &bullet, &bMan);
-  titleScreenClass titleScreen(&fxMan);
+  titleScreenClass titleScreen(&fxMan, texPowerup);
 
   announce.write("SDL-BALL",2000, fonts[0]);
   soundMan.add(SND_START,0);

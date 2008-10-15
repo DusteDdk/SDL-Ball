@@ -41,7 +41,7 @@ class controllerClass {
   ~controllerClass();
   void movePaddle(GLfloat px);
   void btnPress();
-  void get();
+  bool get();
   void calibrate();
   #ifdef WITH_WIIUSE
   bool connectMote();
@@ -110,10 +110,11 @@ void controllerClass::btnPress()
 {
   if(var.titleScreenShow)
   {
-    SDL_WarpMouse(var.halfresx,0);
     var.titleScreenShow=0;
+    SDL_WarpMouse(var.halfresx,0);
     return;
   }
+  
   struct pos p;
   if(shotTime > 150)
   {
@@ -134,7 +135,7 @@ void controllerClass::btnPress()
   }
 }
 
-void controllerClass::get()
+bool controllerClass::get()
 {
   Uint8 *keyStates;
   Uint8 keyDown[3]; //Need this since its not a good idea to write to keyStates for some reason
@@ -233,6 +234,9 @@ void controllerClass::get()
   if(keyDown[2])
   {
     btnPress();
+    return(1);
+  } else {
+    return(0);
   }
 }
 

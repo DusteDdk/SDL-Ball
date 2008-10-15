@@ -158,6 +158,7 @@ Added GPL header and real name of author to relevant sourcefiles.
 Updated Readme
 Faster timeout (now is 20 seconds instead of 30)
 If compiled without sound, don't show the sound settings in the menu.
+Powerups are a bit larger.
 
 Todo:
 Intro screen with powerup explanations.
