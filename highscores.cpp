@@ -99,7 +99,9 @@ class highScoreClass {
           hsList.close();
           initNewGame();
           menu.genHsTex();
-          var.menu = 7;
+//           var.menu = 7;
+          resumeGame();
+          var.titleScreenShow=1;
 
         }
       }

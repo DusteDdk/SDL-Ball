@@ -101,21 +101,22 @@ struct score *sortScores(int *rl)
   return(final);
 }
 
-//TODO: get the other textue stuff into the class too
 class menuClass {
 private:
 GLuint texSaveGameSlot[6];
 string saveGameName;
 int saveGameSlot;
-
 GLuint texHighScore[20];
 textureClass tex[56];
 GLuint dl;
 
 public:
+  GLuint titleHighscoreTex[20];
+  int numHighScores;
   menuClass()
   {
     glGenTextures(20, &texHighScore[0]);
+    glGenTextures(10, &titleHighscoreTex[0]);
     glGenTextures(6, &texSaveGameSlot[0]);
     genHsTex(); //load the highscore file (if exists) and print to texture
     textureManager texMgr;
@@ -322,12 +323,53 @@ public:
           sprintf(txt, "SDL-Ball - %i", (t*-1)+20 );
           writeTxt(fonts[3], color, txt, texHighScore[t],0);
       }
+      //Intro screen
+      numHighScores=0;
+      for(int t=lines; t < 7; t++)
+      {
+        numHighScores++;
+        switch(t)
+        {
+          case 0:
+          sprintf(txt, "SDL-BALL v "VERSION );
+          break;
+          case 1:
+          sprintf(txt, "-----------------------");
+          break;
+          case 2:
+          sprintf(txt, "Copyleft GPLv3 2008 Jimmy Christensen");
+          break;
+          case 3:
+          sprintf(txt, "Based on Dx-Ball by Michael P. Welch");
+          break;
+          case 4:
+          sprintf(txt, "based on Megaball by ED and AL MACKEY");
+          break;
+          case 5:
+          sprintf(txt, "-----------------------");
+          break;
+          case 6:
+          sprintf(txt, "Greetings to everyone!");
+          break;
+          
+        }
+          writeTxt(fonts[3], color, txt, titleHighscoreTex[t],1);
+      }
 
+     //Highscores list
      for(int t=0; t < lines; t++)
      {
         sprintf(txt, "%i - %s", final[t].score, final[t].name.data());
         writeTxt(fonts[3], color, txt, texHighScore[t],0);
      }
+     
+     //Intro screen
+      for(int t=0; t < lines && t<10; t++)
+      {
+        numHighScores++;
+        sprintf(txt, "%i. %s  %i", t+1,final[t].name.data(),final[t].score);
+        writeTxt(fonts[3], color, txt, titleHighscoreTex[t],1);
+      }
 
      if(lines>0)
       delete[] final;

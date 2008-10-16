@@ -159,9 +159,10 @@ Updated Readme
 Faster timeout (now is 20 seconds instead of 30)
 If compiled without sound, don't show the sound settings in the menu.
 Powerups are a bit larger.
+Intro screen with powerup explanations.
 
 Todo:
-Intro screen with powerup explanations.
+Bigball does two hits in damage.
 Powerup themes
 Make bricks align exactly with the border.
 Get more liniar increase in difficulty by sorting/adding/removing levels.

@@ -50,7 +50,6 @@ void powerupDescriptionClass::draw()
         glTexCoord2f(text->pos[4],text->pos[5]);glVertex3f(  0.58+width+posx,-height+posy, 0.00 );
         glTexCoord2f(text->pos[6],text->pos[7]);glVertex3f( width+posx,-height+posy, 0.00 );
       glEnd( );
-      
 
 }
 
@@ -61,22 +60,49 @@ class titleScreenClass {
     textureManager texMgr;
     textureClass texTitle;
     textureClass *texPowerups;
+    GLuint glTitleList;
     textureClass texText[MAXPOTEXTURES];
     float rot;
     bool rotDir;
     powerupDescriptionClass powerUp[MAXPOTEXTURES];
+    GLuint *texHighScore; //Pointer to the texture array in menuClass, where they are updated.
+    int *numHighScores; //Pointer to the number of highscores in menuClass.
+    struct pos runnerPos;
+    int runnerTime;
+    float runnerVelX,runnerVelY;
+    int hilight;
+    bool hilightDir;
+    int hilightTime;
   public:
-    titleScreenClass(effectManager *m, textureClass tp[]);
-    void draw(int * frameAge);
+    titleScreenClass(effectManager *m, textureClass tp[], menuClass *me);
+    void draw(int * frameAge, int * maxFrameAge);
 };
 
-titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[])
+titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClass *me)
 {
+  texHighScore = me->titleHighscoreTex;
+  numHighScores = &me->numHighScores;
   texPowerups = tp;
   fxMan = m;
   ticksSinceLastSpawn=100;
   texMgr.load(DATADIR"/gfx/title/title.png", texTitle);
-  
+  glTitleList = glGenLists(1);
+
+  glNewList(glTitleList, GL_COMPILE);
+    for(int i=0; i < 32; i++)
+    {
+      glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
+      glBegin( GL_QUADS );
+        glColor4f(1,1,1,0.1);
+        glTexCoord2f(0.0, 0.0); glVertex3f(-1.2,1.15, 0.005*i );
+        glTexCoord2f(1.0, 0.0); glVertex3f( 1.2,1.15, 0.005*i );
+        glColor4f(0,0,1,0.00);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 1.2, 0.75, 0.005*i );
+        glTexCoord2f(0.0, 1.0); glVertex3f(-1.2, 0.75, 0.005*i );
+      glEnd( );
+    }
+  glEndList();
+
   texMgr.load(DATADIR"/gfx/title/glue.png", texText[PO_GLUE]);
   texMgr.load(DATADIR"/gfx/title/gravity.png", texText[PO_GRAVITY]);
   texMgr.load(DATADIR"/gfx/title/multiball.png", texText[PO_MULTIBALL]);
@@ -99,12 +125,10 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[])
   texMgr.load(DATADIR"/gfx/title/growbat.png", texText[PO_GROWPADDLE]);
   texMgr.load(DATADIR"/gfx/title/shrinkbat.png", texText[PO_SHRINKPADDLE]);
 
-  int i,ii;
-  for(ii = 0; ii < 3; ii++)
+  for(int ii = 0; ii < 3; ii++)
   {
-    for(i=0; i < 7; i++)
+    for(int i=0; i < 7; i++)
     {
-      
       texText[i+(7*ii)].prop.ticks = 1000;
       texText[i+(7*ii)].prop.cols = 1;
       texText[i+(7*ii)].prop.rows = 1;
@@ -122,14 +146,31 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[])
     }
   }
 
+  runnerPos.x=0.0;
+  runnerPos.y=0.66;
+  runnerVelX = rndflt(15,0)+15;
+  runnerVelY = rndflt(15,0)+15;
+  runnerTime=0;
   
-
+  hilight=0;
+  hilightDir=1;
+  hilightTime=0;
 }
 
-void titleScreenClass::draw(int * frameAge)
+int delta(int a, int b)
+{
+  if(a >= b)
+  {
+    return(a-b);
+  } else {
+    return(b-a);
+  }
+}
+
+void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
 {
   pos p,s;
-  if(*frameAge > 8)
+  if(*frameAge >= *maxFrameAge)
   {
           soundMan.play();
 
@@ -138,13 +179,14 @@ void titleScreenClass::draw(int * frameAge)
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     glEnable(GL_TEXTURE_2D);
+    
     ticksSinceLastSpawn +=nonpausingGlobalTicks;
     if(ticksSinceLastSpawn > 15)
     {
-      s.x = 3.2;
-      s.y = 0.5;
+      s.x = 3.25;
+      s.y = 0.525;
       p.x = 0;
-      p.y = 0;
+      p.y = 1;
 
       ticksSinceLastSpawn=0;
       fxMan->set(FX_VAR_TYPE, FX_PARTICLEFIELD);
@@ -157,8 +199,8 @@ void titleScreenClass::draw(int * frameAge)
       fxMan->set(FX_VAR_RECTANGLE, s);
       fxMan->set(FX_VAR_COLOR, 1.0f, 1.0f, 1.0f);
       fxMan->spawn(p);
-
     }
+    fxMan->draw();
 
     int i;
     glLoadIdentity();
@@ -169,40 +211,109 @@ void titleScreenClass::draw(int * frameAge)
       powerUp[i].draw();
     }
     
+    runnerTime+=nonpausingGlobalTicks;
+    if(runnerTime>1)
+    {
+      fxMan->set(FX_VAR_TYPE, FX_SPARKS);
+      fxMan->set(FX_VAR_COLDET,0);
+      fxMan->set(FX_VAR_LIFE, 250);
+      fxMan->set(FX_VAR_NUM, 2);
+      fxMan->set(FX_VAR_SIZE, 0.09f);
+      fxMan->set(FX_VAR_SPEED, 0.5f);
+      fxMan->set(FX_VAR_GRAVITY, -0.4f);
+  
+      fxMan->set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
+      fxMan->spawn(runnerPos);
+      fxMan->set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
+      fxMan->spawn(runnerPos);
+      fxMan->set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
+      fxMan->spawn(runnerPos);
+      fxMan->set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
+      fxMan->spawn(runnerPos);
+      
+      runnerPos.x += runnerVelX*(runnerTime/1000.0);
+      runnerPos.y += runnerVelY*(runnerTime/1000.0);
+      if(runnerPos.x > 1.64 && runnerVelX > 0)
+      {
+        runnerVelX *= -1;
+      }
+      if(runnerPos.x < -1.64 && runnerVelX < 0)
+      {
+        runnerVelX *= -1;
+      }
+      
+      if(runnerPos.y > 1.24 && runnerVelY > 0)
+      {
+        runnerVelY *= -1;
+      }
+      
+      if(runnerPos.y < -1.24 && runnerVelY < 0)
+      {
+        runnerVelY *= -1;
+      }
+      runnerTime=0;
+    }
+   
+  hilightTime += nonpausingGlobalTicks;
+  if(hilightTime > 3)
+  {
+    if(hilightDir)
+    {
+      hilight++;
+      if(hilight == *numHighScores*3)//-1)
+      {
+        hilight=*numHighScores-1;
+        hilightDir=0;
+      }
+    } else {
+      hilight--;
+      if(hilight == -*numHighScores*2)
+      {
+        hilightDir=1;
+        hilight=0;
+      }
+    }
+    hilightTime=0;
+  }
+   
+    glTranslatef(0.0, 0.59, 0.0);
+    float a;
+    for(i=0; i < *numHighScores; i++)
+    {
+      if(hilightDir && i < hilight+1 || !hilightDir && i > hilight-1)
+      {
+        a=1.0-((1.0/(float)(*numHighScores*2))*(delta(hilight,i)));
+        glBindTexture(GL_TEXTURE_2D, texHighScore[i]);
+        glColor4f(1.0,1.0,1.0, a  );
+        glBegin( GL_QUADS );
+          glTexCoord2f(-0.0f,0); glVertex3f(  -1.27, 0.16, 0.0 );
+          glTexCoord2f(1.0f,0);glVertex3f(   1.27, 0.16, 0.0 );
+          glTexCoord2f(1.0f,0.110001);glVertex3f(   1.27,-0.16, 0.0 );
+          glTexCoord2f(0.0f,0.110001); glVertex3f(  -1.27,-0.16, 0.0 );
+        glEnd( );
+      }
+      glTranslatef(0.0,-0.1,0.0);
+   }
+   
     if(!rotDir)
     {
-      rot += 0.05 * nonpausingGlobalTicks;
-      if(rot > 45)
+      rot += 0.07 * nonpausingGlobalTicks;
+      if(rot > 40)
       {
         rotDir=1;
       }
     } else {
-      rot -= 0.05 * nonpausingGlobalTicks;
-      if(rot < -45)
+      rot -= 0.07 * nonpausingGlobalTicks;
+      if(rot < -40)
       {
         rotDir=0;
       }
     }
-    fxMan->draw();
     glLoadIdentity();
     glTranslatef(0.0,0.0,-3.0);
+    glRotatef(20, 1,0,0);
     glRotatef(rot, 0,1,0);
-    
-
-    for(i=0; i < 32; i++)
-    {
-      glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
-      glBegin( GL_QUADS );
-          glColor4f(1,1,1,0.1);
-          glTexCoord2f(0.0, 0.0); glVertex3f(-1.2,0.2, 0.005*i );
-          glTexCoord2f(1.0, 0.0); glVertex3f( 1.2,0.2, 0.005*i );
-          glColor4f(0,0,1,0.00);
-          glTexCoord2f(1.0, 1.0); glVertex3f( 1.2,-0.2, 0.005*i );
-          glTexCoord2f(0.0, 1.0); glVertex3f(-1.2,-0.2, 0.005*i );
-      glEnd( );
-    }
-    
-    
+    glCallList(glTitleList);
 
     SDL_GL_SwapBuffers( );
     

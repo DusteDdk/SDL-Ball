@@ -42,6 +42,7 @@
 #define WITH_SOUND
 // #define WITH_WIIUSE
 
+#define VERSION "0.12-CVS"
 
 #ifdef WITH_WIIUSE
   #include <wiiuse.h>
@@ -3795,7 +3796,7 @@ int main (int argc, char *argv[]) {
 
   difficulty = static_difficulty;
 
-  cout << "SDL-Ball v 0.12-SVN" << endl;
+  cout << "SDL-Ball v "VERSION << endl;
 
 #ifdef WIN32
   privFile.programRoot = ""; // default to ./ on win32
@@ -4066,8 +4067,6 @@ int main (int argc, char *argv[]) {
 
   texMgr.load(DATADIR"/gfx/particle.png", texParticle);
 
-  menuClass menu;
-
   GLuint sceneDL;
 
   mkDLscene(&sceneDL, texBorder);
@@ -4080,6 +4079,7 @@ int main (int argc, char *argv[]) {
 
   int i=0; //bruges i for loop xD
   glScoreBoard scoreboard;
+  menuClass menu;
 
 
   paddle_class paddle;
@@ -4092,6 +4092,8 @@ int main (int argc, char *argv[]) {
   effectManager fxMan;
   fxMan.set(FX_VAR_TEXTURE, texParticle);
   fxMan.set(FX_VAR_GRAVITY, 0.6f);
+  
+  titleScreenClass titleScreen(&fxMan, texPowerup, &menu);
 
   ballManager bMan(texBall);
   player.difficulty = NORMAL;
@@ -4123,9 +4125,9 @@ int main (int argc, char *argv[]) {
   #endif
 
   controllerClass control(&paddle, &bullet, &bMan);
-  titleScreenClass titleScreen(&fxMan, texPowerup);
 
-  announce.write("SDL-BALL",2000, fonts[0]);
+
+//   announce.write("SDL-BALL",2000, fonts[0]);
   soundMan.add(SND_START,0);
 
   while(!var.quit)
@@ -4184,8 +4186,7 @@ int main (int argc, char *argv[]) {
             announce.write("GameOver!", 3000,fonts[0]);
             soundMan.add(SND_GAMEOVER, 0);
             initNewGame();
-            menu.genHsTex();
-            var.menu = 7;
+            var.titleScreenShow=1;
           }
         }
       }
@@ -4499,7 +4500,7 @@ int main (int argc, char *argv[]) {
       }
     } else {
     //Show the title screen
-      titleScreen.draw(&frameAge);
+      titleScreen.draw(&frameAge, &maxFrameAge);
     }
 
 
@@ -4530,7 +4531,7 @@ int main (int argc, char *argv[]) {
 
           if( sdlevent.key.keysym.sym == SDLK_s )
             screenShot();
-
+            
           #ifdef WITH_WIIUSE
           if( sdlevent.key.keysym.sym == SDLK_w )
           {
