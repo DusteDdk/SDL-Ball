@@ -119,6 +119,7 @@ void soundClass::loadsounds()
   loadSample("highscore.ogg", SND_HIGHSCORE);
   loadSample("menuclick.ogg", SND_MENUCLICK);
   loadSample("glue-ball-hit-paddle.ogg", SND_GLUE_BALL_HIT_PADDLE);
+  loadSample("buy-powerup.ogg", SND_BUY_POWERUP);
 //   loadSample("score-tick.ogg", SND_SCORE_TICK); //Not sure if this is a good idea..
   #endif
 }

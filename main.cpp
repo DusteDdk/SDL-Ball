@@ -117,7 +117,8 @@
 #define SND_GLUE_BALL_HIT_PADDLE 18
 #define SND_INVISIBLE_BRICK_APPEAR 19
 #define SND_HIGHSCORE 20
-#define SNDSAMPLES 21
+#define SND_BUY_POWERUP 21
+#define SNDSAMPLES 22
 
 
 using namespace std;
@@ -3510,6 +3511,7 @@ class hudClass {
         player.coins -= item[shopItemSelected].price;
         shopItemBlocked[shopItemSelected]=1;
         gVar.shopNextItem=1;
+        soundMan.add(SND_BUY_POWERUP, 0.0);
       }
     }
     
