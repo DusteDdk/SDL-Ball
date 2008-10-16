@@ -43,6 +43,7 @@
 // #define WITH_WIIUSE
 
 #define VERSION "0.12-CVS"
+#define SAVEGAMEVERSION 2
 
 #ifdef WITH_WIIUSE
   #include <wiiuse.h>
@@ -171,7 +172,7 @@ struct settings {
   bool eyeCandy;
   bool particleCollide;
   //Add to menu:
-  SDLKey keyLeft, keyRight, keyShoot;
+  SDLKey keyLeft, keyRight, keyShoot, keyNextPo, keyPrevPo, keyBuyPo;
   float controlAccel;
   float controlStartSpeed;
   float controlMaxSpeed;
@@ -227,6 +228,7 @@ struct vars {
 
 //Ting der har med spillogik at gøre
 struct gameVars {
+  bool shopNextItem, shopPrevItem, shopBuyItem; //When set to 1 shop goes next or prev
   int deadTime; //I hvor mange millisekunder har bolden intet rørt
   bool nextlevel;
   bool gameOver;
@@ -237,6 +239,7 @@ struct gameVars {
 struct gameVars gVar;
 
 struct player_struct {
+  int coins;
   int multiply;
   bool powerup[MAXPOTEXTURES];
   bool explodePaddle; //This lock makes the paddle explode and it won't come back until newlife.
@@ -2116,10 +2119,12 @@ class powerupClass : public moving_object {
         switch(type)
         {
           case PO_GLUE:
+            player.coins += 150;
             player.powerup[PO_GLUE] = 1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_BIGBALL:
+            player.coins += 30;
             bMan.powerup(PO_BIGBALL);
             player.powerup[PO_BIGBALL]=1;
             player.powerup[PO_NORMALBALL]=0;
@@ -2127,6 +2132,7 @@ class powerupClass : public moving_object {
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_NORMALBALL:
+            player.coins += 50;
             bMan.powerup(PO_NORMALBALL);
             player.powerup[PO_NORMALBALL]=1;
             player.powerup[PO_BIGBALL]=0;
@@ -2134,6 +2140,7 @@ class powerupClass : public moving_object {
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_SMALLBALL:
+            player.coins += 10;
             bMan.powerup(PO_SMALLBALL);
             player.powerup[PO_SMALLBALL]=1;
             player.powerup[PO_BIGBALL]=0;
@@ -2141,14 +2148,17 @@ class powerupClass : public moving_object {
             soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
             break;
           case PO_GRAVITY:
+            player.coins += 5;
             bMan.powerup(PO_GRAVITY);
             soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
             break;
           case PO_MULTIBALL:
+            player.coins += 100;
             bMan.multiply();
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_AIM:
+            player.coins += 50;
             if(player.difficulty==0)
             {
               player.powerup[PO_GLUE]=1;
@@ -2163,61 +2173,75 @@ class powerupClass : public moving_object {
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_GROWPADDLE:
+            player.coins += 100;
             if(p.width < 0.4)
               p.grow(p.width+0.03);
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_SHRINKPADDLE:
+            player.coins += 10;
             if(p.width > 0.02) p.grow(p.width-0.02);
             soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
             break;
           case PO_EXPLOSIVE:
+            player.coins += 150;
             bMan.powerup(PO_EXPLOSIVE);
             player.powerup[PO_EXPLOSIVE]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_GUN:
+            player.coins += 200;
             player.powerup[PO_GUN]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_THRU:
+            player.coins += 300;
             player.powerup[PO_THRU]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_LASER:
+            player.coins += 40;
             player.powerup[PO_LASER]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_LIFE:
+            player.coins += 400;
             player.lives++;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_DIE:
+            player.coins += 1;
             player.explodePaddle=1;
             player.powerup[PO_DIE]=1;
             //NOTE: no sound here, SND_DIE is played when paddle dissapers
             break;
           case PO_DROP:
+            player.coins += 1;
             player.powerup[PO_DROP]=1;
             soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
             break;
           case PO_DETONATE:
+            player.coins += 200;
             player.powerup[PO_DETONATE]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_EXPLOSIVE_GROW:
+            player.coins += 100;
             player.powerup[PO_EXPLOSIVE_GROW]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_EASYBRICK:
+            player.coins += 90;
             player.powerup[PO_EASYBRICK]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_NEXTLEVEL:
+            player.coins += 100;
             player.powerup[PO_NEXTLEVEL]=1;
             //NOTE: no sound here, SND_NEXTLEVEL is played when changing level
             break;
           case PO_AIMHELP:
+            player.coins += 50;
             player.powerup[PO_AIMHELP]=1;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
@@ -2300,7 +2324,8 @@ class powerupManager {
       texPowerup[PO_GLUE].prop.yoffset=1.0/4.0;
       texPowerup[PO_GLUE].prop.playing=1;
       texPowerup[PO_GLUE].prop.padding=1;
-
+      texPowerup[PO_GLUE].prop.bidir=0;
+      
       //gravity
       texPowerup[PO_GRAVITY].prop.frames = 1;
       texPowerup[PO_GRAVITY].prop.ticks = 1000;
@@ -3064,7 +3089,7 @@ void resetPlayerPowerups()
   player.powerup[PO_GUN] = 0;
   player.powerup[PO_THRU] = 0;
   player.powerup[PO_DROP] = 0;
-  player.powerup[PO_DETONATE] = 0; //this is not really nessicary (should not be, atleast)
+  player.powerup[PO_DETONATE] = 0;
 
   player.powerup[PO_AIMHELP] = 0;
 
@@ -3082,10 +3107,11 @@ void initNewGame()
   player.multiply = 1;
 
   player.lives=5;
-
+  player.coins = 600;
   //Easy skal ikke clears af powerups
   if(player.difficulty > 0)
   {
+    player.coins = 0;
     player.lives -= 2;
   }
 
@@ -3360,23 +3386,59 @@ void padcoldet(ball & b, paddle_class & p, pos & po)
 
 #include "highscores.cpp"
 
+struct shopItemStruct {
+  int price;
+  char type;
+};
+
 class hudClass {
   private:
   textureClass texBall;
-
+  
+  //For the powerup "shop"
+  textureClass *texPowerup; //Pointer to array of powerup textures
+  int shopItemSelected;
+  #define NUMITEMSFORSALE 10
+  struct shopItemStruct item[NUMITEMSFORSALE];
+  bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
+  
   public:
-  hudClass(textureClass texB)
+  hudClass(textureClass texB, textureClass texPo[])
   {
+    texPowerup = texPo;
     texBall=texB;
-      texBall.prop.ticks = 1000;
-      texBall.prop.cols = 1;
-      texBall.prop.rows = 1;
-      texBall.prop.xoffset = 1;
-      texBall.prop.yoffset = 1;
-      texBall.prop.frames = 1;
-      texBall.prop.bidir = 0;
-      texBall.prop.playing = 0;
-      texBall.prop.padding=1;
+    texBall.prop.ticks = 1000;
+    texBall.prop.cols = 1;
+    texBall.prop.rows = 1;
+    texBall.prop.xoffset = 1;
+    texBall.prop.yoffset = 1;
+    texBall.prop.frames = 1;
+    texBall.prop.bidir = 0;
+    texBall.prop.playing = 0;
+    texBall.prop.padding=1;
+
+    item[0].type = PO_NORMALBALL;
+    item[0].price = 400;
+    item[1].type = PO_BIGBALL;
+    item[1].price = 500;
+    item[2].type = PO_AIMHELP;
+    item[2].price = 600;
+    item[3].type = PO_GROWPADDLE;
+    item[3].price = 600;
+    item[4].type = PO_MULTIBALL;
+    item[4].price = 700;
+    item[5].type = PO_GLUE;
+    item[5].price = 700;
+    item[6].type = PO_EXPLOSIVE;
+    item[6].price = 800;
+    item[7].type = PO_THRU;
+    item[7].price = 1000;
+    item[8].type = PO_EXPLOSIVE_GROW;
+    item[8].price = 1500;
+    item[9].type = PO_LIFE;
+    item[9].price = 3000;
+    
+    shopItemSelected=0;
   }
 
   void draw()
@@ -3399,10 +3461,96 @@ class hudClass {
     }
     glEnd( );
 
-  }
-  void update()
-  {
+    //Draw the "shop"
+    //First, find out how many items the player can afford, so we can center them
+    int canAfford=0;
+    for(i=0; i < NUMITEMSFORSALE; i++)
+    {
+      if(item[i].price <= player.coins)
+      {
+        canAfford++;
+      }
+    }
+    
+    if(shopItemSelected > canAfford || shopItemSelected < 0)
+    {
+      shopItemSelected=canAfford-1;
+    }
+    
+    GLfloat shopListStartX = -((0.11*canAfford)/2.0);
+    if(gVar.shopNextItem)
+    {
+      gVar.shopNextItem=0;
+      shopItemSelected++;
 
+      if(shopItemSelected > canAfford-1)
+      {
+        shopItemSelected=0;
+      }
+    } else if(gVar.shopPrevItem)
+    {
+      gVar.shopPrevItem=0;
+      shopItemSelected--;
+
+      if(shopItemSelected < 0)
+      {
+        shopItemSelected=canAfford-1;
+      }
+    } else if(gVar.shopBuyItem)
+    {
+      gVar.shopBuyItem=0;
+      if(item[shopItemSelected].price <= player.coins && !shopItemBlocked[shopItemSelected])
+      {
+        struct pos a,b;
+        a.x = shopListStartX + (0.11*shopItemSelected);
+        a.y = 1.15;
+        b.x = 0.0;
+        b.y = 0.0;
+        pMan.spawn(a,b,item[shopItemSelected].type);
+        player.coins -= item[shopItemSelected].price;
+        shopItemBlocked[shopItemSelected]=1;
+        gVar.shopNextItem=1;
+      }
+    }
+    
+    glTranslatef( shopListStartX, 1.15, 0.0f);
+    for(i=0; i < canAfford; i++)
+    {
+      if(i==shopItemSelected)
+      {
+        if(shopItemBlocked[i])
+        {
+          glColor4f(1.0, 0.0, 0.0, 1.0);
+        } else {
+          glColor4f(1.0, 1.0, 1.0, 1.0);
+        }
+      } else {
+        if(shopItemBlocked[i])
+        {
+          glColor4f(1.0, 0.0, 0.0, 0.4);
+        } else {
+          glColor4f(1.0, 1.0, 1.0, 0.4);
+        }
+      }
+      texPowerup[item[i].type].play();
+      glBindTexture( GL_TEXTURE_2D, texPowerup[item[i].type].prop.texture);
+      glBegin( GL_QUADS );
+        glTexCoord2f(texPowerup[item[i].type].pos[0],texPowerup[item[i].type].pos[1]);glVertex3f( -0.055, 0.055, 0.00 );
+        glTexCoord2f(texPowerup[item[i].type].pos[2],texPowerup[item[i].type].pos[3]);glVertex3f(  0.055, 0.055, 0.00 ); 
+        glTexCoord2f(texPowerup[item[i].type].pos[4],texPowerup[item[i].type].pos[5]);glVertex3f(  0.055,-0.055, 0.00 ); 
+        glTexCoord2f(texPowerup[item[i].type].pos[6],texPowerup[item[i].type].pos[7]);glVertex3f( -0.055,-0.055, 0.00 ); 
+      glEnd( );
+      glTranslatef( 0.11, 0.0, 0.0f);
+    }
+    
+  }
+
+  void clearShop()
+  {
+    for(int i=0; i < NUMITEMSFORSALE; i++)
+    {
+      shopItemBlocked[i]=0;
+    }
   }
 };
 
@@ -3427,6 +3575,9 @@ void writeSettings()
     conf << "controlstartspeed="<<setting.controlStartSpeed<<endl;
     conf << "rightkey="<<setting.keyRight<<endl;
     conf << "leftkey="<<setting.keyLeft<<endl;
+    conf << "nextkey="<<setting.keyNextPo<<endl;
+    conf << "buykey="<<setting.keyBuyPo<<endl;
+    conf << "prevkey="<<setting.keyPrevPo<<endl;
     conf << "shootkey="<<setting.keyShoot<<endl;
     conf << "joyenabled="<<setting.joyEnabled<<endl;
     conf << "joyisdigital="<<setting.joyIsDigital<<endl;
@@ -3471,6 +3622,7 @@ struct savedGame {
   struct player_struct player;
 };
 
+//Savegame files now consist of a int long header with a version number.
 void saveGame(int slot, string name) {
   fstream file;
   struct savedGame game;
@@ -3481,8 +3633,9 @@ void saveGame(int slot, string name) {
   {
     cout << "Could not open '"<<privFile.saveGameFile<<"' for Read+Write." << endl;
   }
-  //first, move to the slot
-   file.seekp( sizeof(savedGame)*slot );
+    
+  //move to the slot, mind the header
+  file.seekp( (sizeof(int))+((sizeof(savedGame)*slot)) );
 
   file.write((char *)(&game), sizeof(savedGame));
   file.close();
@@ -3490,6 +3643,18 @@ void saveGame(int slot, string name) {
 
 void clearSaveGames()
 {
+  fstream file;
+  file.open(privFile.saveGameFile.data(), ios::out | ios::in | ios::binary);
+  if(!file.is_open())
+  {
+    cout << "Could not open '"<<privFile.saveGameFile<<"' for Read+Write." << endl;
+  }
+  //Write the header
+  const int sgHead = SAVEGAMEVERSION; //Savegame file version
+  file.write( (char *)(&sgHead), sizeof(int));
+  file.close();
+
+  
   saveGame(0, "Empty Slot");
   saveGame(1, "Empty Slot");
   saveGame(2, "Empty Slot");
@@ -3507,7 +3672,7 @@ void loadGame(int slot)
     cout << "Could not open '" << privFile.saveGameFile << "' for Reading." << endl;
 
   //first, move to the slot
-  file.seekg( sizeof(savedGame)*slot );
+  file.seekg( sizeof(int)+(sizeof(savedGame)*slot) );
   file.read((char *)(&game), sizeof(savedGame));
   file.close();
 
@@ -3546,6 +3711,21 @@ int listSaveGames(string slotName[])
       return(0);
     }
   }
+  
+    //First we check if this is the right version
+  int sgHead=0x00; //Invalid version
+  
+  file.read((char *)(&sgHead), sizeof(int));
+  if(sgHead!=SAVEGAMEVERSION)
+  {
+    cout << "Savegame format error, is v" << sgHead << " should be v'"  << SAVEGAMEVERSION << "'." << endl;
+    cout << "Overriding old savegames..." << endl;
+    file.close();
+    clearSaveGames();
+
+    file.open(privFile.saveGameFile.data() , ios::in | ios::binary);
+    file.seekp(sizeof(int));
+  }
 
   while(1)
   {
@@ -3559,10 +3739,13 @@ int listSaveGames(string slotName[])
     {
       break;
     }
+
       slotName[i] = slot[i].name;
     i++;
   }
   file.close();
+
+
   return(i);
 }
 
@@ -3763,6 +3946,9 @@ int main (int argc, char *argv[]) {
   setting.keyLeft = (SDLKey)276;
   setting.keyRight= (SDLKey)275;
   setting.keyShoot= (SDLKey)273;
+  setting.keyNextPo=(SDLKey)SDLK_v;
+  setting.keyBuyPo =(SDLKey)SDLK_b;
+  setting.keyPrevPo=(SDLKey)SDLK_n;
   setting.controlAccel = 7;
   setting.controlStartSpeed = 1.0;
   setting.controlMaxSpeed = 5;
@@ -3902,6 +4088,15 @@ int main (int argc, char *argv[]) {
         } else if(set=="shootkey")
         {
           setting.keyShoot = (SDLKey)atoi(val.data());
+        } else if(set=="nextkey")
+        {
+          setting.keyNextPo = (SDLKey)atoi(val.data());
+        } else if(set=="buykey")
+        {
+          setting.keyBuyPo = (SDLKey)atoi(val.data());
+        } else if(set=="prevkey")
+        {
+          setting.keyPrevPo = (SDLKey)atoi(val.data());
         } else if(set=="joyenabled")
         {
           setting.joyEnabled = atoi(val.data());
@@ -4107,7 +4302,7 @@ int main (int argc, char *argv[]) {
 
   speedometerClass speedo;
 
-  hudClass hud(texBall[0]); //This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
+  hudClass hud(texBall[0], texPowerup); //This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
 
   var.transiteffectnum=-1;
 
@@ -4277,7 +4472,7 @@ int main (int argc, char *argv[]) {
       {
         gVar.newLife=0;
         paddle.init();
-
+        hud.clearShop();
         p.x=paddle.posx;
 
         p.y=paddle.posy+paddle.height+0.025;
@@ -4455,10 +4650,10 @@ int main (int argc, char *argv[]) {
 
         pMan.draw();
         bMan.draw(paddle);
-        fxMan.draw();
         scoreboard.draw();
         speedo.draw();
         hud.draw();
+        fxMan.draw();
 
         if(var.showHighScores)
           hKeeper.draw();
@@ -4527,14 +4722,24 @@ int main (int argc, char *argv[]) {
           if( sdlevent.key.keysym.sym == SDLK_q )
           {
             var.quit=1;
-          }
-
-          if( sdlevent.key.keysym.sym == SDLK_s )
+          } else if( sdlevent.key.keysym.sym == SDLK_s )
+          {
             screenShot();
+          } else if( sdlevent.key.keysym.sym == setting.keyNextPo)
+          {
+            gVar.shopPrevItem=1;
+          } else if( sdlevent.key.keysym.sym == setting.keyBuyPo)
+          {
+            gVar.shopBuyItem=1;
+          } else if( sdlevent.key.keysym.sym == setting.keyPrevPo)
+          {
+            gVar.shopNextItem=1;
+          }
             
           #ifdef WITH_WIIUSE
           if( sdlevent.key.keysym.sym == SDLK_w )
           {
+            var.titleScreenShow=0;
             pauseGame();
             var.menu=11;
             var.menuJoyCalStage=-1;
@@ -4620,9 +4825,17 @@ int main (int argc, char *argv[]) {
           }
 
           control.btnPress();
+        } else if(sdlevent.button.button == SDL_BUTTON_RIGHT )
+        {
+          gVar.shopBuyItem=1;
+        } else if(sdlevent.button.button == 4)
+        {
+          gVar.shopPrevItem=1;
+        } else if(sdlevent.button.button == 5)
+        {
+          gVar.shopNextItem=1;
         }
       }
-
       if( sdlevent.type == SDL_QUIT ) {
         var.quit = 1;
       } else if( sdlevent.type == SDL_VIDEORESIZE )

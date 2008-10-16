@@ -21,11 +21,13 @@ class controllerClass {
   paddle_class *paddle;
   bulletsClass *bullet;
   ballManager *bMan;
-  int shotTime;
+  #define ITEMSELECTTIME 300 /* Milliseconds before changing item */
+  int shotTime, itemSelectTime;
   float accel;
   SDL_Joystick *joystick;
   Sint16 joystickx;
-  Uint8 joystickbtnA;
+  Sint16 joysticky;
+  Uint8 joystickbtnA, joystickbtnB;
   GLfloat joystickLeftX; //There are two because the calibrated values differ
   GLfloat joystickRightX;
   int calMin, calMax, calLowJitter, calHighJitter;
@@ -54,6 +56,7 @@ controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager
   bullet = bu;
   bMan = bm;
   shotTime=200;
+  itemSelectTime=0;
 
   //Try to open a joystick.
   if(setting.joyEnabled && SDL_NumJoysticks() > 0)
@@ -145,17 +148,26 @@ bool controllerClass::get()
   keyDown[0] = keyStates[setting.keyLeft];
   keyDown[1] = keyStates[setting.keyRight];
   keyDown[2] = keyStates[setting.keyShoot];
+  
+  itemSelectTime += globalTicks;
   //Read joystick here so we can override keypresses if the joystick is digital
   //We shouldn't need to check if the joystick is enabled, since it won't be opened if its not enabled anyway.
   if(setting.joyEnabled && SDL_JoystickOpened(0))
   {
     joystickx = SDL_JoystickGetAxis(joystick, 0);
+    joysticky = SDL_JoystickGetAxis(joystick, 1);
     joystickbtnA = SDL_JoystickGetButton(joystick, 0);
+    joystickbtnB = SDL_JoystickGetButton(joystick, 1);
 
 
     if(joystickbtnA)
     {
       keyDown[2] = 1;
+    }
+    if(joystickbtnB && itemSelectTime > ITEMSELECTTIME)
+    {
+      itemSelectTime=0;
+      gVar.shopBuyItem=1;
     }
 
     if(setting.joyIsDigital)
@@ -167,6 +179,16 @@ bool controllerClass::get()
       {
         keyDown[1]=1;
       }
+      if(joysticky < -200 && itemSelectTime > ITEMSELECTTIME)
+      {
+        itemSelectTime=0;
+        gVar.shopNextItem = 1;
+      } else if(joysticky > 200 && itemSelectTime > ITEMSELECTTIME)
+      {
+        itemSelectTime=0;
+        gVar.shopPrevItem = 1;
+      }
+      
     } else {
       GLfloat x; //This is the actual traveling speed of the paddle
       if(joystickx > setting.JoyCalHighJitter)
@@ -176,7 +198,16 @@ bool controllerClass::get()
       {
         x = -(joystickLeftX * joystickx);
       }
-
+      
+      if(joysticky < setting.JoyCalLowJitter && itemSelectTime > ITEMSELECTTIME)
+      {
+        itemSelectTime=0;
+        gVar.shopNextItem = 1;
+      } else if(joysticky > setting.JoyCalHighJitter && itemSelectTime > ITEMSELECTTIME)
+      {
+        itemSelectTime=0;
+        gVar.shopPrevItem = 1;
+      }
       //Move the paddle:
       movePaddle( paddle->posx += (x*globalMilliTicks) );
     }
@@ -192,6 +223,18 @@ bool controllerClass::get()
           if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_TWO))
           {
             keyDown[2]=1;
+          } else if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_ONE) && itemSelectTime > ITEMSELECTTIME)
+          {
+            gVar.shopBuyItem = 1;
+            itemSelectTime=0;
+          }else if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_UP) && itemSelectTime > ITEMSELECTTIME)
+          {
+            itemSelectTime=0;
+            gVar.shopPrevItem = 1;
+          }else if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_DOWN) && itemSelectTime > ITEMSELECTTIME)
+          {
+            itemSelectTime=0;
+            gVar.shopNextItem = 1;
           } else if(WIIUSE_USING_ACC(wiimotes[0]))
           {
             motePitch = wiimotes[0]->orient.pitch;

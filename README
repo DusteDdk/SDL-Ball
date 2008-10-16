@@ -45,6 +45,8 @@ The objective of the game is to control the paddle in order to keep
 the ball from falling down, by precise controlling you are able to
 reflect the ball into bricks. Hitting bricks gives points and powerups.
 Collecting powerups make the game easier or harder depending on the type.
+Powerups gives you "coins" (you never now exactly how many coins you have),
+and you can spend them on... Powerups :D
 When all breakable bricks are destroyed, the level ends, and next level is on.
 When all levels are completed, game start from level1 again, but with twice the score.
 
@@ -55,26 +57,38 @@ There are several ways to control the paddle, the preferred is using the mouse
 but you can also use your keyboard, joystick or wiimote (wiimote, see 1.4.5 2.0 and 2.2)
 
 1.2.1 Keyboard controls
+w   - Bring up wiimote connection dialog (only if compiled with wiiuse)
 p   - Pause
 s   - Take Screenshot (saves in ~/.config/sdl-ball/screenshots/)
 ESC - Pause and Show Menu
 F1  - Show titlescreen
 F11 - Toggle Fullscreen
+
+v   - Select Powerup (Next)
+b   - Buy selected Powerup
+n   - Select Powerup (Previous)
+
 Arrow Up - Shoot/Launch ball
 Arrow Left and Right - Move paddle left or right (See 1.4.2)
 
 
 1.2.2 Mouse controls
 Button1 - Shoot/Launch ball
+Button2(Right Click) - Buy Powerup.
+Mouse Down/Up - Select Powerup to buy.
 X axis - Move Paddle
 
 1.2.3 WiiMote controls
+Button 1 - Buy Item.
 Button 2 - Shoot/Launch ball
++ left and right - Select powerup to buy.
 Tilt left or right to move paddle.
 
 1.2.4 Joystick controls
 Button1 - Shoot/Launch ball
+Button2 - Buy powerup.
 X axis - Move Paddle
+Y axis - Selevt powerup to buy.
 
 ------------------------------------
 
@@ -149,6 +163,9 @@ controlaccel - the acceleration that the paddle gains when using digital joystic
 controlstartspeed - the starting speed (the "lowest" speed) of the paddle when using digital joystick or keyboard.
 rightkey - SDLK number of the key that makes the paddle travel right
 leftkey - same as above, but left.
+nextkey - Select next powerup.
+buykey  - Buy selected powerup.
+prevkey - Select previous powerup.
 shootkey - the key that makes the guns shoot and releases the ball.
 Check this site for sdl key numbers: http://kobesearch.cpan.org/htdocs/SDL_Perl/SDL/Constants.pm.html#SDLK_0-
 joyisdigital [0/1] - if this is 1, the joystick acts as a "dump"/digital joystick (behaving excatly like the keyboard)

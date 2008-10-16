@@ -160,11 +160,11 @@ Faster timeout (now is 20 seconds instead of 30)
 If compiled without sound, don't show the sound settings in the menu.
 Powerups are a bit larger.
 Intro screen with powerup explanations.
+Added header to savegamefile (this version is incompatible with older and will override them)
+Coins system, Player gets coins for powerups, and can buy powerups for them. (Might need balancing)
 
 Todo:
-Bigball does two hits in damage.
-Powerup themes
-Make bricks align exactly with the border.
+Themes (basically do like quake engine.. If a file is not in the "theme tree" get it from "base")
 Get more liniar increase in difficulty by sorting/adding/removing levels.
 Fix bugs found in 0.11
 
