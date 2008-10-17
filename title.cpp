@@ -148,8 +148,8 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
 
   runnerPos.x=0.0;
   runnerPos.y=0.66;
-  runnerVelX = rndflt(15,0)+15;
-  runnerVelY = rndflt(15,0)+15;
+  runnerVelX = rndflt(2,1)+2;
+  runnerVelY = rndflt(2,1)+2;
   runnerTime=0;
   
   hilight=0;
@@ -180,8 +180,8 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
     }
     glEnable(GL_TEXTURE_2D);
     
-    ticksSinceLastSpawn +=nonpausingGlobalTicks;
-    if(ticksSinceLastSpawn > 15)
+    ticksSinceLastSpawn +=globalTicksSinceLastDraw;
+    if(ticksSinceLastSpawn > 125)
     {
       s.x = 3.25;
       s.y = 0.525;
@@ -211,8 +211,8 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
       powerUp[i].draw();
     }
     
-    runnerTime+=nonpausingGlobalTicks;
-    if(runnerTime>1)
+    runnerTime+=globalTicksSinceLastDraw;
+    if(runnerTime>10)
     {
       fxMan->set(FX_VAR_TYPE, FX_SPARKS);
       fxMan->set(FX_VAR_COLDET,0);
@@ -254,8 +254,8 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
       runnerTime=0;
     }
    
-  hilightTime += nonpausingGlobalTicks;
-  if(hilightTime > 3)
+  hilightTime += globalTicksSinceLastDraw;
+  if(hilightTime > 50)
   {
     if(hilightDir)
     {
@@ -297,13 +297,13 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
    
     if(!rotDir)
     {
-      rot += 0.07 * nonpausingGlobalTicks;
+      rot += 0.01 * globalTicksSinceLastDraw;
       if(rot > 40)
       {
         rotDir=1;
       }
     } else {
-      rot -= 0.07 * nonpausingGlobalTicks;
+      rot -= 0.01 * globalTicksSinceLastDraw;
       if(rot < -40)
       {
         rotDir=0;
