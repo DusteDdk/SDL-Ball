@@ -353,6 +353,7 @@ void initlevels(brick bricks[], textureClass texLvl[])
       
       } else if(bricks[i].type == '8')
       {
+        bricks[i].tex=texLvl[11];
         bricks[i].color[0]=texLvl[11].prop.glColorInfo[0];
         bricks[i].color[1]=texLvl[11].prop.glColorInfo[1];
         bricks[i].color[2]=texLvl[11].prop.glColorInfo[2];
