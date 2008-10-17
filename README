@@ -194,6 +194,9 @@ Make, a working C++ compiler and stdlibc++6
 To compile, extract the SDL-Ball tarball (since you're reading this I figure you allready did) and cd into the dir.
 Type make and press enter.
 
+If you get errors: error: SDL.h: No such file or directory
+And you're SURE you have dev libs installed, add -I/usr/include/SDL to CFLAGS in Makefile
+
 2.1 Without sound
 If you don't have a soundcard/have a very weak computer/don't have SDL-mixer you can compile without sound support.
 This removes SDL-mixer dependancy.
