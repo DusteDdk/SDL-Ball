@@ -7,4 +7,5 @@ yoffset=0.5
 frames=2
 playing=0
 padding=0
-color=FFFFFFFF
+texcolor=FFFFFFFF
+parcolor=EFEFEF

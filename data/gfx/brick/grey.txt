@@ -7,5 +7,6 @@ yoffset=1.0
 frames=0
 playing=0
 padding=1
-color=7F7F7FFF
+texcolor=7F7F7FFF
+parcolor=7F7F7F
 file=brick/base.png

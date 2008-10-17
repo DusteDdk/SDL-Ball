@@ -8,4 +8,5 @@ frames=
 playing=
 bidir=
 padding=
-color=
+texcolor=
+parcolor

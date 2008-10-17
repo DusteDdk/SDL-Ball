@@ -46,7 +46,7 @@
 #define WITH_SOUND
 // #define WITH_WIIUSE
 
-#define VERSION "0.12-CVS"
+#define VERSION "0.12-RC1"
 #define SAVEGAMEVERSION 2
 
 #ifdef WITH_WIIUSE
@@ -282,7 +282,9 @@ struct texProp {
   bool padding; //Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
   float pxw, pxh; //pixels width, and height
   
-  GLfloat glColorInfo[4]; //FIXME: use this on: bricks, paddle, balls, powerups.
+  GLfloat glTexColorInfo[4]; //FIXME: use this on: bricks, paddle, balls, powerups.
+  GLfloat glParColorInfo[3]; //This and above are going to replace object::color
+  
   string fileName; //Quite the fugly.. This will be set by readTexProps();
 };
 
@@ -536,74 +538,6 @@ class textureClass {
 
 /* This function reads textureProperties from fileName
    and applies them to *tex */
-void readTexProps(string fileName, textureClass & tex)
-{
-  ifstream f;
-  string line,set,val;
-  f.open( fileName.data() );
-  if(f.is_open())
-  {
-    while(!f.eof())
-    {
-      getline(f, line);
-      if(line.find('=') != string::npos)
-      {
-        set=line.substr(0,line.find('='));
-        val=line.substr(line.find('=')+1);
-     if(set=="xoffset")
-        {
-          tex.prop.xoffset=atof(val.data());
-        } else if(set=="yoffset")
-        {
-          tex.prop.yoffset=atof(val.data());
-        } else if(set=="cols")
-        {
-          tex.prop.cols=atoi(val.data());
-        } else if(set=="rows")
-        {
-          tex.prop.rows=atoi(val.data());
-        } else if(set=="ticks")
-        {
-          tex.prop.ticks=atoi(val.data());
-        } else if(set=="frames")
-        {
-          tex.prop.frames=atoi(val.data());
-        } else if(set=="bidir")
-        {
-          tex.prop.bidir=atoi(val.data());
-        } else if(set=="playing")
-        {
-          tex.prop.playing=atoi(val.data());
-        } else if(set=="padding")
-        {
-          tex.prop.padding=atoi(val.data());
-        } else if(set=="color")
-        {
-         //Color in hex RGBA
-         //Example:color=FFFFFFFF
-         char rgba[4][5];
-         sprintf(rgba[0], "0x%c%c", val[0], val[1]);
-         sprintf(rgba[1], "0x%c%c", val[2], val[3]);
-         sprintf(rgba[2], "0x%c%c", val[4], val[5]);
-         sprintf(rgba[3], "0x%c%c", val[6], val[7]);
-         tex.prop.glColorInfo[0] = 0.003921569 * strtol(rgba[0], NULL,16);
-         tex.prop.glColorInfo[1] = 0.003921569 * strtol(rgba[1], NULL,16);
-         tex.prop.glColorInfo[2] = 0.003921569 * strtol(rgba[2], NULL,16);
-         tex.prop.glColorInfo[3] = 0.003921569 * strtol(rgba[3], NULL,16);
-        } else if(set=="file")
-        {
-         tex.prop.fileName = val;
-        } else {
-          cout << "Invalid setting '"<< set <<"' with value '" << val <<"'"<<endl;
-        }
-        
-      }
-    }
-  } else {
-    cout << "readTexProps: Cannot open '" << fileName << "'"<<endl;
-  }
-}
-
 class textureManager {
 
   public:
@@ -658,16 +592,96 @@ class textureManager {
 
       return(TRUE);
     }
-    
-    
-    //Quote the fugly
-    //This function assumes that the prop.fileName have been set and that it contains a path relative to gfx/
-    bool load(textureClass & tex)
+
+  void readTexProps(string fileName, textureClass & tex)
+  {
+    char rgba[4][5];
+    ifstream f;
+    string line,set,val;
+    f.open( fileName.data() );
+  
+    if(f.is_open())
     {
-      string name = "gfx/" + tex.prop.fileName;
-      return(load(useTheme(name,setting.gfxTheme), tex));
+      while(!f.eof())
+      {
+        getline(f, line);
+        if(line.find('=') != string::npos)
+        {
+          set=line.substr(0,line.find('='));
+          val=line.substr(line.find('=')+1);
+      if(set=="xoffset")
+          {
+            tex.prop.xoffset=atof(val.data());
+          } else if(set=="yoffset")
+          {
+            tex.prop.yoffset=atof(val.data());
+          } else if(set=="cols")
+          {
+            tex.prop.cols=atoi(val.data());
+          } else if(set=="rows")
+          {
+            tex.prop.rows=atoi(val.data());
+          } else if(set=="ticks")
+          {
+            tex.prop.ticks=atoi(val.data());
+          } else if(set=="frames")
+          {
+            tex.prop.frames=atoi(val.data());
+          } else if(set=="bidir")
+          {
+            tex.prop.bidir=atoi(val.data());
+          } else if(set=="playing")
+          {
+            tex.prop.playing=atoi(val.data());
+          } else if(set=="padding")
+          {
+            tex.prop.padding=atoi(val.data());
+          } else if(set=="texcolor")
+          {
+          //Color in hex RGBA
+          //Example:color=FFFFFFFF
+          sprintf(rgba[0], "0x%c%c", val[0], val[1]);
+          sprintf(rgba[1], "0x%c%c", val[2], val[3]);
+          sprintf(rgba[2], "0x%c%c", val[4], val[5]);
+          sprintf(rgba[3], "0x%c%c", val[6], val[7]);
+          tex.prop.glTexColorInfo[0] = 0.003921569 * strtol(rgba[0], NULL,16);
+          tex.prop.glTexColorInfo[1] = 0.003921569 * strtol(rgba[1], NULL,16);
+          tex.prop.glTexColorInfo[2] = 0.003921569 * strtol(rgba[2], NULL,16);
+          tex.prop.glTexColorInfo[3] = 0.003921569 * strtol(rgba[3], NULL,16);
+          } else if(set=="parcolor")
+          {
+          //Color in hex RGBA
+          //Example:color=FFFFFFFF
+          sprintf(rgba[0], "0x%c%c", val[0], val[1]);
+          sprintf(rgba[1], "0x%c%c", val[2], val[3]);
+          sprintf(rgba[2], "0x%c%c", val[4], val[5]);
+          tex.prop.glParColorInfo[0] = 0.003921569 * strtol(rgba[0], NULL,16);
+          tex.prop.glParColorInfo[1] = 0.003921569 * strtol(rgba[1], NULL,16);
+          tex.prop.glParColorInfo[2] = 0.003921569 * strtol(rgba[2], NULL,16);
+          } else if(set=="file")
+          {
+          tex.prop.fileName = val;
+          } else {
+            cout << "Error: '"<<fileName<<"'invalid setting '"<< set <<"' with value '" << val <<"'"<<endl;
+          }
+          
+        }
+      }
+      
+      //Load the texture if we have a filename.
+      if(tex.prop.fileName.length() > 1)
+      {
+        string name = "gfx/"+tex.prop.fileName;
+        load(useTheme(name,setting.gfxTheme), tex);
+      }
+      
+    } else {
+      cout << "readTexProps: Cannot open '" << fileName << "'"<<endl;
     }
+  }
 };
+
+
 
 #include "sound.cpp"
 soundClass soundMan; //Public object so all objects can use it
@@ -679,24 +693,17 @@ soundClass soundMan; //Public object so all objects can use it
 
 class object {
   public:
-    GLfloat color[3];
-    GLfloat opacity;
+//     GLfloat color[3];
+    GLfloat opacity; //This is still used, because it can then be reset, and it's used for fading out bricks (i think)
     GLfloat posx, posy;
     GLfloat width,height;
     GLuint dl; //opengl display list
     bool active;
     bool collide;
-    bool reflect;
+    bool reflect; //NOTE: use this for bricks that are not going to reflect the ball? (trap brick? :D)
 
     textureClass tex;
 
-    object()
-    {
-      color[0]=1.0f;
-      color[1]=1.0f;
-      color[2]=1.0f;
-      opacity=1.0f;
-    }
 };
 
 class paddle_class : public object {
@@ -979,7 +986,7 @@ class brick : public object {
 
     tex.play();
 
-    glColor4f( color[0], color[1], color[2], opacity );
+    glColor4f( tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2], opacity );
 
     glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
     glBegin( GL_QUADS );
@@ -1090,10 +1097,7 @@ void makeExplosive(brick & b)
   {
     b.type='B';
     b.tex=*texExplosiveBrick;
-    b.color[0]=1.0;
-    b.color[1]=1.0;
-    b.color[2]=1.0;
-    b.opacity=1.0;
+    //NOTE: for some reason, the color of the object was changed, why??
     b.justBecomeExplosive=1;
   }
 }
@@ -1342,7 +1346,7 @@ void brick::hit(effectManager & fxMan, pos poSpawnPos, pos poSpawnVel, bool ball
 
         fxMan.set(FX_VAR_RECTANGLE, s);
 
-        fxMan.set(FX_VAR_COLOR, color[0],color[1],color[2]);
+        fxMan.set(FX_VAR_COLOR, tex.prop.glParColorInfo[0],tex.prop.glParColorInfo[1],tex.prop.glParColorInfo[2]);
         fxMan.spawn(p);
       }
 
@@ -1531,7 +1535,7 @@ class ball : public moving_object {
   GLfloat bsin[32], bcos[32];
 
   bool aimdir;
-  textureClass fireTex, texTail;
+  textureClass fireTex;
 
   GLfloat lastX,lastY;
   ball() {
@@ -1882,31 +1886,11 @@ class ballManager {
       tex[1] = btex[1];
       tex[2] = btex[2];
 
-      tex[0].prop.ticks = 1000;
-      tex[0].prop.cols = 1;
-      tex[0].prop.rows = 1;
-      tex[0].prop.xoffset = 1.0;
-      tex[0].prop.yoffset = 1.0;
-      tex[0].prop.frames = 1;
-      tex[0].prop.bidir = 0;
-      tex[0].prop.playing = 0;
-      tex[0].prop.padding=1;
-
-      tex[1].prop.ticks = 25;
-      tex[1].prop.cols = 4;
-      tex[1].prop.rows = 4;
-      tex[1].prop.xoffset = 0.25;
-      tex[1].prop.yoffset = 0.25;
-      tex[1].prop.frames = 16;
-      tex[1].prop.bidir = 1;
-      tex[1].prop.playing = 1;
-      tex[1].prop.padding=1;
 
       for(i=0; i < MAXBALLS; i++)
       {
         b[i].tex=tex[0];
         b[i].fireTex=tex[1];
-        b[i].texTail=tex[2];
         b[i].tail.texture = tex[2].prop.texture;
       }
 
@@ -1974,7 +1958,6 @@ class ballManager {
           activeBalls++;
           b[i].tex = tex[0];
           b[i].fireTex = tex[1];
-          b[i].texTail = tex[2];
           b[i].glued=glued;
 
           b[i].width=0.0;
@@ -2013,8 +1996,6 @@ class ballManager {
           break;
         }
       }
-
-
     }
 
     void clear()
@@ -2331,7 +2312,7 @@ class powerupClass : public moving_object {
 
           fxMan.set(FX_VAR_RECTANGLE, fxSize);
 
-          fxMan.set(FX_VAR_COLOR, color[0], color[1], color[2]);
+          fxMan.set(FX_VAR_COLOR, tex.prop.glParColorInfo[0],tex.prop.glParColorInfo[1],tex.prop.glParColorInfo[2]);
           fxMan.spawn(fxpos);
         }
         active=0;
@@ -2491,7 +2472,7 @@ class powerupClass : public moving_object {
         fxMan.set(FX_VAR_SPEED, 0.8f);
         fxMan.set(FX_VAR_GRAVITY, 0.6f);
         fxMan.set(FX_VAR_SIZE, 0.025f);
-        fxMan.set(FX_VAR_COLOR, color[0], color[1], color[2]);
+        fxMan.set(FX_VAR_COLOR, tex.prop.glParColorInfo[0],tex.prop.glParColorInfo[1],tex.prop.glParColorInfo[2]);
         fxMan.spawn(p);
 
         fxMan.set(FX_VAR_SPEED, 0.4f);
@@ -2514,7 +2495,7 @@ class powerupClass : public moving_object {
       tex.play();
 
       glBindTexture( GL_TEXTURE_2D, tex.prop.texture);
-      glColor4f(1.0, 1.0, 1.0, 1.0);
+      glColor4f(tex.prop.glTexColorInfo[0],tex.prop.glTexColorInfo[1],tex.prop.glTexColorInfo[2],tex.prop.glTexColorInfo[3]);
       glLoadIdentity();
       glTranslatef( posx, posy, -3.0f);
       glBegin( GL_QUADS );
@@ -2536,238 +2517,7 @@ class powerupManager {
 
     void init(textureClass texPowerup[])
     {
-      //Sætter textures op for de forskellige powerups
 
-      //Glue
-      texPowerup[PO_GLUE].prop.frames = 6;
-      texPowerup[PO_GLUE].prop.ticks = 100;
-      texPowerup[PO_GLUE].prop.rows= 4;
-      texPowerup[PO_GLUE].prop.cols= 2  ;
-      texPowerup[PO_GLUE].prop.xoffset=0.5;
-      texPowerup[PO_GLUE].prop.yoffset=1.0/4.0;
-      texPowerup[PO_GLUE].prop.playing=1;
-      texPowerup[PO_GLUE].prop.padding=1;
-      texPowerup[PO_GLUE].prop.bidir=0;
-      
-      //gravity
-      texPowerup[PO_GRAVITY].prop.frames = 1;
-      texPowerup[PO_GRAVITY].prop.ticks = 1000;
-      texPowerup[PO_GRAVITY].prop.rows=1;
-      texPowerup[PO_GRAVITY].prop.cols=1;
-      texPowerup[PO_GRAVITY].prop.xoffset=1;
-      texPowerup[PO_GRAVITY].prop.yoffset=1;
-      texPowerup[PO_GRAVITY].prop.bidir=0;
-      texPowerup[PO_GRAVITY].prop.playing=0;
-      texPowerup[PO_GRAVITY].prop.padding=1;
-
-      //multiball
-      texPowerup[PO_MULTIBALL].prop.frames = 1;
-      texPowerup[PO_MULTIBALL].prop.ticks = 1000;
-      texPowerup[PO_MULTIBALL].prop.rows= 1;
-      texPowerup[PO_MULTIBALL].prop.cols= 1;
-      texPowerup[PO_MULTIBALL].prop.xoffset=1.0;
-      texPowerup[PO_MULTIBALL].prop.yoffset=1.0;
-      texPowerup[PO_MULTIBALL].prop.bidir=0;
-      texPowerup[PO_MULTIBALL].prop.playing=0;
-      texPowerup[PO_MULTIBALL].prop.padding=1;
-
-      //bigball
-      texPowerup[PO_BIGBALL].prop.frames = 1;
-      texPowerup[PO_BIGBALL].prop.ticks = 1000;
-      texPowerup[PO_BIGBALL].prop.rows= 1;
-      texPowerup[PO_BIGBALL].prop.cols= 1;
-      texPowerup[PO_BIGBALL].prop.xoffset=1;
-      texPowerup[PO_BIGBALL].prop.yoffset=1;
-      texPowerup[PO_BIGBALL].prop.bidir=0;
-      texPowerup[PO_BIGBALL].prop.playing=0;
-      texPowerup[PO_BIGBALL].prop.padding=0;
-
-
-      //normalball
-      texPowerup[PO_NORMALBALL].prop.frames = 1;
-      texPowerup[PO_NORMALBALL].prop.ticks = 1000;
-      texPowerup[PO_NORMALBALL].prop.rows= 1;
-      texPowerup[PO_NORMALBALL].prop.cols= 1;
-      texPowerup[PO_NORMALBALL].prop.xoffset=1;
-      texPowerup[PO_NORMALBALL].prop.yoffset=1;
-      texPowerup[PO_NORMALBALL].prop.bidir=0;
-      texPowerup[PO_NORMALBALL].prop.playing=0;
-      texPowerup[PO_NORMALBALL].prop.padding=1;
-
-      //smallball
-      texPowerup[PO_SMALLBALL].prop.frames = 1;
-      texPowerup[PO_SMALLBALL].prop.ticks = 1000;
-      texPowerup[PO_SMALLBALL].prop.rows= 1;
-      texPowerup[PO_SMALLBALL].prop.cols= 1;
-      texPowerup[PO_SMALLBALL].prop.xoffset=1;
-      texPowerup[PO_SMALLBALL].prop.yoffset=1;
-      texPowerup[PO_SMALLBALL].prop.bidir=0;
-      texPowerup[PO_SMALLBALL].prop.playing=0;
-      texPowerup[PO_SMALLBALL].prop.padding=1;
-
-      //Aim
-      texPowerup[PO_AIM].prop.frames = 8;
-      texPowerup[PO_AIM].prop.ticks = 100;
-      texPowerup[PO_AIM].prop.rows= 4;
-      texPowerup[PO_AIM].prop.cols= 2;
-      texPowerup[PO_AIM].prop.xoffset=0.5;
-      texPowerup[PO_AIM].prop.yoffset=1.0/4.0;
-      texPowerup[PO_AIM].prop.bidir=1;
-      texPowerup[PO_AIM].prop.playing=1;
-      texPowerup[PO_AIM].prop.padding=1;
-
-      //Growpaddle
-      texPowerup[PO_GROWPADDLE].prop.frames = 1;
-      texPowerup[PO_GROWPADDLE].prop.ticks = 1000;
-      texPowerup[PO_GROWPADDLE].prop.rows= 1;
-      texPowerup[PO_GROWPADDLE].prop.cols= 1;
-      texPowerup[PO_GROWPADDLE].prop.xoffset=1;
-      texPowerup[PO_GROWPADDLE].prop.yoffset=1;
-      texPowerup[PO_GROWPADDLE].prop.bidir=0;
-      texPowerup[PO_GROWPADDLE].prop.playing=0;
-      texPowerup[PO_GROWPADDLE].prop.padding=1;
-
-      //Shrinkpaddle
-      texPowerup[PO_SHRINKPADDLE].prop.frames = 1;
-      texPowerup[PO_SHRINKPADDLE].prop.ticks = 1000;
-      texPowerup[PO_SHRINKPADDLE].prop.rows= 1;
-      texPowerup[PO_SHRINKPADDLE].prop.cols= 1;
-      texPowerup[PO_SHRINKPADDLE].prop.xoffset=1;
-      texPowerup[PO_SHRINKPADDLE].prop.yoffset=1;
-      texPowerup[PO_SHRINKPADDLE].prop.bidir=0;
-      texPowerup[PO_SHRINKPADDLE].prop.playing=0;
-      texPowerup[PO_SHRINKPADDLE].prop.padding=1;
-
-      //Explosive
-      texPowerup[PO_EXPLOSIVE].prop.frames = 1;
-      texPowerup[PO_EXPLOSIVE].prop.ticks = 1000;
-      texPowerup[PO_EXPLOSIVE].prop.rows= 1;
-      texPowerup[PO_EXPLOSIVE].prop.cols= 1;
-      texPowerup[PO_EXPLOSIVE].prop.xoffset=1;
-      texPowerup[PO_EXPLOSIVE].prop.yoffset=1;
-      texPowerup[PO_EXPLOSIVE].prop.bidir=0;
-      texPowerup[PO_EXPLOSIVE].prop.playing=0;
-      texPowerup[PO_EXPLOSIVE].prop.padding=1;
-
-      //Gun
-      texPowerup[PO_GUN].prop.frames = 3;
-      texPowerup[PO_GUN].prop.ticks = 150;
-      texPowerup[PO_GUN].prop.rows= 2;
-      texPowerup[PO_GUN].prop.cols= 2;
-      texPowerup[PO_GUN].prop.xoffset=0.5;
-      texPowerup[PO_GUN].prop.yoffset=0.5;
-      texPowerup[PO_GUN].prop.bidir=0;
-      texPowerup[PO_GUN].prop.playing=1;
-      texPowerup[PO_GUN].prop.padding=1;
-
-      //Thru
-      texPowerup[PO_THRU].prop.frames = 1;
-      texPowerup[PO_THRU].prop.ticks = 1000;
-      texPowerup[PO_THRU].prop.rows= 1;
-      texPowerup[PO_THRU].prop.cols= 1;
-      texPowerup[PO_THRU].prop.xoffset=1;
-      texPowerup[PO_THRU].prop.yoffset=1;
-      texPowerup[PO_THRU].prop.bidir=0;
-      texPowerup[PO_THRU].prop.playing=0;
-      texPowerup[PO_THRU].prop.padding=1;
-
-      //Laser
-      texPowerup[PO_LASER].prop.frames = 1;
-      texPowerup[PO_LASER].prop.ticks = 1000;
-      texPowerup[PO_LASER].prop.rows= 1;
-      texPowerup[PO_LASER].prop.cols= 1;
-      texPowerup[PO_LASER].prop.xoffset=1;
-      texPowerup[PO_LASER].prop.yoffset=1;
-      texPowerup[PO_LASER].prop.bidir=0;
-      texPowerup[PO_LASER].prop.playing=0;
-
-      //Teh extra life
-      texPowerup[PO_LIFE].prop.frames = 1;
-      texPowerup[PO_LIFE].prop.ticks = 1000;
-      texPowerup[PO_LIFE].prop.rows= 1;
-      texPowerup[PO_LIFE].prop.cols= 1;
-      texPowerup[PO_LIFE].prop.xoffset=1;
-      texPowerup[PO_LIFE].prop.yoffset=1;
-      texPowerup[PO_LIFE].prop.bidir=0;
-      texPowerup[PO_LIFE].prop.playing=0;
-      texPowerup[PO_LIFE].prop.padding=1;
-
-      //Die powerup
-      texPowerup[PO_DIE].prop.frames = 1;
-      texPowerup[PO_DIE].prop.ticks = 1000;
-      texPowerup[PO_DIE].prop.rows= 1;
-      texPowerup[PO_DIE].prop.cols= 1;
-      texPowerup[PO_DIE].prop.xoffset=1;
-      texPowerup[PO_DIE].prop.yoffset=1;
-      texPowerup[PO_DIE].prop.bidir=0;
-      texPowerup[PO_DIE].prop.playing=0;
-      texPowerup[PO_DIE].prop.padding=1;
-
-      //PO_DROP
-      texPowerup[PO_DROP].prop.frames = 1;
-      texPowerup[PO_DROP].prop.ticks = 1000;
-      texPowerup[PO_DROP].prop.rows= 1;
-      texPowerup[PO_DROP].prop.cols= 1;
-      texPowerup[PO_DROP].prop.xoffset=1;
-      texPowerup[PO_DROP].prop.yoffset=1;
-      texPowerup[PO_DROP].prop.bidir=0;
-      texPowerup[PO_DROP].prop.playing=0;
-      texPowerup[PO_DROP].prop.padding=1;
-
-      //PO_DETONATE
-      texPowerup[PO_DETONATE].prop.frames = 1;
-      texPowerup[PO_DETONATE].prop.ticks = 1000;
-      texPowerup[PO_DETONATE].prop.rows= 1;
-      texPowerup[PO_DETONATE].prop.cols= 1;
-      texPowerup[PO_DETONATE].prop.xoffset=1;
-      texPowerup[PO_DETONATE].prop.yoffset=1;
-      texPowerup[PO_DETONATE].prop.bidir=0;
-      texPowerup[PO_DETONATE].prop.playing=0;
-      texPowerup[PO_DETONATE].prop.padding=1;
-
-      //PO_EXPLOSIVE_GROW
-      texPowerup[PO_EXPLOSIVE_GROW].prop.frames = 3;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.ticks = 300;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.rows= 2;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.cols= 2;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.xoffset=0.5;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.yoffset=0.5;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.bidir=0;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.playing=1;
-      texPowerup[PO_EXPLOSIVE_GROW].prop.padding=1;
-
-      //PO_EASYBRICK
-      texPowerup[PO_EASYBRICK].prop.frames = 1;
-      texPowerup[PO_EASYBRICK].prop.ticks = 1000;
-      texPowerup[PO_EASYBRICK].prop.rows= 1;
-      texPowerup[PO_EASYBRICK].prop.cols= 1;
-      texPowerup[PO_EASYBRICK].prop.xoffset=1;
-      texPowerup[PO_EASYBRICK].prop.yoffset=1;
-      texPowerup[PO_EASYBRICK].prop.bidir=0;
-      texPowerup[PO_EASYBRICK].prop.playing=0;
-      texPowerup[PO_EASYBRICK].prop.padding=1;
-
-      //PO_NEXTLEVEL
-      texPowerup[PO_NEXTLEVEL].prop.frames = 1;
-      texPowerup[PO_NEXTLEVEL].prop.ticks = 1000;
-      texPowerup[PO_NEXTLEVEL].prop.rows= 1;
-      texPowerup[PO_NEXTLEVEL].prop.cols= 1;
-      texPowerup[PO_NEXTLEVEL].prop.xoffset=1;
-      texPowerup[PO_NEXTLEVEL].prop.yoffset=1;
-      texPowerup[PO_NEXTLEVEL].prop.bidir=0;
-      texPowerup[PO_NEXTLEVEL].prop.playing=0;
-      texPowerup[PO_NEXTLEVEL].prop.padding=1;
-
-      //PO_AIMHELP
-      texPowerup[PO_AIMHELP].prop.frames = 6;
-      texPowerup[PO_AIMHELP].prop.ticks = 100;
-      texPowerup[PO_AIMHELP].prop.rows= 3;
-      texPowerup[PO_AIMHELP].prop.cols= 2;
-      texPowerup[PO_AIMHELP].prop.xoffset=0.5;
-      texPowerup[PO_AIMHELP].prop.yoffset=1.0/4.0;
-      texPowerup[PO_AIMHELP].prop.bidir=1;
-      texPowerup[PO_AIMHELP].prop.playing=1;
-      texPowerup[PO_AIMHELP].prop.padding=1;
 
 
 
@@ -2815,175 +2565,112 @@ class powerupManager {
           //Give texture that this type has.
           p[i].tex = tex[type];
 
+          //FIXME: rewrite as a switch
           //Set colors and score
           if(type==PO_GLUE)
           {
             p[i].score = 500;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_GRAVITY)
           {
             p[i].score = -600;
-            p[i].color[0]=1.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_MULTIBALL)
           {
             p[i].score = 500;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
-
           }
 
           if(type==PO_BIGBALL)
           {
             p[i].score = 300;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_NORMALBALL)
           {
             p[i].score = 400;
-            p[i].color[0]=0.5f;
-            p[i].color[1]=0.5f;
-            p[i].color[2]=0.5f;
           }
 
           if(type==PO_SMALLBALL)
           {
             p[i].score = 100;
-            p[i].color[0]=1.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_AIM)
           {
             p[i].score = 1600;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_GROWPADDLE)
           {
             p[i].score = 500;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_SHRINKPADDLE)
           {
             p[i].score = -1000;
-            p[i].color[0]=1.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_EXPLOSIVE)
           {
             p[i].score = 1400;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=1.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_GUN)
           {
             p[i].score = 1800;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_THRU)
           {
 
             p[i].score = 1000;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_LASER)
           {
             p[i].score = 500;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_LIFE)
           {
             p[i].score = 1000;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_DIE)
           {
             p[i].score = -1000;
-            p[i].color[0]=1.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_DROP)
           {
             p[i].score = -1000;
-            p[i].color[0]=1.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_DETONATE)
           {
             p[i].score = 1000;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=1.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_EXPLOSIVE_GROW)
           {
             p[i].score = 1000;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=1.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_EASYBRICK)
           {
             p[i].score = 1000;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=1.0f;
-            p[i].color[2]=0.0f;
           }
 
           if(type==PO_NEXTLEVEL)
           {
             p[i].score = 1000;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=0.0f;
-            p[i].color[2]=1.0f;
           }
 
           if(type==PO_AIMHELP)
           {
             p[i].score = 1000;
-            p[i].color[0]=0.0f;
-            p[i].color[1]=1.0f;
-            p[i].color[2]=0.0f;
           }
 
           break; //Whats this doing?
@@ -3520,7 +3207,7 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
           p.x = ba.posx+px;
           p.y = ba.posy+py;
 
-          ba.hit(p, br.color);
+          ba.hit(p, br.tex.prop.glParColorInfo);
 
           if(!player.powerup[PO_THRU])
           {
@@ -3630,15 +3317,6 @@ class hudClass {
   {
     texPowerup = texPo;
     texBall=texB;
-    texBall.prop.ticks = 1000;
-    texBall.prop.cols = 1;
-    texBall.prop.rows = 1;
-    texBall.prop.xoffset = 1;
-    texBall.prop.yoffset = 1;
-    texBall.prop.frames = 1;
-    texBall.prop.bidir = 0;
-    texBall.prop.playing = 0;
-    texBall.prop.padding=1;
 
     item[0].type = PO_NORMALBALL;
     item[0].price = 400;
@@ -3670,7 +3348,7 @@ class hudClass {
     //Draw lives left.
     glLoadIdentity();
     glTranslatef(0,0,-3.0);
-    glColor4f( 1,1,1,1);
+    glColor4f( texBall.prop.glTexColorInfo[0],texBall.prop.glTexColorInfo[1],texBall.prop.glTexColorInfo[2],texBall.prop.glTexColorInfo[3]);
 
     glBindTexture(GL_TEXTURE_2D, texBall.prop.texture);
     texBall.play();
@@ -4428,107 +4106,57 @@ int main (int argc, char *argv[]) {
   textureClass texBullet;
   textureClass texParticle;
 
-  texPaddleBase.prop.ticks= 100;
-  texPaddleBase.prop.cols = 1;
-  texPaddleBase.prop.rows = 1;
-  texPaddleBase.prop.xoffset=1.0;
-  texPaddleBase.prop.yoffset=1.0;
-  texPaddleBase.prop.frames=1;
-  texPaddleBase.prop.bidir=0;
-  texPaddleBase.prop.playing=0;
-  texPaddleBase.prop.padding=1;
-
-  texPaddleLayers[1].prop.ticks = 250;
-  texPaddleLayers[1].prop.cols = 2;
-  texPaddleLayers[1].prop.rows = 3;
-  texPaddleLayers[1].prop.xoffset = 0.5;
-  texPaddleLayers[1].prop.yoffset = 0.25;
-  texPaddleLayers[1].prop.frames = 6;
-  texPaddleLayers[1].prop.bidir=0;
-  texPaddleLayers[1].prop.playing = 1;
-  texPaddleLayers[1].prop.padding = 1;
-
-  texBullet.prop.ticks = 100;
-  texBullet.prop.cols = 2;
-  texBullet.prop.rows = 4;
-  texBullet.prop.xoffset = 0.5;
-  texBullet.prop.yoffset = 0.25;
-  texBullet.prop.frames = 8;
-  texBullet.prop.bidir = 1;
-  texBullet.prop.playing = 1;
-
-  texMgr.load(useTheme("/gfx/paddle/base.png",setting.gfxTheme), texPaddleBase);
-  texMgr.load(useTheme("/gfx/paddle/glue.png",setting.gfxTheme), texPaddleLayers[0]);
-  texMgr.load(useTheme("/gfx/paddle/gun.png",setting.gfxTheme), texPaddleLayers[1]);
 
 
-  texMgr.load(useTheme("/gfx/ball/test.png",setting.gfxTheme), texBall[0]);
-  texMgr.load(useTheme("/gfx/ball/fireball.png",setting.gfxTheme), texBall[1]);
-  texMgr.load(useTheme("/gfx/ball/tail.png",setting.gfxTheme), texBall[2]);
+  texMgr.readTexProps(useTheme("/gfx/paddle/base.txt",setting.gfxTheme), texPaddleBase);
+  texMgr.readTexProps(useTheme("/gfx/paddle/glue.txt",setting.gfxTheme), texPaddleLayers[0]);
+  texMgr.readTexProps(useTheme("/gfx/paddle/gun.txt",setting.gfxTheme), texPaddleLayers[1]);
 
-  readTexProps(useTheme("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
-  texMgr.load(texLvl[0]);
-  
-  readTexProps(useTheme("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
-  texMgr.load(texLvl[1]);
-  
-  readTexProps(useTheme("gfx/brick/cement.txt", setting.gfxTheme), texLvl[2]);
-  texMgr.load(texLvl[2]);
-  
-  readTexProps(useTheme("gfx/brick/doom.txt", setting.gfxTheme), texLvl[3]);
-  texMgr.load(texLvl[3]);
-  
-  readTexProps(useTheme("gfx/brick/glass.txt", setting.gfxTheme), texLvl[4]);
-  texMgr.load(texLvl[4]);
-  
-  readTexProps(useTheme("gfx/brick/invisible.txt", setting.gfxTheme), texLvl[5]);
-  texMgr.load(texLvl[5]);
 
-  readTexProps(useTheme("gfx/brick/blue.txt", setting.gfxTheme), texLvl[6]);
-  texMgr.load(texLvl[6]);
-  readTexProps(useTheme("gfx/brick/yellow.txt", setting.gfxTheme), texLvl[7]);
-  texMgr.load(texLvl[7]);
-  readTexProps(useTheme("gfx/brick/green.txt", setting.gfxTheme), texLvl[8]);
-  texMgr.load(texLvl[8]);
-  readTexProps(useTheme("gfx/brick/grey.txt", setting.gfxTheme), texLvl[9]);
-  texMgr.load(texLvl[9]);
-  readTexProps(useTheme("gfx/brick/purple.txt", setting.gfxTheme), texLvl[10]);
-  texMgr.load(texLvl[10]);
-  readTexProps(useTheme("gfx/brick/white.txt", setting.gfxTheme), texLvl[11]);
-  texMgr.load(texLvl[11]);
-  readTexProps(useTheme("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
-  texMgr.load(texLvl[12]);
+  texMgr.readTexProps(useTheme("/gfx/ball/normal.txt",setting.gfxTheme), texBall[0]);
+  texMgr.readTexProps(useTheme("/gfx/ball/fireball.txt",setting.gfxTheme), texBall[1]);
+  texMgr.readTexProps(useTheme("/gfx/ball/tail.txt",setting.gfxTheme), texBall[2]);
+
+  texMgr.readTexProps(useTheme("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
+  texMgr.readTexProps(useTheme("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
+  texMgr.readTexProps(useTheme("gfx/brick/cement.txt", setting.gfxTheme), texLvl[2]);
+  texMgr.readTexProps(useTheme("gfx/brick/doom.txt", setting.gfxTheme), texLvl[3]);
+  texMgr.readTexProps(useTheme("gfx/brick/glass.txt", setting.gfxTheme), texLvl[4]);
+  texMgr.readTexProps(useTheme("gfx/brick/invisible.txt", setting.gfxTheme), texLvl[5]);
+  texMgr.readTexProps(useTheme("gfx/brick/blue.txt", setting.gfxTheme), texLvl[6]);
+  texMgr.readTexProps(useTheme("gfx/brick/yellow.txt", setting.gfxTheme), texLvl[7]);
+  texMgr.readTexProps(useTheme("gfx/brick/green.txt", setting.gfxTheme), texLvl[8]);
+  texMgr.readTexProps(useTheme("gfx/brick/grey.txt", setting.gfxTheme), texLvl[9]);
+  texMgr.readTexProps(useTheme("gfx/brick/purple.txt", setting.gfxTheme), texLvl[10]);
+  texMgr.readTexProps(useTheme("gfx/brick/white.txt", setting.gfxTheme), texLvl[11]);
+  texMgr.readTexProps(useTheme("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
 
 
   texMgr.load(useTheme("/gfx/border.png",setting.gfxTheme), texBorder);
 
-  texMgr.load(useTheme("/gfx/powerup/glue.png",setting.gfxTheme), texPowerup[PO_GLUE]);
-  texMgr.load(useTheme("/gfx/powerup/gravity.png",setting.gfxTheme), texPowerup[PO_GRAVITY]);
-  texMgr.load(useTheme("/gfx/powerup/multiball.png",setting.gfxTheme), texPowerup[PO_MULTIBALL]);
-  texMgr.load(useTheme("/gfx/powerup/bigball.png",setting.gfxTheme), texPowerup[PO_BIGBALL]);
-  texMgr.load(useTheme("/gfx/powerup/normalball.png",setting.gfxTheme), texPowerup[PO_NORMALBALL]);
-  texMgr.load(useTheme("/gfx/powerup/smallball.png",setting.gfxTheme), texPowerup[PO_SMALLBALL]);
-  texMgr.load(useTheme("/gfx/powerup/aim.png",setting.gfxTheme), texPowerup[PO_AIM]);
-  texMgr.load(useTheme("/gfx/powerup/explosive.png",setting.gfxTheme), texPowerup[PO_EXPLOSIVE]);
-  texMgr.load(useTheme("/gfx/powerup/gun.png",setting.gfxTheme), texPowerup[PO_GUN]);
-  texMgr.load(useTheme("/gfx/powerup/go-thru.png",setting.gfxTheme), texPowerup[PO_THRU]);
-  texMgr.load(useTheme("/gfx/powerup/laser.png",setting.gfxTheme), texPowerup[PO_LASER]);
-  texMgr.load(useTheme("/gfx/powerup/life.png",setting.gfxTheme), texPowerup[PO_LIFE]);
-  texMgr.load(useTheme("/gfx/powerup/die.png",setting.gfxTheme), texPowerup[PO_DIE]);
-  texMgr.load(useTheme("/gfx/powerup/drop.png",setting.gfxTheme), texPowerup[PO_DROP]);
-  texMgr.load(useTheme("/gfx/powerup/detonate.png",setting.gfxTheme), texPowerup[PO_DETONATE]);
-  texMgr.load(useTheme("/gfx/powerup/explosive-grow.png",setting.gfxTheme), texPowerup[PO_EXPLOSIVE_GROW]);
-  texMgr.load(useTheme("/gfx/powerup/easybrick.png",setting.gfxTheme), texPowerup[PO_EASYBRICK]);
-  texMgr.load(useTheme("/gfx/powerup/nextlevel.png",setting.gfxTheme), texPowerup[PO_NEXTLEVEL]);
-  texMgr.load(useTheme("/gfx/powerup/aimhelp.png",setting.gfxTheme), texPowerup[PO_AIMHELP]);
-
+  texMgr.readTexProps(useTheme("/gfx/powerup/glue.txt",setting.gfxTheme),texPowerup[PO_GLUE]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/gravity.txt",setting.gfxTheme),texPowerup[PO_GRAVITY]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/multiball.txt",setting.gfxTheme),texPowerup[PO_MULTIBALL]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/bigball.txt",setting.gfxTheme),texPowerup[PO_BIGBALL]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/normalball.txt",setting.gfxTheme),texPowerup[PO_NORMALBALL]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/smallball.txt",setting.gfxTheme),texPowerup[PO_SMALLBALL]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/aim.txt",setting.gfxTheme),texPowerup[PO_AIM]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/explosive.txt",setting.gfxTheme),texPowerup[PO_EXPLOSIVE]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/gun.txt",setting.gfxTheme),texPowerup[PO_GUN]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/go-thru.txt",setting.gfxTheme),texPowerup[PO_THRU]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/laser.txt",setting.gfxTheme),texPowerup[PO_LASER]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/life.txt",setting.gfxTheme),texPowerup[PO_LIFE]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/die.txt",setting.gfxTheme),texPowerup[PO_DIE]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/drop.txt",setting.gfxTheme),texPowerup[PO_DROP]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/detonate.txt",setting.gfxTheme),texPowerup[PO_DETONATE]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/explosive-grow.txt",setting.gfxTheme),texPowerup[PO_EXPLOSIVE_GROW]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/easybrick.txt",setting.gfxTheme),texPowerup[PO_EASYBRICK]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/nextlevel.txt",setting.gfxTheme),texPowerup[PO_NEXTLEVEL]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/aimhelp.txt",setting.gfxTheme),texPowerup[PO_AIMHELP]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/growbat.txt",setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/shrinkbat.txt",setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
+  texMgr.readTexProps(useTheme("/gfx/powerup/bullet.txt",setting.gfxTheme), texBullet);
   pMan.init(texPowerup);
-
-  texMgr.load(useTheme("/gfx/powerup/bullet.png",setting.gfxTheme), texBullet);
-
-
-  texMgr.load(useTheme("/gfx/powerup/growbat.png",setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
-  texMgr.load(useTheme("/gfx/powerup/shrinkbat.png",setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
 
   texMgr.load(useTheme("/gfx/particle.png",setting.gfxTheme), texParticle);
 

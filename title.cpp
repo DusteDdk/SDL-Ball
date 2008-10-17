@@ -34,7 +34,7 @@ void powerupDescriptionClass::draw()
 {
       tex->play();
       glBindTexture( GL_TEXTURE_2D, tex->prop.texture);
-      glColor4f(1.0, 1.0, 1.0, 1.0);
+      glColor4f(tex->prop.glTexColorInfo[0],tex->prop.glTexColorInfo[1],tex->prop.glTexColorInfo[2],tex->prop.glTexColorInfo[3]);
       glBegin( GL_QUADS );
         glTexCoord2f(tex->pos[0],tex->pos[1]);glVertex3f( -width+posx, height+posy, 0.00 ); // øverst venst
         glTexCoord2f(tex->pos[2],tex->pos[3]);glVertex3f(  width+posx, height+posy, 0.00 ); // øverst højre
@@ -43,6 +43,7 @@ void powerupDescriptionClass::draw()
       glEnd( );
       
       text->play();
+      glColor4f(1.0, 1.0, 1.0, 1.0);
       glBindTexture( GL_TEXTURE_2D, text->prop.texture);
       glBegin( GL_QUADS );//0.58 x 0.11
         glTexCoord2f(text->pos[0],text->pos[1]);glVertex3f(  width+posx, height+posy, 0.00 );

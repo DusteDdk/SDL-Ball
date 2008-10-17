@@ -1,0 +1,12 @@
+file=powerup/explosive-grow.png
+ticks=300
+cols=2
+rows=2
+xoffset=0.5
+yoffset=0.5
+frames=3
+playing=1
+bidir=0
+padding=1
+texcolor=FFFFFFFF
+parcolor=00FF00

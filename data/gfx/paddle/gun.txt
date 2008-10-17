@@ -1,0 +1,12 @@
+file=paddle/gun.png
+ticks=250
+cols=2
+rows=3
+xoffset=0.5
+yoffset=0.25
+frames=6
+playing=1
+bidir=0
+padding=1
+texcolor=FFFFFFFF
+parcolor=EFEFEF

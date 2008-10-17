@@ -8,4 +8,5 @@ frames=2
 playing=0
 bidir=0
 padding=0
-color=FFFFFF80
+texcolor=FFFFFFA0
+parcolor=FFFFFF
