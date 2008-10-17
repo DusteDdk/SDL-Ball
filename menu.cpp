@@ -107,8 +107,14 @@ GLuint texSaveGameSlot[6];
 string saveGameName;
 int saveGameSlot;
 GLuint texHighScore[20];
-textureClass tex[56];
+textureClass tex[65];
 GLuint dl;
+
+bool themeChanged; //If the theme has changed change the banner.
+int themesOffset; //If there is more than 5 themes, we need to scoll...
+void generateThemeTextures(); //When this is called, the list of themes is read, and put into textures
+vector<struct themeInfo> tI; //Vector of theme info
+GLuint *themeTextureIndex; //Pointer to array of theme textures
 
 public:
   GLuint titleHighscoreTex[20];
@@ -123,12 +129,12 @@ public:
 
     dl = glGenLists(5); //Generate displaylists
 
+
     SDL_Color txtColorRed = {255,0,0};
     SDL_Color txtColorGreen = {0,255,0};
     SDL_Color txtColorBlue = {0,0,255};
     SDL_Color txtColorWhite = {255,255,255};
     SDL_Color txtColorBlack = {0,0,0};
-
 
     texMgr.load(useTheme("/gfx/menu/menu0.png",setting.gfxTheme), tex[0]);
     texMgr.load(useTheme("/gfx/menu/but0.png",setting.gfxTheme), tex[1]);
@@ -190,6 +196,12 @@ public:
     glGenTextures(1, &tex[53].prop.texture);
     glGenTextures(1, &tex[54].prop.texture);
     glGenTextures(1, &tex[55].prop.texture);
+    
+    glGenTextures(1, &tex[56].prop.texture); // "Themes"
+    glGenTextures(1, &tex[57].prop.texture); 
+    glGenTextures(1, &tex[58].prop.texture); 
+    glGenTextures(1, &tex[59].prop.texture); 
+
 
     writeTxt(fonts[0],txtColorBlack,"Exit Game", tex[4].prop.texture,1); //0
     writeTxt(fonts[0],txtColorBlack,"Settings",  tex[5].prop.texture,1);
@@ -249,6 +261,11 @@ public:
     writeTxt(fonts[0],txtColorBlack,"Wiimote Connected!", tex[54].prop.texture,1);
     writeTxt(fonts[0],txtColorBlack,"Failed. Try again.", tex[55].prop.texture,1);
 
+    writeTxt(fonts[0],txtColorBlack,"Themes", tex[56].prop.texture,1);
+    writeTxt(fonts[0],txtColorWhite,"Restart to apply", tex[57].prop.texture,1);
+    
+    generateThemeTextures();
+    
     refreshLoadList(-1);
 
     //Baggrund
@@ -549,10 +566,10 @@ public:
         glCallList(dl+3);
       }
 
+      glTranslatef(0.0,-0.22,0.0f);
       #ifdef WITH_WIIUSE
       if(!var.wiiConnect)
       {
-        glTranslatef(0.0,-0.22,0.0f);
         if(var.menuItem==3)
           glCallList(dl+2);
         else
@@ -561,6 +578,14 @@ public:
         glCallList(dl+3);
       }
       #endif
+      
+        glTranslatef(0.0,-0.22,0.0f);
+        if(var.menuItem==2)
+          glCallList(dl+2);
+        else
+          glCallList(dl+1);
+        glBindTexture(GL_TEXTURE_2D, tex[56].prop.texture);
+        glCallList(dl+3);
 
       if(var.menuPressed)
       {
@@ -592,6 +617,9 @@ public:
           }
           break;
           #endif
+          case 2:
+            var.menu=12;
+          break;
         }
         var.menuPressed=0;
       }
@@ -1143,10 +1171,7 @@ public:
         glCallList(dl+3);
 
       glTranslatef(0.0,-0.22,0.0f);
-      glTranslatef(0.0,-0.22,0.0f);
-      glTranslatef(0.0,-0.22,0.0f);
-      glTranslatef(0.0,-0.22,0.0f);
-      glTranslatef(0.0,-0.22,0.0f);
+      glTranslatef(0.0,-0.88,0.0f);
 
       if(var.menuItem==1)
         glCallList(dl+2);
@@ -1177,5 +1202,95 @@ public:
       var.menuNumItems=6;
     }
     #endif
-  }
+    else if(var.menu == 12) //Theme selector (Main screen)
+    {
+      glLoadIdentity();
+      glTranslatef(0.0, 0.54,-3.0f);
+      glCallList(dl+4);
+
+      if(!themeChanged)
+      glBindTexture(GL_TEXTURE_2D, tex[56].prop.texture);
+      else
+      glBindTexture(GL_TEXTURE_2D, tex[57].prop.texture);
+      glCallList(dl+3);
+      
+      int i=0;
+      for(vector<struct themeInfo>::iterator it=tI.begin(); it < tI.end(); ++it)
+      {
+          if(i ==5)
+            break;
+          glTranslatef(0.0,-0.22,0.0f);
+          if(var.menuItem==6-i)
+            glCallList(dl+2);
+          else if(it->name.compare(setting.gfxTheme)==0)
+            glCallList(dl+4);
+          else
+            glCallList(dl+1);
+          glBindTexture(GL_TEXTURE_2D, themeTextureIndex[i]);
+          glCallList(dl+3);
+          i++;
+      }
+      
+      for(int a=i; a < 6; a++)
+      {
+          glTranslatef(0.0,-0.22,0.0f);
+      }
+
+      if(var.menuItem==1)
+        glCallList(dl+2);
+      else
+        glCallList(dl+1);
+      glBindTexture(GL_TEXTURE_2D, tex[32].prop.texture);
+      glCallList(dl+3);
+ 
+    }
+
+      if(var.menuPressed)
+      {
+        switch(var.menuItem)
+        {
+          case 1:
+            var.menu=2;
+            break;
+        }
+        
+        for(i=0; i < (int)tI.size() && i<5; i++)
+        {
+          if(6-i == var.menuItem)
+          {
+            setting.gfxTheme = tI.at(i).name;
+            setting.sndTheme = tI.at(i).name;
+            setting.lvlTheme = tI.at(i).name;
+            themeChanged=1;
+            writeSettings();
+          }
+        }
+        var.menuPressed=0;
+      }
+    }
 };
+
+void menuClass::generateThemeTextures()
+{
+  tI = getThemes();
+  const int numThemes = tI.size();
+  SDL_Color txtColorRed = {255,0,0};
+  SDL_Color txtColorBlack = {0,0,0};
+  char txt[64];
+  int i=0;
+  themeTextureIndex = new GLuint[numThemes];
+  glGenTextures(numThemes, themeTextureIndex);
+
+  for(vector<struct themeInfo>::iterator it = tI.begin(); it < tI.end(); ++it)
+  {
+    
+    sprintf(txt, "%s", it->name.data());
+    if(it->valid)
+    {
+      writeTxt(fonts[0],txtColorBlack,txt, themeTextureIndex[i],1);
+    } else {
+      writeTxt(fonts[0],txtColorRed,txt, themeTextureIndex[i],1);
+    }
+    i++;
+  }
+}

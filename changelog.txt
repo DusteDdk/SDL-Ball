@@ -162,11 +162,18 @@ Powerups are a bit larger.
 Intro screen with powerup explanations.
 Added header to savegamefile (this version is incompatible with older and will override them)
 Coins system, Player gets coins for powerups, and can buy powerups for them. (Might need balancing)
-Themes (basically do like quake engine.. If a file is not in the "theme tree" get it from "base") See readme
+Themes (basically do like quake.. If a file is not in the "theme tree" get it from "base") See readme
+Moved texture properties to external files so they can change with themes
 
 Todo:
+find out if reflect and collide are used anymore
+Pad the rest of the blocks and update their props accordingly.
+Corrected bug that made it extremely hard if not impossible to calibrate a analog joystick.
 Get more liniar increase in difficulty by sorting/adding/removing levels.
 Fix bugs found in 0.11
+
+Polish stuff that needs doing some time:
+Pad doombrick and cementbrick (images and turn on padding=1 in .txt files)
 
 May never get fixed:
 Fix problem with framerate not being smooth

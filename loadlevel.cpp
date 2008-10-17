@@ -239,70 +239,6 @@ void initlevels(brick bricks[], textureClass texLvl[])
 {
   int brick;
   powerupLoaderClass powerupLoader;
-  
-  //Formelen for at regne offset ud er: xoffset = framewidth / picturewidth
-                                      //yoffset = frameheight / pictureheight
-  
-  //Explosive
-  texLvl[0].prop.ticks = 100;
-  texLvl[0].prop.cols = 1;
-  texLvl[0].prop.rows = 8;
-  texLvl[0].prop.xoffset = 1.0;
-  texLvl[0].prop.yoffset = 0.125;
-  texLvl[0].prop.frames = 8;
-  texLvl[0].prop.bidir = 1;
-  texLvl[0].prop.playing = 1;
-  texLvl[0].prop.padding=1;
-  
-  //normal brik
-  texLvl[1].prop.ticks = 1000;
-  texLvl[1].prop.cols = 1;
-  texLvl[1].prop.rows = 1;
-  texLvl[1].prop.xoffset = 1.0;
-  texLvl[1].prop.yoffset = 1.0;
-  texLvl[1].prop.frames = 0;
-  texLvl[1].prop.playing = 0;
-  texLvl[1].prop.padding=1;
-
-  //cement
-  texLvl[2].prop.ticks = 1000;
-  texLvl[2].prop.cols = 1;
-  texLvl[2].prop.rows = 2;
-  texLvl[2].prop.xoffset = 1.0;
-  texLvl[2].prop.yoffset = 0.5;
-  texLvl[2].prop.frames = 2;
-  texLvl[2].prop.playing = 0;
-
-  //DOOM
-  texLvl[3].prop.ticks = 250;
-  texLvl[3].prop.cols = 8;
-  texLvl[3].prop.rows = 16;
-  texLvl[3].prop.xoffset = 0.125;
-  texLvl[3].prop.yoffset = 0.062;
-  texLvl[3].prop.frames = 8;
-  texLvl[3].prop.bidir=1;
-  texLvl[3].prop.playing = 1;
-  
-  //Glass
-  texLvl[4].prop.ticks = 250;
-  texLvl[4].prop.cols = 1;
-  texLvl[4].prop.rows = 2;
-  texLvl[4].prop.xoffset = 1.0;
-  texLvl[4].prop.yoffset = 0.5;
-  texLvl[4].prop.frames = 2;
-  texLvl[4].prop.bidir=0;
-  texLvl[4].prop.playing = 0;
-  
-  //Invisible
-  texLvl[5].prop.ticks = 250;
-  texLvl[5].prop.cols = 1;
-  texLvl[5].prop.rows = 3;
-  texLvl[5].prop.xoffset = 1.0;
-  texLvl[5].prop.yoffset = 0.25;
-  texLvl[5].prop.frames = 3;
-  texLvl[5].prop.bidir=0;
-  texLvl[5].prop.playing = 0;
-  texLvl[5].prop.padding=1;
 
   //Set dem op
   int row,i;
@@ -319,20 +255,14 @@ void initlevels(brick bricks[], textureClass texLvl[])
       
       if(bricks[i].type != '0')
       {
-        if(bricks[i].type != 'D') //type D får farverne fra loadlevel
-        {
-          bricks[i].color[0]=1.0f;
-          bricks[i].color[1]=1.0f;
-          bricks[i].color[2]=1.0f;
-        }
+
         
-        bricks[i].tex=texLvl[1];
         bricks[i].active=1;
         bricks[i].collide=1;
         bricks[i].isdyingnormally=0;
         bricks[i].isexploding=0;
         bricks[i].reflect=1;
-        bricks[i].opacity=1.0;
+
         bricks[i].fade=1.0;
         bricks[i].fadespeed=2.0;
         bricks[i].zoom=1.0;
@@ -364,72 +294,110 @@ void initlevels(brick bricks[], textureClass texLvl[])
       
       if(bricks[i].type == '1')
       {
-        bricks[i].color[0]=0.0f;
-        bricks[i].color[1]=0.0f;
-        bricks[i].color[2]=1.0f;
-      
+        bricks[i].tex=texLvl[6];
+        bricks[i].color[0]=texLvl[6].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[6].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[6].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[6].prop.glColorInfo[3];
       } else if(bricks[i].type == '2')
       {
-        bricks[i].color[0]=1.0f;
-        bricks[i].color[1]=1.0f;
-        bricks[i].color[2]=0.0f;
-      
+        bricks[i].tex=texLvl[7];
+        bricks[i].color[0]=texLvl[7].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[7].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[7].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[7].prop.glColorInfo[3];
       }else if(bricks[i].type == '3')
       {
         bricks[i].powerup = '0';
         bricks[i].tex= texLvl[2];
+        bricks[i].color[0]=texLvl[2].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[2].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[2].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[2].prop.glColorInfo[3];
         bricks[i].score=30;
         bricks[i].destroytowin=0;
-        
       } else if(bricks[i].type == '4')
       {
         bricks[i].tex=texLvl[4]; //glass texture
         bricks[i].hitsLeft = 2; //takes two hits to kill
-        bricks[i].opacity=0.5f;
-      
+        bricks[i].color[0]=texLvl[4].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[4].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[4].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[4].prop.glColorInfo[3];
       } else if(bricks[i].type == '5')
       {
-        bricks[i].color[0]=0.0f;
-        bricks[i].color[1]=1.0f;
-        bricks[i].color[2]=0.0f;
+        bricks[i].tex=texLvl[8];
+        bricks[i].color[0]=texLvl[8].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[8].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[8].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[8].prop.glColorInfo[3];
+
       
       } else if(bricks[i].type == '6')
       {
-        bricks[i].color[0]=0.5f;
-        bricks[i].color[1]=0.5f;
-        bricks[i].color[2]=0.5f;
+        bricks[i].tex=texLvl[9];
+        bricks[i].color[0]=texLvl[9].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[9].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[9].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[9].prop.glColorInfo[3];
+
       
       } else if(bricks[i].type == '7')
       {
-        bricks[i].color[0]=1.0f;
-        bricks[i].color[1]=0.0f;
-        bricks[i].color[2]=1.0f;
+        bricks[i].tex=texLvl[10];
+        bricks[i].color[0]=texLvl[10].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[10].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[10].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[10].prop.glColorInfo[3];
+
       
       } else if(bricks[i].type == '8')
       {
-      
+        bricks[i].color[0]=texLvl[11].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[11].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[11].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[11].prop.glColorInfo[3];
+
       } else if(bricks[i].type == '9')
       {
         bricks[i].tex=texLvl[5]; //invisible texture
         bricks[i].tex.frame=1;
         bricks[i].hitsLeft = 3; //takes 3 to kill
-        bricks[i].color[0]=1.0f;
-        bricks[i].color[1]=0.0f;
-        bricks[i].color[2]=1.0f;
+        bricks[i].color[0]=texLvl[5].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[5].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[5].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[5].prop.glColorInfo[3];
       
       } else if(bricks[i].type == 'A')
       {
-        bricks[i].color[0]=1.0f;
-        bricks[i].color[1]=0.0f;
-        bricks[i].color[2]=0.0f;
+        bricks[i].tex=texLvl[11];
+        bricks[i].color[0]=texLvl[12].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[12].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[12].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[12].prop.glColorInfo[3];
       
       } else if(bricks[i].type == 'B')
       {
         bricks[i].tex=texLvl[0];
+        bricks[i].color[0]=texLvl[0].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[0].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[0].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[0].prop.glColorInfo[3];
       } else if(bricks[i].type == 'C')
       {
         bricks[i].tex=texLvl[3];
+        bricks[i].color[0]=texLvl[3].prop.glColorInfo[0];
+        bricks[i].color[1]=texLvl[3].prop.glColorInfo[1];
+        bricks[i].color[2]=texLvl[3].prop.glColorInfo[2];
+        bricks[i].opacity=texLvl[3].prop.glColorInfo[3];
         bricks[i].powerup = powerupLoader.randomEvilPowerup();
+      } else if(bricks[i].type != 'D') //type D får farverne fra loadlevel
+      {
+        bricks[i].color[0]=1.0f;
+        bricks[i].color[1]=1.0f;
+        bricks[i].color[2]=1.0f;
+        bricks[i].tex=texLvl[1];
+        bricks[i].opacity=1.0f;
       }
 
       i++;

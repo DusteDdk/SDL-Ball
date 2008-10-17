@@ -1,0 +1,11 @@
+file=brick/doom.png
+ticks=250
+cols=8
+rows=16
+xoffset=0.125
+yoffset=0.062
+frames=8
+playing=1
+bidir=1
+padding=0
+color=FFFFFFFF

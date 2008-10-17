@@ -225,7 +225,6 @@ Notice the trailing /
 ------------------------------------
 
 3.0 Themes
-NOTE: /font/ is a part of the gfxtheme. powerups.txt are a part of the lvltheme
 Themes can, but don't have to, consist of several things, in SDL-Ball a theme can contain:
 levels - other levelsets are always nice.
 graphics - all the graphics in sdl-ball can be changed by the theme.
@@ -234,14 +233,11 @@ Themes can be stored in 2 diffrent places: Either in ~/.config/sdl-ball/themes/
 or in sdl-balls own data/themes folder.
 
 3.1 How to use a diffrent theme
-You can choose a theme from the options menu. (not implemented yet)
+You can choose a theme from the options menu.
 You can mix sound, gfx and level thems in the settings file (see 1.4 and 1.4.6)
-NO! You don't need a diffrent theme for sound,level and graphics, it simply means
-that you CAN use them.. For example you might want themeA sound with themeB graphics.
-You can use the same name for all three, then you have the originally intended theme ;)
 
 3.2 How to make your own theme
-NOTE: /font/ is a part of the gfxtheme.
+NOTE: /font/ is a part of the gfxtheme. powerups.txt are a part of the lvltheme
 Make a new directory either in data/themes/ or ~/.config/sdl-ball/themes/ and call it the name of your theme,
 let's say you choose to call it footheme.
 Copy all files from sdl-balls data dir into your theme folder. ( cp -a path/to/sdl-ball/data/* path/to/footheme )

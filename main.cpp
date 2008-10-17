@@ -28,8 +28,12 @@
 #include <math.h>
 #include <string.h>
 #include <list>
+#include <vector>
 #include <sys/time.h>
 #include <sys/stat.h>
+
+#include <dirent.h>
+
 #ifdef WIN32
 #include <windows.h>
 #include <GL/glext.h>
@@ -277,13 +281,18 @@ struct texProp {
 
   bool padding; //Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
   float pxw, pxh; //pixels width, and height
+  
+  GLfloat glColorInfo[4]; //FIXME: use this on: bricks, paddle, balls, powerups.
+  string fileName; //Quite the fugly.. This will be set by readTexProps();
 };
 
 /* This function attempts to open path
-   It will first look for the file in DATADIR/themes/setting.theme/path
-   Then in ~/.config/sdl-ball/themes/theme/path
+   It will first look for the file in ~/.config/sdl-ball/themes/theme/path
+   Then in DATADIR/themes/setting.theme/path
+   This way, each user can even override a part of a theme that exist both
+   in their own homedir and in the global themes dir.
    If still no luck it will use the file from DATADIR/path
-   It will return the full qualified filename name */
+   It will return the full qualified filename */
 string useTheme(string path, string theme)
 {
   struct stat st;
@@ -291,19 +300,19 @@ string useTheme(string path, string theme)
   
   if(theme.compare("default") != 0)
   {
-    //Try in DATADIR/themes/themename/
-    name = DATADIR"themes/"+ theme+"/"+path;
-    if( stat(name.data(), &st) == 0)
-    {
-      return(name);
-    }
-  
     //Try in ~/.config/sdl-ball/themes/themename
     name = privFile.programRoot+"/themes/"+ theme+"/"+path;
     if( stat(name.data(), &st) == 0)
     {
       return(name);
     }
+    //Try in DATADIR/themes/themename/
+    name = DATADIR"themes/"+ theme+"/"+path;
+    if( stat(name.data(), &st) == 0)
+    {
+      return(name);
+    }
+
   }
   
   //Fall back on default file.
@@ -313,8 +322,102 @@ string useTheme(string path, string theme)
      return(name);
   } else {
     cout << "File Error: Could not find '" << path << "'" << endl;
-    return(path);
+    return(name);
   }
+}
+
+   
+struct themeInfo {
+  string name;
+  bool snd,gfx,lvl,valid; //Valid means that there seems to be data of some kind (ie. not just an empty folder)
+};
+/* This function looks in ~/.config/sdl-ball/themes/
+   and in DATADIR/themes
+   for directories, it looks inside the dir
+   to decide if a theme contains:
+   gfx folder - this theme contains graphics
+   snd folder - this theme contains sound
+   level.txt  - this theme contains levels.
+   It will return info even if the theme is not valid
+   It returns a vector of structs with info */
+vector<struct themeInfo> getThemes() {
+  DIR *pdir;
+  struct dirent *pent;
+  struct stat st;
+  struct themeInfo ti;
+  string themeDir;
+  string temp;
+  vector<struct themeInfo> v;
+  //Start with the default theme.
+  ti.name="default";
+  ti.gfx=1;
+  ti.snd=1;
+  ti.lvl=1;
+  ti.valid=1;
+  v.push_back(ti);
+  
+  for(int i=0; i < 2; i++)
+  {
+    if(i==0)
+    {
+      themeDir = privFile.programRoot + "/themes";
+    } else if(i==1)
+    {
+      themeDir = DATADIR"/themes";
+    }
+    pdir = opendir(themeDir.data());
+    if (pdir)
+    {
+      themeDir.append("/");
+      while ((pent=readdir(pdir))){
+        temp=pent->d_name;
+        //We're not going to read hidden files
+        if(temp[0] != '.')
+        {
+          temp= themeDir + pent->d_name;
+          //Check if file is a dir.
+          if(stat(temp.data(), &st) == 0)
+          {
+            ti.name = pent->d_name;
+            ti.valid = 0;
+            //Check if theme have graphics
+            temp=themeDir + pent->d_name +"/gfx";
+            if(stat(temp.data(), &st) == 0)
+            {
+              ti.gfx=1;
+              ti.valid=1;
+            } else {
+              ti.gfx=0;
+            }
+            
+            //Check if theme have sound
+            temp=themeDir + pent->d_name +"/snd";
+            if(stat(temp.data(), &st) == 0)
+            {
+              ti.snd=1;
+              ti.valid=1;
+            } else {
+              ti.snd=0;
+            }
+            
+            //Check if theme have levels
+            temp=themeDir + pent->d_name +"/levels.txt";
+            if(stat(temp.data(), &st) == 0)
+            {
+              ti.lvl=1;
+              ti.valid=1;
+            } else {
+              ti.lvl=0;
+            }
+            
+            v.push_back(ti);
+          }
+        }
+      }
+    }
+  }
+  
+  return(v);
 }
 
 class textureClass {
@@ -431,6 +534,76 @@ class textureClass {
 
 };
 
+/* This function reads textureProperties from fileName
+   and applies them to *tex */
+void readTexProps(string fileName, textureClass & tex)
+{
+  ifstream f;
+  string line,set,val;
+  f.open( fileName.data() );
+  if(f.is_open())
+  {
+    while(!f.eof())
+    {
+      getline(f, line);
+      if(line.find('=') != string::npos)
+      {
+        set=line.substr(0,line.find('='));
+        val=line.substr(line.find('=')+1);
+     if(set=="xoffset")
+        {
+          tex.prop.xoffset=atof(val.data());
+        } else if(set=="yoffset")
+        {
+          tex.prop.yoffset=atof(val.data());
+        } else if(set=="cols")
+        {
+          tex.prop.cols=atoi(val.data());
+        } else if(set=="rows")
+        {
+          tex.prop.rows=atoi(val.data());
+        } else if(set=="ticks")
+        {
+          tex.prop.ticks=atoi(val.data());
+        } else if(set=="frames")
+        {
+          tex.prop.frames=atoi(val.data());
+        } else if(set=="bidir")
+        {
+          tex.prop.bidir=atoi(val.data());
+        } else if(set=="playing")
+        {
+          tex.prop.playing=atoi(val.data());
+        } else if(set=="padding")
+        {
+          tex.prop.padding=atoi(val.data());
+        } else if(set=="color")
+        {
+         //Color in hex RGBA
+         //Example:color=FFFFFFFF
+         char rgba[4][5];
+         sprintf(rgba[0], "0x%c%c", val[0], val[1]);
+         sprintf(rgba[1], "0x%c%c", val[2], val[3]);
+         sprintf(rgba[2], "0x%c%c", val[4], val[5]);
+         sprintf(rgba[3], "0x%c%c", val[6], val[7]);
+         tex.prop.glColorInfo[0] = 0.003921569 * strtol(rgba[0], NULL,16);
+         tex.prop.glColorInfo[1] = 0.003921569 * strtol(rgba[1], NULL,16);
+         tex.prop.glColorInfo[2] = 0.003921569 * strtol(rgba[2], NULL,16);
+         tex.prop.glColorInfo[3] = 0.003921569 * strtol(rgba[3], NULL,16);
+        } else if(set=="file")
+        {
+         tex.prop.fileName = val;
+        } else {
+          cout << "Invalid setting '"<< set <<"' with value '" << val <<"'"<<endl;
+        }
+        
+      }
+    }
+  } else {
+    cout << "readTexProps: Cannot open '" << fileName << "'"<<endl;
+  }
+}
+
 class textureManager {
 
   public:
@@ -484,6 +657,15 @@ class textureManager {
       SDL_FreeSurface( temp );
 
       return(TRUE);
+    }
+    
+    
+    //Quote the fugly
+    //This function assumes that the prop.fileName have been set and that it contains a path relative to gfx/
+    bool load(textureClass & tex)
+    {
+      string name = "gfx/" + tex.prop.fileName;
+      return(load(useTheme(name,setting.gfxTheme), tex));
     }
 };
 
@@ -4238,7 +4420,7 @@ int main (int argc, char *argv[]) {
   textureClass texPaddleBase;
   textureClass texPaddleLayers[2];
   textureClass texBall[3];
-  textureClass texLvl[6];
+  textureClass texLvl[13];
   texExplosiveBrick = &texLvl[0]; //Pointer to explosive texture..
 
   textureClass texBorder;
@@ -4284,12 +4466,38 @@ int main (int argc, char *argv[]) {
   texMgr.load(useTheme("/gfx/ball/fireball.png",setting.gfxTheme), texBall[1]);
   texMgr.load(useTheme("/gfx/ball/tail.png",setting.gfxTheme), texBall[2]);
 
-  texMgr.load(useTheme("/gfx/brick/explosive.png",setting.gfxTheme), texLvl[0]);
-  texMgr.load(useTheme("/gfx/brick/base.png",setting.gfxTheme), texLvl[1]);
-  texMgr.load(useTheme("/gfx/brick/cement.png",setting.gfxTheme), texLvl[2]);
-  texMgr.load(useTheme("/gfx/brick/doom.png",setting.gfxTheme), texLvl[3]);
-  texMgr.load(useTheme("/gfx/brick/glass.png",setting.gfxTheme), texLvl[4]);
-  texMgr.load(useTheme("/gfx/brick/invisible.png",setting.gfxTheme), texLvl[5]);
+  readTexProps(useTheme("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
+  texMgr.load(texLvl[0]);
+  
+  readTexProps(useTheme("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
+  texMgr.load(texLvl[1]);
+  
+  readTexProps(useTheme("gfx/brick/cement.txt", setting.gfxTheme), texLvl[2]);
+  texMgr.load(texLvl[2]);
+  
+  readTexProps(useTheme("gfx/brick/doom.txt", setting.gfxTheme), texLvl[3]);
+  texMgr.load(texLvl[3]);
+  
+  readTexProps(useTheme("gfx/brick/glass.txt", setting.gfxTheme), texLvl[4]);
+  texMgr.load(texLvl[4]);
+  
+  readTexProps(useTheme("gfx/brick/invisible.txt", setting.gfxTheme), texLvl[5]);
+  texMgr.load(texLvl[5]);
+
+  readTexProps(useTheme("gfx/brick/blue.txt", setting.gfxTheme), texLvl[6]);
+  texMgr.load(texLvl[6]);
+  readTexProps(useTheme("gfx/brick/yellow.txt", setting.gfxTheme), texLvl[7]);
+  texMgr.load(texLvl[7]);
+  readTexProps(useTheme("gfx/brick/green.txt", setting.gfxTheme), texLvl[8]);
+  texMgr.load(texLvl[8]);
+  readTexProps(useTheme("gfx/brick/grey.txt", setting.gfxTheme), texLvl[9]);
+  texMgr.load(texLvl[9]);
+  readTexProps(useTheme("gfx/brick/purple.txt", setting.gfxTheme), texLvl[10]);
+  texMgr.load(texLvl[10]);
+  readTexProps(useTheme("gfx/brick/white.txt", setting.gfxTheme), texLvl[11]);
+  texMgr.load(texLvl[11]);
+  readTexProps(useTheme("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
+  texMgr.load(texLvl[12]);
 
 
   texMgr.load(useTheme("/gfx/border.png",setting.gfxTheme), texBorder);
@@ -4387,6 +4595,16 @@ int main (int argc, char *argv[]) {
 //   announce.write("SDL-BALL",2000, fonts[0]);
   soundMan.add(SND_START,0);
 
+  /*vector<struct themeInfo> t = getThemes();
+
+  for(vector<struct themeInfo>::iterator it = t.begin(); it < t.end(); ++it)
+  {
+    cout << "Theme:" <<it->name << endl;
+    cout << "Snd:" <<it->snd <<endl;
+    cout << "Gfx:" <<it->gfx << endl;
+    cout << "Lvl:" <<it->lvl << endl;
+  }*/
+  
   while(!var.quit)
   {
     #ifdef performanceTimer
