@@ -130,10 +130,10 @@ public:
     SDL_Color txtColorBlack = {0,0,0};
 
 
-    texMgr.load(DATADIR"/gfx/menu/menu0.png", tex[0]);
-    texMgr.load(DATADIR"/gfx/menu/but0.png", tex[1]);
-    texMgr.load(DATADIR"/gfx/menu/but1.png", tex[2]);
-    texMgr.load(DATADIR"/gfx/menu/but2.png", tex[3]);
+    texMgr.load(useTheme("/gfx/menu/menu0.png",setting.gfxTheme), tex[0]);
+    texMgr.load(useTheme("/gfx/menu/but0.png",setting.gfxTheme), tex[1]);
+    texMgr.load(useTheme("/gfx/menu/but1.png",setting.gfxTheme), tex[2]);
+    texMgr.load(useTheme("/gfx/menu/but2.png",setting.gfxTheme), tex[3]);
 
 
     glGenTextures(1, &tex[4].prop.texture);
@@ -165,7 +165,7 @@ public:
     glGenTextures(1, &tex[30].prop.texture);
     glGenTextures(1, &tex[31].prop.texture);
     glGenTextures(1, &tex[32].prop.texture);
-    texMgr.load(DATADIR"/gfx/menu/highscorebg.png", tex[33]);
+    texMgr.load(useTheme("/gfx/menu/highscorebg.png",setting.gfxTheme), tex[33]);
     glGenTextures(1, &tex[34].prop.texture);
     glGenTextures(1, &tex[35].prop.texture);
 

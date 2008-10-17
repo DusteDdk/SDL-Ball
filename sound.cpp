@@ -62,10 +62,10 @@ bool soundClass::init() {
 void soundClass::loadSample(const char *SampleName, int sampleNum)
 {
   #ifdef WITH_SOUND
-  string F=DATADIR"snd/";
+  string F="snd/";
   F += SampleName;
   
-  sample[sampleNum] = Mix_LoadWAV(F.data());
+  sample[sampleNum] = Mix_LoadWAV(useTheme(F,setting.sndTheme).data());
   if(!sample[sampleNum])
   {
     cout << "SoundManager '"<< F <<"' : " << Mix_GetError() << endl;

@@ -33,10 +33,10 @@ class powerupLoaderClass {
     //Which powerups are evil?
     evilPowerups = "2HE37"; //P
     
-    ifstream powerFile(DATADIR"/powerups.txt");
+    ifstream powerFile(useTheme("/powerups.txt",setting.lvlTheme).data());
     if(!powerFile.is_open())
     {
-      cout << " Could not open '"<<DATADIR<<"/powerups.txt'"<<endl;
+      cout << " Could not open 'powerups.txt'"<<endl;
       var.quit=1;
       return;
     }

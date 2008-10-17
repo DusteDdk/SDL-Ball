@@ -39,7 +39,7 @@ class glScoreBoard
 
   glScoreBoard()
   {
-    texMgr.load(DATADIR"/gfx/highscore/numbers.png", tex);
+    texMgr.load(useTheme("/gfx/highscore/numbers.png",setting.gfxTheme), tex);
     tex.prop.ticks=1000;
     tex.prop.cols=4;
     tex.prop.rows=4;

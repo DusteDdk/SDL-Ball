@@ -85,7 +85,7 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
   texPowerups = tp;
   fxMan = m;
   ticksSinceLastSpawn=100;
-  texMgr.load(DATADIR"/gfx/title/title.png", texTitle);
+  texMgr.load(useTheme("/gfx/title/title.png",setting.gfxTheme), texTitle);
   glTitleList = glGenLists(1);
 
   glNewList(glTitleList, GL_COMPILE);
@@ -103,27 +103,27 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     }
   glEndList();
 
-  texMgr.load(DATADIR"/gfx/title/glue.png", texText[PO_GLUE]);
-  texMgr.load(DATADIR"/gfx/title/gravity.png", texText[PO_GRAVITY]);
-  texMgr.load(DATADIR"/gfx/title/multiball.png", texText[PO_MULTIBALL]);
-  texMgr.load(DATADIR"/gfx/title/bigball.png", texText[PO_BIGBALL]);
-  texMgr.load(DATADIR"/gfx/title/normalball.png", texText[PO_NORMALBALL]);
-  texMgr.load(DATADIR"/gfx/title/smallball.png", texText[PO_SMALLBALL]);
-  texMgr.load(DATADIR"/gfx/title/aim.png", texText[PO_AIM]);
-  texMgr.load(DATADIR"/gfx/title/explosive.png", texText[PO_EXPLOSIVE]);
-  texMgr.load(DATADIR"/gfx/title/gun.png", texText[PO_GUN]);
-  texMgr.load(DATADIR"/gfx/title/go-thru.png", texText[PO_THRU]);
-  texMgr.load(DATADIR"/gfx/title/laser.png", texText[PO_LASER]);
-  texMgr.load(DATADIR"/gfx/title/life.png", texText[PO_LIFE]);
-  texMgr.load(DATADIR"/gfx/title/die.png", texText[PO_DIE]);
-  texMgr.load(DATADIR"/gfx/title/drop.png", texText[PO_DROP]);
-  texMgr.load(DATADIR"/gfx/title/detonate.png", texText[PO_DETONATE]);
-  texMgr.load(DATADIR"/gfx/title/explosive-grow.png", texText[PO_EXPLOSIVE_GROW]);
-  texMgr.load(DATADIR"/gfx/title/easybrick.png", texText[PO_EASYBRICK]);
-  texMgr.load(DATADIR"/gfx/title/nextlevel.png", texText[PO_NEXTLEVEL]);
-  texMgr.load(DATADIR"/gfx/title/aimhelp.png", texText[PO_AIMHELP]);
-  texMgr.load(DATADIR"/gfx/title/growbat.png", texText[PO_GROWPADDLE]);
-  texMgr.load(DATADIR"/gfx/title/shrinkbat.png", texText[PO_SHRINKPADDLE]);
+  texMgr.load(useTheme("/gfx/title/glue.png",setting.gfxTheme), texText[PO_GLUE]);
+  texMgr.load(useTheme("/gfx/title/gravity.png",setting.gfxTheme), texText[PO_GRAVITY]);
+  texMgr.load(useTheme("/gfx/title/multiball.png",setting.gfxTheme), texText[PO_MULTIBALL]);
+  texMgr.load(useTheme("/gfx/title/bigball.png",setting.gfxTheme), texText[PO_BIGBALL]);
+  texMgr.load(useTheme("/gfx/title/normalball.png",setting.gfxTheme), texText[PO_NORMALBALL]);
+  texMgr.load(useTheme("/gfx/title/smallball.png",setting.gfxTheme), texText[PO_SMALLBALL]);
+  texMgr.load(useTheme("/gfx/title/aim.png",setting.gfxTheme), texText[PO_AIM]);
+  texMgr.load(useTheme("/gfx/title/explosive.png",setting.gfxTheme), texText[PO_EXPLOSIVE]);
+  texMgr.load(useTheme("/gfx/title/gun.png",setting.gfxTheme), texText[PO_GUN]);
+  texMgr.load(useTheme("/gfx/title/go-thru.png",setting.gfxTheme), texText[PO_THRU]);
+  texMgr.load(useTheme("/gfx/title/laser.png",setting.gfxTheme), texText[PO_LASER]);
+  texMgr.load(useTheme("/gfx/title/life.png",setting.gfxTheme), texText[PO_LIFE]);
+  texMgr.load(useTheme("/gfx/title/die.png",setting.gfxTheme), texText[PO_DIE]);
+  texMgr.load(useTheme("/gfx/title/drop.png",setting.gfxTheme), texText[PO_DROP]);
+  texMgr.load(useTheme("/gfx/title/detonate.png",setting.gfxTheme), texText[PO_DETONATE]);
+  texMgr.load(useTheme("/gfx/title/explosive-grow.png",setting.gfxTheme), texText[PO_EXPLOSIVE_GROW]);
+  texMgr.load(useTheme("/gfx/title/easybrick.png",setting.gfxTheme), texText[PO_EASYBRICK]);
+  texMgr.load(useTheme("/gfx/title/nextlevel.png",setting.gfxTheme), texText[PO_NEXTLEVEL]);
+  texMgr.load(useTheme("/gfx/title/aimhelp.png",setting.gfxTheme), texText[PO_AIMHELP]);
+  texMgr.load(useTheme("/gfx/title/growbat.png",setting.gfxTheme), texText[PO_GROWPADDLE]);
+  texMgr.load(useTheme("/gfx/title/shrinkbat.png",setting.gfxTheme), texText[PO_SHRINKPADDLE]);
 
   for(int ii = 0; ii < 3; ii++)
   {

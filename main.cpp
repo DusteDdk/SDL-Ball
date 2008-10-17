@@ -161,7 +161,9 @@ struct difficultyStruct {
 
 struct difficultyStruct static_difficulty, difficulty;
 
+
 struct settings {
+  string sndTheme,gfxTheme,lvlTheme;
   bool cfgRes[2];
   int resx;
   int resy;
@@ -276,6 +278,44 @@ struct texProp {
   bool padding; //Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
   float pxw, pxh; //pixels width, and height
 };
+
+/* This function attempts to open path
+   It will first look for the file in DATADIR/themes/setting.theme/path
+   Then in ~/.config/sdl-ball/themes/theme/path
+   If still no luck it will use the file from DATADIR/path
+   It will return the full qualified filename name */
+string useTheme(string path, string theme)
+{
+  struct stat st;
+  string name;
+  
+  if(theme.compare("default") != 0)
+  {
+    //Try in DATADIR/themes/themename/
+    name = DATADIR"themes/"+ theme+"/"+path;
+    if( stat(name.data(), &st) == 0)
+    {
+      return(name);
+    }
+  
+    //Try in ~/.config/sdl-ball/themes/themename
+    name = privFile.programRoot+"/themes/"+ theme+"/"+path;
+    if( stat(name.data(), &st) == 0)
+    {
+      return(name);
+    }
+  }
+  
+  //Fall back on default file.
+  name = DATADIR + path;
+  if( stat(name.data(), &st) == 0)
+  {
+     return(name);
+  } else {
+    cout << "File Error: Could not find '" << path << "'" << endl;
+    return(path);
+  }
+}
 
 class textureClass {
   private:
@@ -3587,6 +3627,9 @@ void writeSettings()
     conf << "joycallowjitter="<<setting.JoyCalLowJitter<<endl;
     conf << "joycalmax="<<setting.JoyCalMax<<endl;
     conf << "joycalmin="<<setting.JoyCalMin<<endl;
+    conf << "sndtheme="<<setting.sndTheme<<endl;
+    conf << "gfxtheme="<<setting.gfxTheme<<endl;
+    conf << "lvltheme="<<setting.lvlTheme<<endl;
     conf.close();
   } else {
     cout << "Could not open ' ' for writing." << endl;
@@ -3938,6 +3981,9 @@ int main (int argc, char *argv[]) {
   var.quit=0;
   var.clearScreen=1;
   var.titleScreenShow=1;
+  setting.gfxTheme="default";
+  setting.sndTheme="default";
+  setting.lvlTheme="default";
   setting.eyeCandy = 1;
   setting.showBg = 0;
   setting.particleCollide=0;
@@ -3985,6 +4031,7 @@ int main (int argc, char *argv[]) {
   difficulty = static_difficulty;
 
   cout << "SDL-Ball v "VERSION << endl;
+
 
 #ifdef WIN32
   privFile.programRoot = ""; // default to ./ on win32
@@ -4117,6 +4164,15 @@ int main (int argc, char *argv[]) {
         } else if(set=="joycalmin")
         {
           setting.JoyCalMin = atoi(val.data());
+        } else if(set=="lvltheme")
+        {
+          setting.lvlTheme = val;
+        } else if(set=="sndtheme")
+        {
+          setting.sndTheme = val;
+        } else if(set=="gfxtheme")
+        {
+          setting.gfxTheme = val;
         }
         else
         {
@@ -4163,12 +4219,16 @@ int main (int argc, char *argv[]) {
 
   initGL();
 
+
+
   soundMan.init();
   TTF_Init();
-  fonts[0] = TTF_OpenFont( DATADIR"/font/ack.ttf", 50 );
-  fonts[3] = TTF_OpenFont( DATADIR"/font/ack.ttf", 25);
-  fonts[1] = TTF_OpenFont( DATADIR"/font/acidic.ttf", 60 );
-  fonts[2] = TTF_OpenFont( DATADIR"/font/acidic.ttf", 80 );
+
+  
+  fonts[0] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 50 );
+  fonts[3] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 25);
+  fonts[1] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 60 );
+  fonts[2] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 80 );
 
   SDL_WM_SetCaption("SDL-Ball", "SDL-Ball");
   SDL_WarpMouse(var.halfresx, var.halfresy);
@@ -4215,54 +4275,54 @@ int main (int argc, char *argv[]) {
   texBullet.prop.bidir = 1;
   texBullet.prop.playing = 1;
 
-  texMgr.load(DATADIR"/gfx/paddle/base.png", texPaddleBase);
-  texMgr.load(DATADIR"/gfx/paddle/glue.png", texPaddleLayers[0]);
-  texMgr.load(DATADIR"/gfx/paddle/gun.png", texPaddleLayers[1]);
+  texMgr.load(useTheme("/gfx/paddle/base.png",setting.gfxTheme), texPaddleBase);
+  texMgr.load(useTheme("/gfx/paddle/glue.png",setting.gfxTheme), texPaddleLayers[0]);
+  texMgr.load(useTheme("/gfx/paddle/gun.png",setting.gfxTheme), texPaddleLayers[1]);
 
 
-  texMgr.load(DATADIR"/gfx/ball/test.png", texBall[0]);
-  texMgr.load(DATADIR"/gfx/ball/fireball.png", texBall[1]);
-  texMgr.load(DATADIR"/gfx/ball/tail.png", texBall[2]);
+  texMgr.load(useTheme("/gfx/ball/test.png",setting.gfxTheme), texBall[0]);
+  texMgr.load(useTheme("/gfx/ball/fireball.png",setting.gfxTheme), texBall[1]);
+  texMgr.load(useTheme("/gfx/ball/tail.png",setting.gfxTheme), texBall[2]);
 
-  texMgr.load(DATADIR"/gfx/brick/explosive.png", texLvl[0]);
-  texMgr.load(DATADIR"/gfx/brick/base.png", texLvl[1]);
-  texMgr.load(DATADIR"/gfx/brick/cement.png", texLvl[2]);
-  texMgr.load(DATADIR"/gfx/brick/doom.png", texLvl[3]);
-  texMgr.load(DATADIR"/gfx/brick/glass.png", texLvl[4]);
-  texMgr.load(DATADIR"/gfx/brick/invisible.png", texLvl[5]);
+  texMgr.load(useTheme("/gfx/brick/explosive.png",setting.gfxTheme), texLvl[0]);
+  texMgr.load(useTheme("/gfx/brick/base.png",setting.gfxTheme), texLvl[1]);
+  texMgr.load(useTheme("/gfx/brick/cement.png",setting.gfxTheme), texLvl[2]);
+  texMgr.load(useTheme("/gfx/brick/doom.png",setting.gfxTheme), texLvl[3]);
+  texMgr.load(useTheme("/gfx/brick/glass.png",setting.gfxTheme), texLvl[4]);
+  texMgr.load(useTheme("/gfx/brick/invisible.png",setting.gfxTheme), texLvl[5]);
 
 
-  texMgr.load(DATADIR"/gfx/border.png", texBorder);
+  texMgr.load(useTheme("/gfx/border.png",setting.gfxTheme), texBorder);
 
-  texMgr.load(DATADIR"/gfx/powerup/glue.png", texPowerup[PO_GLUE]);
-  texMgr.load(DATADIR"/gfx/powerup/gravity.png", texPowerup[PO_GRAVITY]);
-  texMgr.load(DATADIR"/gfx/powerup/multiball.png", texPowerup[PO_MULTIBALL]);
-  texMgr.load(DATADIR"/gfx/powerup/bigball.png", texPowerup[PO_BIGBALL]);
-  texMgr.load(DATADIR"/gfx/powerup/normalball.png", texPowerup[PO_NORMALBALL]);
-  texMgr.load(DATADIR"/gfx/powerup/smallball.png", texPowerup[PO_SMALLBALL]);
-  texMgr.load(DATADIR"/gfx/powerup/aim.png", texPowerup[PO_AIM]);
-  texMgr.load(DATADIR"/gfx/powerup/explosive.png", texPowerup[PO_EXPLOSIVE]);
-  texMgr.load(DATADIR"/gfx/powerup/gun.png", texPowerup[PO_GUN]);
-  texMgr.load(DATADIR"/gfx/powerup/go-thru.png", texPowerup[PO_THRU]);
-  texMgr.load(DATADIR"/gfx/powerup/laser.png", texPowerup[PO_LASER]);
-  texMgr.load(DATADIR"/gfx/powerup/life.png", texPowerup[PO_LIFE]);
-  texMgr.load(DATADIR"/gfx/powerup/die.png", texPowerup[PO_DIE]);
-  texMgr.load(DATADIR"/gfx/powerup/drop.png", texPowerup[PO_DROP]);
-  texMgr.load(DATADIR"/gfx/powerup/detonate.png", texPowerup[PO_DETONATE]);
-  texMgr.load(DATADIR"/gfx/powerup/explosive-grow.png", texPowerup[PO_EXPLOSIVE_GROW]);
-  texMgr.load(DATADIR"/gfx/powerup/easybrick.png", texPowerup[PO_EASYBRICK]);
-  texMgr.load(DATADIR"/gfx/powerup/nextlevel.png", texPowerup[PO_NEXTLEVEL]);
-  texMgr.load(DATADIR"/gfx/powerup/aimhelp.png", texPowerup[PO_AIMHELP]);
+  texMgr.load(useTheme("/gfx/powerup/glue.png",setting.gfxTheme), texPowerup[PO_GLUE]);
+  texMgr.load(useTheme("/gfx/powerup/gravity.png",setting.gfxTheme), texPowerup[PO_GRAVITY]);
+  texMgr.load(useTheme("/gfx/powerup/multiball.png",setting.gfxTheme), texPowerup[PO_MULTIBALL]);
+  texMgr.load(useTheme("/gfx/powerup/bigball.png",setting.gfxTheme), texPowerup[PO_BIGBALL]);
+  texMgr.load(useTheme("/gfx/powerup/normalball.png",setting.gfxTheme), texPowerup[PO_NORMALBALL]);
+  texMgr.load(useTheme("/gfx/powerup/smallball.png",setting.gfxTheme), texPowerup[PO_SMALLBALL]);
+  texMgr.load(useTheme("/gfx/powerup/aim.png",setting.gfxTheme), texPowerup[PO_AIM]);
+  texMgr.load(useTheme("/gfx/powerup/explosive.png",setting.gfxTheme), texPowerup[PO_EXPLOSIVE]);
+  texMgr.load(useTheme("/gfx/powerup/gun.png",setting.gfxTheme), texPowerup[PO_GUN]);
+  texMgr.load(useTheme("/gfx/powerup/go-thru.png",setting.gfxTheme), texPowerup[PO_THRU]);
+  texMgr.load(useTheme("/gfx/powerup/laser.png",setting.gfxTheme), texPowerup[PO_LASER]);
+  texMgr.load(useTheme("/gfx/powerup/life.png",setting.gfxTheme), texPowerup[PO_LIFE]);
+  texMgr.load(useTheme("/gfx/powerup/die.png",setting.gfxTheme), texPowerup[PO_DIE]);
+  texMgr.load(useTheme("/gfx/powerup/drop.png",setting.gfxTheme), texPowerup[PO_DROP]);
+  texMgr.load(useTheme("/gfx/powerup/detonate.png",setting.gfxTheme), texPowerup[PO_DETONATE]);
+  texMgr.load(useTheme("/gfx/powerup/explosive-grow.png",setting.gfxTheme), texPowerup[PO_EXPLOSIVE_GROW]);
+  texMgr.load(useTheme("/gfx/powerup/easybrick.png",setting.gfxTheme), texPowerup[PO_EASYBRICK]);
+  texMgr.load(useTheme("/gfx/powerup/nextlevel.png",setting.gfxTheme), texPowerup[PO_NEXTLEVEL]);
+  texMgr.load(useTheme("/gfx/powerup/aimhelp.png",setting.gfxTheme), texPowerup[PO_AIMHELP]);
 
   pMan.init(texPowerup);
 
-  texMgr.load(DATADIR"/gfx/powerup/bullet.png", texBullet);
+  texMgr.load(useTheme("/gfx/powerup/bullet.png",setting.gfxTheme), texBullet);
 
 
-  texMgr.load(DATADIR"/gfx/powerup/growbat.png", texPowerup[PO_GROWPADDLE]);
-  texMgr.load(DATADIR"/gfx/powerup/shrinkbat.png", texPowerup[PO_SHRINKPADDLE]);
+  texMgr.load(useTheme("/gfx/powerup/growbat.png",setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
+  texMgr.load(useTheme("/gfx/powerup/shrinkbat.png",setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
 
-  texMgr.load(DATADIR"/gfx/particle.png", texParticle);
+  texMgr.load(useTheme("/gfx/particle.png",setting.gfxTheme), texParticle);
 
   GLuint sceneDL;
 
@@ -4270,7 +4330,7 @@ int main (int argc, char *argv[]) {
 
   brick bricks[598];
 
-  string levelfile = DATADIR"/levels.txt";
+  string levelfile = useTheme("/levels.txt",setting.lvlTheme);
 
 
 

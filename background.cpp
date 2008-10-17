@@ -41,57 +41,57 @@ class backgroundClass {
       float t = 0.25 * ((float)player.level+1);
 
       if(t <= 1.0)
-        texMgr.load(DATADIR"/gfx/bg/1.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/1.jpg",setting.gfxTheme), tex);
       else if(t <= 2.0)
-        texMgr.load(DATADIR"/gfx/bg/2.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/2.jpg",setting.gfxTheme), tex);
       else if(t <= 3.0)
-        texMgr.load(DATADIR"/gfx/bg/3.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/3.jpg",setting.gfxTheme), tex);
       else if(t <= 4.0)
-        texMgr.load(DATADIR"/gfx/bg/4.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/4.jpg",setting.gfxTheme), tex);
       else if(t <= 5.0)
-        texMgr.load(DATADIR"/gfx/bg/5.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/5.jpg",setting.gfxTheme), tex);
       else if(t <= 6.0)
-        texMgr.load(DATADIR"/gfx/bg/6.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/6.jpg",setting.gfxTheme), tex);
       else if(t <= 7.0)
-        texMgr.load(DATADIR"/gfx/bg/7.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/7.jpg",setting.gfxTheme), tex);
       else if(t <= 8.0)
-        texMgr.load(DATADIR"/gfx/bg/8.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/8.jpg",setting.gfxTheme), tex);
       else if(t <= 9.0)
-        texMgr.load(DATADIR"/gfx/bg/9.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/9.jpg",setting.gfxTheme), tex);
       else if(t <= 10.0)
-        texMgr.load(DATADIR"/gfx/bg/10.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/10.jpg",setting.gfxTheme), tex);
       else if(t <= 11.0)
-        texMgr.load(DATADIR"/gfx/bg/11.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/11.jpg",setting.gfxTheme), tex);
       else if(t <= 12.0)
-        texMgr.load(DATADIR"/gfx/bg/12.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/12.jpg",setting.gfxTheme), tex);
       else if(t <= 13.0)
-        texMgr.load(DATADIR"/gfx/bg/13.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/13.jpg",setting.gfxTheme), tex);
       else if(t <= 14.0)
-        texMgr.load(DATADIR"/gfx/bg/14.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/14.jpg",setting.gfxTheme), tex);
       else if(t <= 15.0)
-        texMgr.load(DATADIR"/gfx/bg/15.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/15.jpg",setting.gfxTheme), tex);
       else if(t <= 16.0)
-        texMgr.load(DATADIR"/gfx/bg/16.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/16.jpg",setting.gfxTheme), tex);
       else if(t <= 17.0)
-        texMgr.load(DATADIR"/gfx/bg/17.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/17.jpg",setting.gfxTheme), tex);
       else if(t <= 18.0)
-        texMgr.load(DATADIR"/gfx/bg/18.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/18.jpg",setting.gfxTheme), tex);
       else if(t <= 19.0)
-        texMgr.load(DATADIR"/gfx/bg/19.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/19.jpg",setting.gfxTheme), tex);
       else if(t <= 20.0)
-        texMgr.load(DATADIR"/gfx/bg/20.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/20.jpg",setting.gfxTheme), tex);
       else if(t <= 21.0)
-        texMgr.load(DATADIR"/gfx/bg/21.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/21.jpg",setting.gfxTheme), tex);
       else if(t <= 22.0)
-        texMgr.load(DATADIR"/gfx/bg/22.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/22.jpg",setting.gfxTheme), tex);
       else if(t <= 23.0)
-        texMgr.load(DATADIR"/gfx/bg/23.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/23.jpg",setting.gfxTheme), tex);
       else if(t <= 24.0)
-        texMgr.load(DATADIR"/gfx/bg/24.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/24.jpg",setting.gfxTheme), tex);
       else if(t <= 25.0)
-        texMgr.load(DATADIR"/gfx/bg/25.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/25.jpg",setting.gfxTheme), tex);
       else
-        texMgr.load(DATADIR"/gfx/bg/final.jpg", tex);
+        texMgr.load(useTheme("/gfx/bg/final.jpg",setting.gfxTheme), tex);
       
 
       firstTexture=0;

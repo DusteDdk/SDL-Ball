@@ -31,7 +31,7 @@ class highScoreClass {
       glGenTextures(1, &texText);
           SDL_Color color = { 255,255,255 };
       writeTxt(fonts[1], color, " ", texText,1);
-      texMgr.load(DATADIR"/gfx/highscore/entername.png", tex[0]);
+      texMgr.load(useTheme("/gfx/highscore/entername.png",setting.gfxTheme), tex[0]);
 
     }
   
