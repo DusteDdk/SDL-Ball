@@ -46,7 +46,7 @@
 #define WITH_SOUND
 // #define WITH_WIIUSE
 
-#define VERSION "0.12-RC1"
+#define VERSION "0.12-RC2"
 #define SAVEGAMEVERSION 2
 
 #ifdef WITH_WIIUSE
@@ -3209,10 +3209,10 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
 
           ba.hit(p, br.tex.prop.glParColorInfo);
 
-          if(!player.powerup[PO_THRU])
-          {
+//           if(!player.powerup[PO_THRU]) //This is commented because the ball should inrease speed even if that po is on, imo
+//           {
             ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
-          }
+//           }
         } else {
           cout << "Collision detection error: Dont know where the ball hit." <<endl;
         }
@@ -3308,7 +3308,7 @@ class hudClass {
   //For the powerup "shop"
   textureClass *texPowerup; //Pointer to array of powerup textures
   int shopItemSelected;
-  #define NUMITEMSFORSALE 10
+  #define NUMITEMSFORSALE 12
   struct shopItemStruct item[NUMITEMSFORSALE];
   bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
   
@@ -3318,26 +3318,30 @@ class hudClass {
     texPowerup = texPo;
     texBall=texB;
 
-    item[0].type = PO_NORMALBALL;
+    item[0].type = PO_LASER;
     item[0].price = 400;
-    item[1].type = PO_BIGBALL;
-    item[1].price = 500;
-    item[2].type = PO_AIMHELP;
-    item[2].price = 600;
-    item[3].type = PO_GROWPADDLE;
+    item[1].type = PO_NORMALBALL;
+    item[1].price = 450;
+    item[2].type = PO_BIGBALL;
+    item[2].price = 500;
+    item[3].type = PO_AIMHELP;
     item[3].price = 600;
-    item[4].type = PO_MULTIBALL;
-    item[4].price = 700;
-    item[5].type = PO_GLUE;
+    item[4].type = PO_GROWPADDLE;
+    item[4].price = 600;
+    item[5].type = PO_MULTIBALL;
     item[5].price = 700;
-    item[6].type = PO_EXPLOSIVE;
-    item[6].price = 800;
-    item[7].type = PO_THRU;
-    item[7].price = 1000;
-    item[8].type = PO_EXPLOSIVE_GROW;
-    item[8].price = 1500;
-    item[9].type = PO_LIFE;
-    item[9].price = 3000;
+    item[6].type = PO_EXPLOSIVE_GROW;
+    item[6].price = 750;
+    item[7].type = PO_EXPLOSIVE;
+    item[7].price = 800;
+    item[8].type = PO_GLUE;
+    item[8].price = 800;
+    item[9].type = PO_EASYBRICK;
+    item[9].price = 850;
+    item[10].type = PO_THRU;
+    item[10].price = 1000;
+    item[11].type = PO_LIFE;
+    item[11].price = 3000;
     
     shopItemSelected=0;
   }
@@ -4439,7 +4443,7 @@ int main (int argc, char *argv[]) {
       {
         if(bricks[i].active)
         {
-          if(bricks[i].destroytowin)
+          if(bricks[i].destroytowin && bricks[i].hitsLeft)
           {
             gVar.bricksleft++;
           }
@@ -4495,6 +4499,7 @@ int main (int argc, char *argv[]) {
         {
           player.powerup[PO_NEXTLEVEL]=0;
           gVar.nextlevel=1;
+          var.paused=1;
         }
 
         if(player.powerup[PO_EXPLOSIVE_GROW])

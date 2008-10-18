@@ -167,12 +167,19 @@ Moved texture properties to external files so they can change with themes, for b
 Now possible to have diffrent colors for textureoverlay and particle effects on brick (no more white trail after hitting explosivebricks)
 Powerups can have texture overlay color, and their particle color is defined in their texture txt file
 
-0.12rc1
+0.12rc2
 Tweaked some of the powerup animations
+Addded easybrick and lasersight to shop.
+Tweaked gameplay.
+  Tweaked powerup prices (gothru should be more expensive than growexplosive)
+  Game will stop, change level, as soon as the last brick is hit, not after it dissapeared.
+  Add speed to ball even if go-thru
+  Fixed bugs in level 6,7 (too many powerups)
+
 Todo:
 Add theme-howto on website
 Look at chipmunk for collisionDetection/Movement AFTER adding theme-howto
-find out if reflect and collide are used anymore
+Balance things even more?
 Pad the rest of the blocks and update their props accordingly.
 Corrected bug that made it extremely hard if not impossible to calibrate a analog joystick.
 Get more liniar increase in difficulty by sorting/adding/removing levels.
