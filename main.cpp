@@ -4096,10 +4096,10 @@ int main (int argc, char *argv[]) {
   TTF_Init();
 
   
-  fonts[0] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 50 );
-  fonts[3] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 25);
-  fonts[1] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 60 );
-  fonts[2] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 80 );
+  fonts[0] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 50 ); //Announcements
+  fonts[3] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 25); //Highscore list
+  fonts[1] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 60 ); //Enter text for highscore
+  fonts[2] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 80 ); //Announcements
 
   SDL_WM_SetCaption("SDL-Ball", "SDL-Ball");
   SDL_WarpMouse(var.halfresx, var.halfresy);
@@ -4231,18 +4231,7 @@ int main (int argc, char *argv[]) {
   controllerClass control(&paddle, &bullet, &bMan);
 
 
-//   announce.write("SDL-BALL",2000, fonts[0]);
   soundMan.add(SND_START,0);
-
-  /*vector<struct themeInfo> t = getThemes();
-
-  for(vector<struct themeInfo>::iterator it = t.begin(); it < t.end(); ++it)
-  {
-    cout << "Theme:" <<it->name << endl;
-    cout << "Snd:" <<it->snd <<endl;
-    cout << "Gfx:" <<it->gfx << endl;
-    cout << "Lvl:" <<it->lvl << endl;
-  }*/
   
   while(!var.quit)
   {
