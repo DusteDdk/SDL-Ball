@@ -281,7 +281,7 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
     float a;
     for(i=0; i < *numHighScores; i++)
     {
-      if(hilightDir && i < hilight+1 || !hilightDir && i > hilight-1)
+      if((hilightDir && i < hilight+1) || (!hilightDir && i > hilight-1))
       {
         a=1.0-((1.0/(float)(*numHighScores*2))*(delta(hilight,i)));
         glBindTexture(GL_TEXTURE_2D, texHighScore[i]);

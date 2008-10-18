@@ -3304,7 +3304,7 @@ void padcoldet(ball & b, paddle_class & p, pos & po)
 
 struct shopItemStruct {
   int price;
-  char type;
+  int type;
 };
 
 class hudClass {
