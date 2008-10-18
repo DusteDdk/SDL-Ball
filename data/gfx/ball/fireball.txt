@@ -6,7 +6,7 @@ xoffset=0.25
 yoffset=0.25
 frames=16
 playing=1
-bidir1
+bidir=1
 padding=1
 texcolor=FFFFFFFF
 parcolor=FFFFFF //no effect

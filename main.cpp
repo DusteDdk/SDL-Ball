@@ -282,8 +282,8 @@ struct texProp {
   bool padding; //Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
   float pxw, pxh; //pixels width, and height
   
-  GLfloat glTexColorInfo[4]; //FIXME: use this on: bricks, paddle, balls, powerups.
-  GLfloat glParColorInfo[3]; //This and above are going to replace object::color
+  GLfloat glTexColorInfo[4]; 
+  GLfloat glParColorInfo[3]; //This and above  replaced object::color and particle colors
   
   string fileName; //Quite the fugly.. This will be set by readTexProps();
 };
@@ -771,6 +771,7 @@ class paddle_class : public object {
 
         tex.play();
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+        glColor4f( tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2], tex.prop.glTexColorInfo[3] );
         glBegin( GL_QUADS );
             glTexCoord2f(tex.pos[0], tex.pos[1]); glVertex3f(-width,height, 0.0f );
             glTexCoord2f(tex.pos[2], tex.pos[3]); glVertex3f( width,height, 0.0f );
@@ -782,6 +783,7 @@ class paddle_class : public object {
         if(player.powerup[PO_GLUE])
         {
           glBindTexture(GL_TEXTURE_2D, layerTex[0].prop.texture);
+          glColor4f( layerTex[0].prop.glTexColorInfo[0], layerTex[0].prop.glTexColorInfo[1], layerTex[0].prop.glTexColorInfo[2], layerTex[0].prop.glTexColorInfo[3] );
           glBegin( GL_QUADS );
             glTexCoord2f(0.0f, 0.0f); glVertex3f(-width, height, 0.0f );
             glTexCoord2f(1.0f, 0.0f); glVertex3f( width, height, 0.0f );
@@ -795,6 +797,7 @@ class paddle_class : public object {
         {
           layerTex[1].play();
           glBindTexture(GL_TEXTURE_2D, layerTex[1].prop.texture);
+          glColor4f( layerTex[1].prop.glTexColorInfo[0], layerTex[1].prop.glTexColorInfo[1], layerTex[1].prop.glTexColorInfo[2], layerTex[1].prop.glTexColorInfo[3] );
           glBegin( GL_QUADS );
             glTexCoord2f(layerTex[1].pos[0], layerTex[1].pos[1]); glVertex3f(-width, height*4, 0.0f );
             glTexCoord2f(layerTex[1].pos[2], layerTex[1].pos[3]); glVertex3f( width, height*4, 0.0f );
@@ -1420,8 +1423,8 @@ class tracer {
 
   public:
     GLfloat height, width;
-    GLuint texture;
-
+//     GLuint texture;
+    textureClass *tex;
     int len;
     void draw()
     {
@@ -1436,15 +1439,16 @@ class tracer {
           if(a[i] < 0.0)
             active[i]=0;
 
-          glBindTexture( GL_TEXTURE_2D, texture);
+          tex->play();
+          glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
           glLoadIdentity();
           glTranslatef(x[i],y[i],-3.0);
           glColor4f(r[i], g[i], b[i], a[i]);
           glBegin( GL_QUADS );
-            glTexCoord2f(0.0, 0.0);glVertex3f( -width*s[i], height*s[i], 0.00 ); // øverst venst
-            glTexCoord2f(0.0, 1.0);glVertex3f(  width*s[i], height*s[i], 0.00 ); // øverst højre
-            glTexCoord2f(1.0, 1.0);glVertex3f(  width*s[i],-height*s[i], 0.00 ); // nederst højre
-            glTexCoord2f(1.0, 0.0);glVertex3f( -width*s[i],-height*s[i], 0.00 ); // nederst venstre
+            glTexCoord2f(tex->pos[0],tex->pos[1]);glVertex3f( -width*s[i], height*s[i], 0.00 ); // øverst venst
+            glTexCoord2f(tex->pos[2],tex->pos[3]);glVertex3f(  width*s[i], height*s[i], 0.00 ); // øverst højre
+            glTexCoord2f(tex->pos[4],tex->pos[5]);glVertex3f(  width*s[i],-height*s[i], 0.00 ); // nederst højre
+            glTexCoord2f(tex->pos[6],tex->pos[7]);glVertex3f( -width*s[i],-height*s[i], 0.00 ); // nederst venstre
           glEnd( );
         }
       }
@@ -1753,6 +1757,7 @@ class ball : public moving_object {
     {
       fireTex.play();
       glBindTexture(GL_TEXTURE_2D, fireTex.prop.texture);
+      glColor4f( fireTex.prop.glTexColorInfo[0], fireTex.prop.glTexColorInfo[1], fireTex.prop.glTexColorInfo[2], fireTex.prop.glTexColorInfo[3] );
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       glBegin( GL_QUADS );
@@ -1764,6 +1769,7 @@ class ball : public moving_object {
     } else {
       tex.play();
       glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+      glColor4f( tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2], tex.prop.glTexColorInfo[3] );
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       glBegin( GL_QUADS );
@@ -1891,7 +1897,7 @@ class ballManager {
       {
         b[i].tex=tex[0];
         b[i].fireTex=tex[1];
-        b[i].tail.texture = tex[2].prop.texture;
+        b[i].tail.tex = &tex[2];
       }
 
       initBalls();
@@ -3308,7 +3314,7 @@ class hudClass {
   //For the powerup "shop"
   textureClass *texPowerup; //Pointer to array of powerup textures
   int shopItemSelected;
-  #define NUMITEMSFORSALE 12
+  #define NUMITEMSFORSALE 13
   struct shopItemStruct item[NUMITEMSFORSALE];
   bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
   
@@ -3338,10 +3344,12 @@ class hudClass {
     item[8].price = 800;
     item[9].type = PO_EASYBRICK;
     item[9].price = 850;
-    item[10].type = PO_THRU;
-    item[10].price = 1000;
-    item[11].type = PO_LIFE;
-    item[11].price = 3000;
+    item[10].type = PO_GUN;
+    item[10].price = 900;
+    item[11].type = PO_THRU;
+    item[11].price = 1000;
+    item[12].type = PO_LIFE;
+    item[12].price = 3000;
     
     shopItemSelected=0;
   }
