@@ -149,7 +149,7 @@ Produced and found soundeffects which are under a free license (read data/snd/LI
 Don't load sounds if sound if disabled, load if enabled.
 setting.joyEnabled added.
 
-0.12
+0.12rc1
 Sound is on by default.
 3 new levels.
 Screenshot function (press s to capture, saves in ~/.config/sdl-ball/screenshots/)
@@ -167,13 +167,16 @@ Moved texture properties to external files so they can change with themes, for b
 Now possible to have diffrent colors for textureoverlay and particle effects on brick (no more white trail after hitting explosivebricks)
 Powerups can have texture overlay color, and their particle color is defined in their texture txt file
 
+0.12rc1
+Tweaked some of the powerup animations
 Todo:
-move texture properties to txt files for powerups, balls, and paddle
+Add theme-howto on website
+Look at chipmunk for collisionDetection/Movement AFTER adding theme-howto
 find out if reflect and collide are used anymore
 Pad the rest of the blocks and update their props accordingly.
 Corrected bug that made it extremely hard if not impossible to calibrate a analog joystick.
 Get more liniar increase in difficulty by sorting/adding/removing levels.
-Fix bugs found in 0.11
+Fix bugs found in 0.12rc1
 
 Polish stuff that needs doing some time:
 Find out if glue should be padded

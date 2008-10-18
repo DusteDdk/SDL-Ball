@@ -1,5 +1,5 @@
 file=powerup/aimhelp.png
-ticks=1000
+ticks=100
 cols=2
 rows=3
 xoffset=0.5

@@ -27,6 +27,8 @@
 3.0 Themes
 3.1 How to use a diffrent theme
 3.2 How to make your own theme
+
+4.0 Contributors and Credits
 ------------------------------------
 
 1.0 SDL-Ball Info
@@ -256,3 +258,10 @@ playing - Is this animation playing, required, set to 0 if its not an animation.
 padding - Is there a 1 px padding around this image (there should be, check data/gfx/brick/base.png for example)
 texcolor - In hex, RGBA. FF0000FF is Green, Totally Opaque. FFFFFF0F is white, very transperant. This is the overlayed color.
 parcolor - In hex RGB ( FFFFFF=white ) This is the color of the particles that brick/or powerup spawn on collision.
+
+------------------------------------
+
+4.0 Contributors and Credits
+These are the people who have directly helped the SDL-Ball project:
+Quinton "quin" Reeves - Windows Port.
+Ciddk - Website and Bugreports
