@@ -3296,7 +3296,6 @@ void padcoldet(ball & b, paddle_class & p, pos & po)
       }
 
     }
-
   }
 }
 
