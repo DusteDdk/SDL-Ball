@@ -175,9 +175,12 @@ Tweaked gameplay.
   Game will stop, change level, as soon as the last brick is hit, not after it dissapeared.
   Add speed to ball even if go-thru
   Fixed bugs in level 6,7 (too many powerups)
+Added theme-howto on website
+Made border texture square
 
 Todo:
-Add theme-howto on website
+Powerups are not cleared when changing from easy to newnormalgame???
+Removed irritating borders of cement from level 10
 Look at chipmunk for collisionDetection/Movement AFTER adding theme-howto
 Balance things even more?
 Pad the rest of the blocks and update their props accordingly.
@@ -186,6 +189,7 @@ Get more liniar increase in difficulty by sorting/adding/removing levels.
 Fix bugs found in 0.12rc1
 
 Polish stuff that needs doing some time:
+Find alternative fonts
 Find out if glue should be padded
 Pad doombrick and cementbrick (images and turn on padding=1 in .txt files)
 
