@@ -239,25 +239,7 @@ You can choose a theme from the options menu.
 You can mix sound, gfx and level thems in the settings file (see 1.4 and 1.4.6)
 
 3.2 How to make your own theme
-NOTE: /font/ is a part of the gfxtheme. powerups.txt are a part of the lvltheme
-Make a new directory either in data/themes/ or ~/.config/sdl-ball/themes/ and call it the name of your theme,
-let's say you choose to call it footheme.
-Copy all files from sdl-balls data dir into your theme folder. ( cp -a path/to/sdl-ball/data/* path/to/footheme )
-Edit the files you want to be diffrent from the original game, you might want to change everything, then again
-if you don't, just delete the files you didn't change.
-
-Texture properties:
-file - The imagefiles for this texture, relative to gfx. For Example: gfx/brick/explosive.png is simply file=brick/explosive.png
-ticks - This is the time each frame is shown, in milliseconds. 1000 ticks = 1 second. (not required if its not an animation)
-cols - How many frames are there to the side -> that direction. Required, set to 1 if its not an animation.
-rows - How many frames are the down. Required, set to 1 if its not an animation.
-xoffset - is 1/cols. Required, set to 1.0 if not animation.
-yoffset - is 1/rows. Required, set to 1.0 if not animation.
-frames - How many frames of animation, required. Set to 1 if not an animation.
-playing - Is this animation playing, required, set to 0 if its not an animation.
-padding - Is there a 1 px padding around this image (there should be, check data/gfx/brick/base.png for example)
-texcolor - In hex, RGBA. FF0000FF is Green, Totally Opaque. FFFFFF0F is white, very transperant. This is the overlayed color.
-parcolor - In hex RGB ( FFFFFF=white ) This is the color of the particles that brick/or powerup spawn on collision.
+http://sdl-ball.sourceforge.net/?page=themes for more information on themes, it's really easy! ;)
 
 ------------------------------------
 
