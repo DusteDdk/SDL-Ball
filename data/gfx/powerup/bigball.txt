@@ -7,6 +7,6 @@ yoffset=1.0
 frames=1
 playing=0
 bidir=0
-padding=0
+padding=1
 texcolor=FFFFFFFF
 parcolor=00FF00
