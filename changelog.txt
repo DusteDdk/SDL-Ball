@@ -177,23 +177,21 @@ Tweaked gameplay.
   Fixed bugs in level 6,7 (too many powerups)
 Added theme-howto on website
 Made border texture square
-Removed non-free font files, replaced with the ones from nesworth untill better are found.
-Updated readme to reflect correct licensing.
+Removed non-free font files, replaced with the ones from nesworth until better are found.
+Updated readme with correct licensing.
+Corrected bug that made it impossible to calibrate joystick.
 
-Todo:
-Powerups are not cleared when changing from easy to newnormalgame???
-Removed irritating borders of cement from level 10
-Look at chipmunk for collisionDetection/Movement AFTER adding theme-howto
-Balance things even more?
-Pad the rest of the blocks and update their props accordingly.
-Corrected bug that made it extremely hard if not impossible to calibrate a analog joystick.
+Todo before 0.12:
+Balance things more?
 Get more liniar increase in difficulty by sorting/adding/removing levels.
 Fix bugs found in 0.12rc1
 
 Polish stuff that needs doing some time:
+use locking for joystick and wii buttons instead of timebased shoot interval
 Find alternative fonts
 Find out if glue should be padded
 Pad doombrick and cementbrick (images and turn on padding=1 in .txt files)
+Pad the rest of the blocks and update their props accordingly.
 
 May never get fixed:
 Fix problem with framerate not being smooth

@@ -2983,32 +2983,10 @@ void initScreen()
 
 void resetPlayerPowerups()
 {
-  player.powerup[PO_GRAVITY] = 0;
-
-  player.powerup[PO_BIGBALL] = 0;
-  player.powerup[PO_NORMALBALL] = 0;
-  player.powerup[PO_SMALLBALL] = 0;
-
-
-  player.powerup[PO_EXPLOSIVE] = 0;
-
-  player.powerup[PO_GLUE] = 0;
-  player.powerup[PO_MULTIBALL] = 0;
-
-  player.powerup[PO_GROWPADDLE] = 0;
-  player.powerup[PO_SHRINKPADDLE] = 0;
-
-
-  player.powerup[PO_AIM] = 0;
-  player.powerup[PO_LASER] = 0;
-
-  player.powerup[PO_GUN] = 0;
-  player.powerup[PO_THRU] = 0;
-  player.powerup[PO_DROP] = 0;
-  player.powerup[PO_DETONATE] = 0;
-
-  player.powerup[PO_AIMHELP] = 0;
-
+  for(int i=0; i < MAXPOTEXTURES; i++)
+  {
+    player.powerup[i] = 0;
+  }
 }
 
 void initNewGame()
@@ -3024,8 +3002,8 @@ void initNewGame()
 
   player.lives=5;
   player.coins = 600;
-  //Easy skal ikke clears af powerups
-  if(player.difficulty > 0)
+  
+  if(player.difficulty > EASY)
   {
     player.coins = 0;
     player.lives -= 2;

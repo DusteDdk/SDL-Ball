@@ -28,6 +28,7 @@ class controllerClass {
   Sint16 joystickx;
   Sint16 joysticky;
   Uint8 joystickbtnA, joystickbtnB;
+  bool joyBtnALock; //TODO: implement this in the rest of the joystick functions (current only using it in cal)
   GLfloat joystickLeftX; //There are two because the calibrated values differ
   GLfloat joystickRightX;
   int calMin, calMax, calLowJitter, calHighJitter;
@@ -292,8 +293,16 @@ void controllerClass::calibrate()
 
     x = SDL_JoystickGetAxis(joystick, 0);
 
-    if(SDL_JoystickGetButton(joystick, 0) && var.menuJoyCalStage != 5)
-      var.menuJoyCalStage++;
+    if(SDL_JoystickGetButton(joystick, 0))
+    {
+      if(!joyBtnALock && var.menuJoyCalStage != 5)
+      {
+        var.menuJoyCalStage++;
+        joyBtnALock=1;
+      }
+    } else {
+      joyBtnALock=0;
+    }
   }
 
   switch(var.menuJoyCalStage)
