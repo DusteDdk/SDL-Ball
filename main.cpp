@@ -4096,10 +4096,10 @@ int main (int argc, char *argv[]) {
   TTF_Init();
 
   
-  fonts[0] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 50 ); //Announcements
-  fonts[3] = TTF_OpenFont( useTheme("/font/ack.ttf",setting.gfxTheme).data(), 25); //Highscore list
-  fonts[1] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 60 ); //Enter text for highscore
-  fonts[2] = TTF_OpenFont( useTheme("/font/acidic.ttf",setting.gfxTheme).data(), 80 ); //Announcements
+  fonts[0] = TTF_OpenFont( useTheme("/font/DejaVuSans.ttf",setting.gfxTheme).data(), 50 ); //Announcements
+  fonts[3] = TTF_OpenFont( useTheme("/font/FreeSans.ttf",setting.gfxTheme).data(), 25); //Highscore list
+  fonts[1] = TTF_OpenFont( useTheme("/font/FreeSans.ttf",setting.gfxTheme).data(), 60 ); //Enter text for highscore
+  fonts[2] = TTF_OpenFont( useTheme("/font/DejaVuSans.ttf",setting.gfxTheme).data(), 80 ); //Announcements
 
   SDL_WM_SetCaption("SDL-Ball", "SDL-Ball");
   SDL_WarpMouse(var.halfresx, var.halfresy);

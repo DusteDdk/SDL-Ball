@@ -293,7 +293,7 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
           glTexCoord2f(0.0f,0.110001); glVertex3f(  -1.27,-0.16, 0.0 );
         glEnd( );
       }
-      glTranslatef(0.0,-0.1,0.0);
+      glTranslatef(0.0,-0.11,0.0);
    }
    
     if(!rotDir)

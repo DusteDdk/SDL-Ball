@@ -1,9 +1,9 @@
 -- SDL-Ball --
- - A DX-Ball/MegaBall/Breakout clone for linux+friends
+ - A DX-Ball/MegaBall/Breakout clone for linux+friends (and windows)
    with pretty graphics.
 
 -- Index --
-1.0 SDL-Ball Info
+1.0 SDL-Ball Info and License
 1.1 Objective
 1.2 Controls and Keys
 1.2.1 Keyboard Controls
@@ -29,14 +29,18 @@
 3.2 How to make your own theme
 
 4.0 Contributors and Credits
+
 ------------------------------------
 
 1.0 SDL-Ball Info
 Author: Jimmy Christensen
 Project page: https://sourceforge.net/projects/sdl-ball/
 Web site: http://sdl-ball.sourceforge.net/
-License: Code is GPLv3, See data/snd/License.txt for sound license,
-graphics is Common-Creatives-share-alike.
+
+License:
+Code, Graphics, Levels are GPLv3
+Sound are (until replaced) Creative Commons Sampling Plus 1.0 License.
+See data/font/COPYING for font licenses.
 
 SDL-Ball is my hobby project, I'm using it to learn C++ and
 how not to design software, I learn by trial and error, thats

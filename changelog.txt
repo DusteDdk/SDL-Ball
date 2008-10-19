@@ -177,6 +177,8 @@ Tweaked gameplay.
   Fixed bugs in level 6,7 (too many powerups)
 Added theme-howto on website
 Made border texture square
+Removed non-free font files, replaced with the ones from nesworth untill better are found.
+Updated readme to reflect correct licensing.
 
 Todo:
 Powerups are not cleared when changing from easy to newnormalgame???

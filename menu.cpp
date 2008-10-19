@@ -958,10 +958,10 @@ public:
         glColor4f(1.0,1.0,1.0,1.0);
         glBindTexture(GL_TEXTURE_2D, texHighScore[i]);
         glBegin( GL_QUADS );
-          glTexCoord2f(-0.01f, 0.01525f); glVertex3f(  -0.78, 0.03, 0.0 );
-          glTexCoord2f(0.99f,0.01525f); glVertex3f(   0.78, 0.03, 0.0 );
-          glTexCoord2f(0.99f,0.04); glVertex3f(   0.78,-0.03, 0.0 );
-          glTexCoord2f(-0.01f,0.04); glVertex3f(  -0.78,-0.03, 0.0 );
+          glTexCoord2f(-0.01f, 0.0f); glVertex3f(  -0.78, 0.03, 0.0 );
+          glTexCoord2f(0.99f,0.0f); glVertex3f(   0.78, 0.03, 0.0 );
+          glTexCoord2f(0.99f,0.042); glVertex3f(   0.78,-0.03, 0.0 );
+          glTexCoord2f(-0.01f,0.042); glVertex3f(  -0.78,-0.03, 0.0 );
         glEnd( );
 
        }
