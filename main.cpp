@@ -4757,7 +4757,7 @@ int main (int argc, char *argv[]) {
 #ifdef WIN32
 	Sleep( 1 );
 #else
-    usleep( 1000 );
+    usleep( 100 );
 #endif
   }
 
