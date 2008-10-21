@@ -181,8 +181,14 @@ Removed non-free font files, replaced with the ones from nesworth until better a
 Updated readme with correct licensing.
 Corrected bug that made it impossible to calibrate joystick.
 
-Todo before 0.12:
-Balance things more?
+0.12rc3
+Balance things more:
+  Speed increase from hitting a brick will be reverted to previous value for normal difficulty
+  Hard difficulty with more agressive speed-increase.
+    TODO: add to menu
+  When go-thru is on, it will only increase speed if difficulty is on hard.
+Saves difficulty in config file and uses that untill other is chosen.
+  TODO: Save/load from settings.
 Get more liniar increase in difficulty by sorting/adding/removing levels.
 Fix bugs found in 0.12rc1
 

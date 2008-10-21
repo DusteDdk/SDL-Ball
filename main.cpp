@@ -46,7 +46,7 @@
 #define WITH_SOUND
 // #define WITH_WIIUSE
 
-#define VERSION "0.12-RC2"
+#define VERSION "0.12-RC3"
 #define SAVEGAMEVERSION 2
 
 #ifdef WITH_WIIUSE
@@ -98,6 +98,7 @@
 
 #define EASY 0
 #define NORMAL 1
+#define HARD 2
 
 //Sound effects
 #define SND_START 0
@@ -155,12 +156,12 @@ struct pos {
 
 
 struct difficultyStruct {
-  GLfloat ballspeed[2];
-  GLfloat maxballspeed[2];
-  GLfloat hitbrickinc[2];
-  GLfloat hitpaddleinc[2];
-  GLfloat slowdown[2];
-  GLfloat speedup[2];
+  GLfloat ballspeed[3];
+  GLfloat maxballspeed[3];
+  GLfloat hitbrickinc[3];
+  GLfloat hitpaddleinc[3];
+  GLfloat slowdown[3];
+  GLfloat speedup[3];
 };
 
 struct difficultyStruct static_difficulty, difficulty;
@@ -1982,8 +1983,8 @@ class ballManager {
           b[i].setangle(angle);
           b[i].setSize(0.025);
 
-          //Find ud af om den skal "arve" powerups
-          if(player.difficulty < 3)
+          //New balls get already applied powerups if not hard
+          if(player.difficulty < HARD)
           {
             b[i].explosive = player.powerup[PO_EXPLOSIVE];
 
@@ -1996,7 +1997,6 @@ class ballManager {
             {
               powerup(PO_BIGBALL);
             }
-
           }
           getSpeed();
           break;
@@ -2191,8 +2191,7 @@ class ballManager {
               break;
             case PO_BIGBALL: //big balls
               b[i].setSize(0.04);
-              //Sløv bolden ned 10 eller 20%
-              b[i].setspeed( b[i].velocity - ((b[i].velocity/100.f)*difficulty.slowdown[player.difficulty]) );
+              b[i].setspeed(difficulty.ballspeed[player.difficulty]);
               break;
             case PO_SMALLBALL: //small balls
               b[i].setSize(0.015);
@@ -3179,6 +3178,10 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
         {
           b.x = ba.xvel/1.5;
           b.y = ba.yvel/1.5;
+        } else if(player.difficulty == HARD)
+        {
+          b.x = ba.xvel/1.25;
+          b.y = ba.yvel/1.25;
         }
 
         if(dirfound)
@@ -3193,10 +3196,10 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
 
           ba.hit(p, br.tex.prop.glParColorInfo);
 
-//           if(!player.powerup[PO_THRU]) //This is commented because the ball should inrease speed even if that po is on, imo
-//           {
+           if(!player.powerup[PO_THRU] || player.difficulty == HARD)
+           {
             ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
-//           }
+           }
         } else {
           cout << "Collision detection error: Dont know where the ball hit." <<endl;
         }
@@ -3863,19 +3866,21 @@ int main (int argc, char *argv[]) {
   static_difficulty.ballspeed[NORMAL] = 1.3f;
 
   static_difficulty.maxballspeed[EASY] = 1.5f;
-  static_difficulty.maxballspeed[NORMAL] = 2.3f;
+  static_difficulty.maxballspeed[NORMAL] = 2.2f;
+  static_difficulty.maxballspeed[HARD] = 3.0f;
 
   static_difficulty.hitbrickinc[EASY] = 0.0025;
-  static_difficulty.hitbrickinc[NORMAL] = 0.0035;
+  static_difficulty.hitbrickinc[NORMAL] = 0.003;
+  static_difficulty.hitbrickinc[HARD] = 0.004;
 
   static_difficulty.hitpaddleinc[EASY] = -0.001;
   static_difficulty.hitpaddleinc[NORMAL] = -0.0005;
+  static_difficulty.hitpaddleinc[HARD] = -0.0004;
 
   //Percentage
-  static_difficulty.slowdown[EASY] = 20.0f;
-  static_difficulty.slowdown[NORMAL] = 10.0f;
   static_difficulty.speedup[EASY] = 10.0f;
   static_difficulty.speedup[NORMAL] = 20.0f;
+  static_difficulty.speedup[HARD] = 25.0f;
 
   difficulty = static_difficulty;
 
