@@ -361,7 +361,7 @@ public:
           sprintf(txt, "Based on Dx-Ball by Michael P. Welch");
           break;
           case 4:
-          sprintf(txt, "based on Megaball by ED and AL MACKEY");
+          sprintf(txt, "Based on Megaball by Ed and Al Mackey");
           break;
           case 5:
           sprintf(txt, "-----------------------");
