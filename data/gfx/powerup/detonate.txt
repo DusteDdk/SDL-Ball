@@ -1,4 +1,4 @@
-file=powerup/multiball.png
+file=powerup/detonate.png
 ticks=1000
 cols=1
 rows=1

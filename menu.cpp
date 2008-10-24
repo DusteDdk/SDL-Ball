@@ -241,6 +241,7 @@ public:
     writeTxt(fonts[0],txtColorWhite,"New Game", tex[28].prop.texture,1);
     writeTxt(fonts[0],txtColorGreen,"Easy", tex[29].prop.texture,1);
     writeTxt(fonts[0],txtColorBlue, "Normal", tex[30].prop.texture,1);
+    writeTxt(fonts[0],txtColorRed, "Hard", tex[31].prop.texture,1);
 
     writeTxt(fonts[0],txtColorBlack,"Back", tex[32].prop.texture,1); //28
 
@@ -848,8 +849,17 @@ public:
       glBindTexture(GL_TEXTURE_2D, tex[30].prop.texture);
       glCallList(dl+3);
 
+      //Hard
+      glTranslatef(0.0,-0.22,0.0f);
+      if(var.menuItem==4)
+        glCallList(dl+2);
+      else
+        glCallList(dl+1);
+      glBindTexture(GL_TEXTURE_2D, tex[31].prop.texture);
+      glCallList(dl+3);
+
       //Back
-      glTranslatef(0.0,-0.88,0.0f);
+      glTranslatef(0.0,-0.66,0.0f);
       if(var.menuItem==1)
         glCallList(dl+2);
       else
@@ -864,13 +874,21 @@ public:
           case 1:
             var.menu=1;
             break;
+          case 4: //New game, hard
+            player.difficulty=HARD;
+            writeSettings();
+            resumeGame();
+            initNewGame();
+            break;
           case 5: //New Game, Normal
-            player.difficulty=1;
+            player.difficulty=NORMAL;
+            writeSettings();
             resumeGame();
             initNewGame();
             break;
           case 6: //New game, easy
-            player.difficulty=0;
+            player.difficulty=EASY;
+            writeSettings();
             resumeGame();
             initNewGame();
             break;

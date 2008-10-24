@@ -1932,7 +1932,7 @@ class ballManager {
             a++;
           }
         }
-
+        
         for(i=0; i < MAXBALLS; i++)
         {
           if(b[i].active && c != a)
@@ -2555,6 +2555,7 @@ class powerupManager {
 
     void spawn(pos spawnpos, pos velocity, int type)
     {
+      cout << "Called poman::spawn with type:" << type << endl;
       for(i=0; i < MAXPOWERUPS; i++)
       {
         if(!p[i].active)
@@ -3004,7 +3005,7 @@ void initNewGame()
   
   if(player.difficulty > EASY)
   {
-    player.coins = 0;
+    player.coins = 10000;
     player.lives -= 2;
   }
 
@@ -3482,6 +3483,7 @@ void writeSettings()
     conf << "sndtheme="<<setting.sndTheme<<endl;
     conf << "gfxtheme="<<setting.gfxTheme<<endl;
     conf << "lvltheme="<<setting.lvlTheme<<endl;
+    conf << "startingdifficulty="<<player.difficulty<<endl;
     conf.close();
   } else {
     cout << "Could not open ' ' for writing." << endl;
@@ -3859,11 +3861,14 @@ int main (int argc, char *argv[]) {
   setting.JoyCalMax=32767;
   setting.JoyCalLowJitter=-20;
   setting.JoyCalHighJitter=20;
-
+  //Default starting difficulty
+  player.difficulty = NORMAL;
+  
   GLfloat mousex,mousey;
 
   static_difficulty.ballspeed[EASY] = 0.7f;
   static_difficulty.ballspeed[NORMAL] = 1.3f;
+  static_difficulty.ballspeed[HARD] = 1.6f;
 
   static_difficulty.maxballspeed[EASY] = 1.5f;
   static_difficulty.maxballspeed[NORMAL] = 2.2f;
@@ -3875,12 +3880,12 @@ int main (int argc, char *argv[]) {
 
   static_difficulty.hitpaddleinc[EASY] = -0.001;
   static_difficulty.hitpaddleinc[NORMAL] = -0.0005;
-  static_difficulty.hitpaddleinc[HARD] = -0.0004;
+  static_difficulty.hitpaddleinc[HARD] = -0.0007;
 
   //Percentage
   static_difficulty.speedup[EASY] = 10.0f;
   static_difficulty.speedup[NORMAL] = 20.0f;
-  static_difficulty.speedup[HARD] = 25.0f;
+  static_difficulty.speedup[HARD] = 30.0f;
 
   difficulty = static_difficulty;
 
@@ -4027,6 +4032,9 @@ int main (int argc, char *argv[]) {
         } else if(set=="gfxtheme")
         {
           setting.gfxTheme = val;
+        } else if(set=="startingdifficulty")
+        {
+          player.difficulty=atoi(val.data());
         }
         else
         {
@@ -4183,7 +4191,7 @@ int main (int argc, char *argv[]) {
   titleScreenClass titleScreen(&fxMan, texPowerup, &menu);
 
   ballManager bMan(texBall);
-  player.difficulty = NORMAL;
+
   initNewGame();
   paddle.posy = -1.15;
 
