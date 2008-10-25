@@ -3005,7 +3005,7 @@ void initNewGame()
   
   if(player.difficulty > EASY)
   {
-    player.coins = 10000;
+    player.coins = 0;
     player.lives -= 2;
   }
 
