@@ -42,11 +42,17 @@
 /* ******************************************** *
      Here are the compile-time options !! ;)
  * ******************************************** */
-#define DATADIR "data/"
+
+//WIN32
+#ifndef DATADIR
+  #define DATADIR "data/"
+#endif
+
+
 #define WITH_SOUND
 // #define WITH_WIIUSE
 
-#define VERSION "0.12-RC3"
+#define VERSION "0.12-RC4"
 #define SAVEGAMEVERSION 2
 
 #ifdef WITH_WIIUSE
