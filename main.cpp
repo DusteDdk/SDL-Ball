@@ -2561,7 +2561,6 @@ class powerupManager {
 
     void spawn(pos spawnpos, pos velocity, int type)
     {
-      cout << "Called poman::spawn with type:" << type << endl;
       for(i=0; i < MAXPOWERUPS; i++)
       {
         if(!p[i].active)
@@ -4101,7 +4100,7 @@ int main (int argc, char *argv[]) {
   SDL_WM_SetCaption("SDL-Ball", "SDL-Ball");
   SDL_WarpMouse(var.halfresx, var.halfresy);
 
-  textureManager texMgr; // textur manager
+  textureManager texMgr;
 
   textureClass texPaddleBase;
   textureClass texPaddleLayers[2];
@@ -4179,7 +4178,7 @@ int main (int argc, char *argv[]) {
 
 
   int i=0; //bruges i for loop xD
-  glScoreBoard scoreboard;
+  glScoreBoard scoreboard(texMgr);
   menuClass menu;
 
 

@@ -31,13 +31,12 @@ class glScoreBoard
   list<struct glQuad> glNum;
   int numQuads;
 
-  textureManager texMgr;
   textureClass tex;
   uint score;
   public:
   
 
-  glScoreBoard()
+  glScoreBoard(textureManager & texMgr)
   {
     texMgr.load(useTheme("/gfx/highscore/numbers.png",setting.gfxTheme), tex);
     tex.prop.ticks=1000;
@@ -113,7 +112,7 @@ class glScoreBoard
     i=0;
     for(list<struct glQuad>::iterator it=glNum.begin(); it != glNum.end(); ++it)
     {
-      tex.frame=it->frame; //+1??
+      tex.frame=it->frame;
       tex.play();
       glBegin( GL_QUADS );
        glTexCoord2f(tex.pos[0],tex.pos[1]); glVertex3f(it->x[0]+ (i*0.20), it->y[0], it->z);
