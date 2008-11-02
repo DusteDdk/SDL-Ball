@@ -639,32 +639,26 @@ class effectManager {
 class glAnnounceMessageClass {
   private:
     int age;
-
     GLfloat zoom,fade;
     bool fadedir;
   public:
-    GLuint texture;
     bool active;
     int life;
+    string text;
+    int font;
     
     glAnnounceMessageClass()
     {
-      glGenTextures(1, &texture);
       active=1;
       age=0;
       fade=0;
       fadedir=0;
       zoom=0;
-      
     }
-    
-    ~glAnnounceMessageClass()
-    {
-      glDeleteTextures(1, &texture);
-    }
-    
+
     void draw()
     {
+        GLfloat s;
         zoom += 4000.0/life * globalMilliTicksSinceLastDraw;
 
         if(fadedir)
@@ -676,51 +670,25 @@ class glAnnounceMessageClass {
 
         glLoadIdentity();
         glTranslatef(0.0,0.0,-3.0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        GLfloat s;
-        
-        glEnable (GL_BLEND);
-        s=zoom*0.85;
+
         glColor4f(1.0,0.0,0.0,fade);
-        glBegin( GL_QUADS );
-          glTexCoord2f(0.0f, 0.0f);     glVertex3f(-1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.0f);     glVertex3f( 1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.15625f); glVertex3f( 1.0*s,-0.11*s, 0.0f );
-          glTexCoord2f(0.0f, 0.15625f); glVertex3f(-1.0*s,-0.11*s, 0.0f );
-        glEnd( );
-        
-        s=zoom*0.9;
+        s=zoom*0.85;
+        glText->write(text, font, 1, s, 0.0, 0.0);
 
         glColor4f(0.0,1.0,0.0,fade);
-        glBegin( GL_QUADS );
-          glTexCoord2f(0.0f, 0.0f);     glVertex3f(-1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.0f);     glVertex3f( 1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.15625f); glVertex3f( 1.0*s,-0.11*s, 0.0f );
-          glTexCoord2f(0.0f, 0.15625f); glVertex3f(-1.0*s,-0.11*s, 0.0f );
-        glEnd( );
-
-        s=zoom*0.95;
+        s=zoom*0.90;
+        glText->write(text, font, 1, s, 0.0, 0.0);
 
         glColor4f(0.0,0.0,1.0,fade);
-        glBegin( GL_QUADS );
-          glTexCoord2f(0.0f, 0.0f);     glVertex3f(-1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.0f);     glVertex3f( 1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.15625f); glVertex3f( 1.0*s,-0.11*s, 0.0f );
-          glTexCoord2f(0.0f, 0.15625f); glVertex3f(-1.0*s,-0.11*s, 0.0f );
-        glEnd( );
-
-        s=zoom;
+        s=zoom*0.95;
+        glText->write(text, font, 1, s, 0.0, 0.0);
 
         glColor4f(1.0,1.0,1.0,fade);
-        glBegin( GL_QUADS );
-          glTexCoord2f(0.0f, 0.0f);     glVertex3f(-1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.0f);     glVertex3f( 1.0*s, 0.11*s, 0.0f );
-          glTexCoord2f(1.0f, 0.15625f); glVertex3f( 1.0*s,-0.11*s, 0.0f );
-          glTexCoord2f(0.0f, 0.15625f); glVertex3f(-1.0*s,-0.11*s, 0.0f );
-        glEnd( );
+        s=zoom;
+        glText->write(text, font, 1, s, 0.0, 0.0);
 
-        age += globalTicksSinceLastDraw; 
 
+        age += globalTicksSinceLastDraw;
         if(age > life*0.50)
         {
           fadedir=1;
@@ -744,10 +712,8 @@ class glAnnounceTextClass {
       len=0;
     }
     
-    void write(const char *text, int ttl, TTF_Font *font)
+    void write(const char *text, int ttl, int font)
     {
-      SDL_Color color = { 255,255,255 };
-
       len++;
 
       msg.resize(len);
@@ -756,8 +722,10 @@ class glAnnounceTextClass {
       --it;
 
       it->life=ttl;
-      writeTxt(font, color, text, it->texture,1);
+      it->text=text;
+      it->font=font;
     }
+    
     void draw()
     {
       if(len>0)

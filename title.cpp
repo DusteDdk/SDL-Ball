@@ -20,8 +20,9 @@ class powerupDescriptionClass :  public moving_object {
   public:
     powerupDescriptionClass();
     textureClass *tex;
-    textureClass *text;
     void draw();
+    string name;
+    string description;
 };
 
 powerupDescriptionClass::powerupDescriptionClass()
@@ -42,16 +43,10 @@ void powerupDescriptionClass::draw()
         glTexCoord2f(tex->pos[6],tex->pos[7]);glVertex3f( -width+posx,-height+posy, 0.00 ); // nederst venstre
       glEnd( );
       
-      text->play();
       glColor4f(1.0, 1.0, 1.0, 1.0);
-      glBindTexture( GL_TEXTURE_2D, text->prop.texture);
-      glBegin( GL_QUADS );//0.58 x 0.11
-        glTexCoord2f(text->pos[0],text->pos[1]);glVertex3f(  width+posx, height+posy, 0.00 );
-        glTexCoord2f(text->pos[2],text->pos[3]);glVertex3f(  0.58+width+posx, height+posy, 0.00 );
-        glTexCoord2f(text->pos[4],text->pos[5]);glVertex3f(  0.58+width+posx,-height+posy, 0.00 );
-        glTexCoord2f(text->pos[6],text->pos[7]);glVertex3f( width+posx,-height+posy, 0.00 );
-      glEnd( );
-
+      //Write her
+      glText->write(name, FONT_INTRODESCRIPTION, 0, 1.0, posx+width, posy+(glText->getHeight(FONT_INTRODESCRIPTION)/2.0));
+      glText->write(description, FONT_INTRODESCRIPTION, 0, 1.0, posx+width, posy-(glText->getHeight(FONT_INTRODESCRIPTION)/2.0));
 }
 
 class titleScreenClass {
@@ -62,18 +57,18 @@ class titleScreenClass {
     textureClass texTitle;
     textureClass *texPowerups;
     GLuint glTitleList;
-    textureClass texText[MAXPOTEXTURES];
     float rot;
     bool rotDir;
     powerupDescriptionClass powerUp[MAXPOTEXTURES];
-    GLuint *texHighScore; //Pointer to the texture array in menuClass, where they are updated.
-    int *numHighScores; //Pointer to the number of highscores in menuClass.
+    int numHighScores; //Number of highscores to show in the intro
     struct pos runnerPos;
+    menuClass *menu; //Here is the highscore text
     int runnerTime;
     float runnerVelX,runnerVelY;
     int hilight;
     bool hilightDir;
     int hilightTime;
+    void readDescriptions(powerupDescriptionClass po[]);
   public:
     titleScreenClass(effectManager *m, textureClass tp[], menuClass *me);
     void draw(int * frameAge, int * maxFrameAge);
@@ -81,14 +76,13 @@ class titleScreenClass {
 
 titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClass *me)
 {
-  texHighScore = me->titleHighscoreTex;
-  numHighScores = &me->numHighScores;
+  menu = me;
+  numHighScores=7;
   texPowerups = tp;
   fxMan = m;
   ticksSinceLastSpawn=100;
   texMgr.load(useTheme("/gfx/title/title.png",setting.gfxTheme), texTitle);
   glTitleList = glGenLists(1);
-
   glNewList(glTitleList, GL_COMPILE);
     for(int i=0; i < 32; i++)
     {
@@ -104,48 +98,18 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     }
   glEndList();
 
-  texMgr.load(useTheme("/gfx/title/glue.png",setting.gfxTheme), texText[PO_GLUE]);
-  texMgr.load(useTheme("/gfx/title/gravity.png",setting.gfxTheme), texText[PO_GRAVITY]);
-  texMgr.load(useTheme("/gfx/title/multiball.png",setting.gfxTheme), texText[PO_MULTIBALL]);
-  texMgr.load(useTheme("/gfx/title/bigball.png",setting.gfxTheme), texText[PO_BIGBALL]);
-  texMgr.load(useTheme("/gfx/title/normalball.png",setting.gfxTheme), texText[PO_NORMALBALL]);
-  texMgr.load(useTheme("/gfx/title/smallball.png",setting.gfxTheme), texText[PO_SMALLBALL]);
-  texMgr.load(useTheme("/gfx/title/aim.png",setting.gfxTheme), texText[PO_AIM]);
-  texMgr.load(useTheme("/gfx/title/explosive.png",setting.gfxTheme), texText[PO_EXPLOSIVE]);
-  texMgr.load(useTheme("/gfx/title/gun.png",setting.gfxTheme), texText[PO_GUN]);
-  texMgr.load(useTheme("/gfx/title/go-thru.png",setting.gfxTheme), texText[PO_THRU]);
-  texMgr.load(useTheme("/gfx/title/laser.png",setting.gfxTheme), texText[PO_LASER]);
-  texMgr.load(useTheme("/gfx/title/life.png",setting.gfxTheme), texText[PO_LIFE]);
-  texMgr.load(useTheme("/gfx/title/die.png",setting.gfxTheme), texText[PO_DIE]);
-  texMgr.load(useTheme("/gfx/title/drop.png",setting.gfxTheme), texText[PO_DROP]);
-  texMgr.load(useTheme("/gfx/title/detonate.png",setting.gfxTheme), texText[PO_DETONATE]);
-  texMgr.load(useTheme("/gfx/title/explosive-grow.png",setting.gfxTheme), texText[PO_EXPLOSIVE_GROW]);
-  texMgr.load(useTheme("/gfx/title/easybrick.png",setting.gfxTheme), texText[PO_EASYBRICK]);
-  texMgr.load(useTheme("/gfx/title/nextlevel.png",setting.gfxTheme), texText[PO_NEXTLEVEL]);
-  texMgr.load(useTheme("/gfx/title/aimhelp.png",setting.gfxTheme), texText[PO_AIMHELP]);
-  texMgr.load(useTheme("/gfx/title/growbat.png",setting.gfxTheme), texText[PO_GROWPADDLE]);
-  texMgr.load(useTheme("/gfx/title/shrinkbat.png",setting.gfxTheme), texText[PO_SHRINKPADDLE]);
 
   for(int ii = 0; ii < 3; ii++)
   {
     for(int i=0; i < 7; i++)
     {
-      texText[i+(7*ii)].prop.ticks = 1000;
-      texText[i+(7*ii)].prop.cols = 1;
-      texText[i+(7*ii)].prop.rows = 1;
-      texText[i+(7*ii)].prop.xoffset = 1;
-      texText[i+(7*ii)].prop.yoffset = 1;
-      texText[i+(7*ii)].prop.frames = 1;
-      texText[i+(7*ii)].prop.bidir=0;
-      texText[i+(7*ii)].prop.playing = 0;
-      texText[i+(7*ii)].prop.padding = 0;
-      
       powerUp[i+(7*ii)].tex = &texPowerups[i+(7*ii)];
-      powerUp[i+(7*ii)].text = &texText[i+(7*ii)];
-      powerUp[i+(7*ii)].posx = -1.5 + (0.7*ii);
-      powerUp[i+(7*ii)].posy = -0.35 - (0.13*i);
+      powerUp[i+(7*ii)].posx = -1.5 + (0.8*ii);
+      powerUp[i+(7*ii)].posy = -0.35 - (0.135*i);
     }
   }
+  readDescriptions(powerUp);
+
 
   runnerPos.x=0.0;
   runnerPos.y=0.66;
@@ -261,14 +225,14 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
     if(hilightDir)
     {
       hilight++;
-      if(hilight == *numHighScores*3)//-1)
+      if(hilight == numHighScores*3)//-1)
       {
-        hilight=*numHighScores-1;
+        hilight= numHighScores-1;
         hilightDir=0;
       }
     } else {
       hilight--;
-      if(hilight == -*numHighScores*2)
+      if(hilight == -numHighScores*2)
       {
         hilightDir=1;
         hilight=0;
@@ -279,21 +243,15 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
    
     glTranslatef(0.0, 0.59, 0.0);
     float a;
-    for(i=0; i < *numHighScores; i++)
+    for(i=0; i < numHighScores; i++)
     {
       if((hilightDir && i < hilight+1) || (!hilightDir && i > hilight-1))
       {
-        a=1.0-((1.0/(float)(*numHighScores*2))*(delta(hilight,i)));
-        glBindTexture(GL_TEXTURE_2D, texHighScore[i]);
-        glColor4f(1.0,1.0,1.0, a  );
-        glBegin( GL_QUADS );
-          glTexCoord2f(-0.0f,0); glVertex3f(  -1.27, 0.16, 0.0 );
-          glTexCoord2f(1.0f,0);glVertex3f(   1.27, 0.16, 0.0 );
-          glTexCoord2f(1.0f,0.110001);glVertex3f(   1.27,-0.16, 0.0 );
-          glTexCoord2f(0.0f,0.110001); glVertex3f(  -1.27,-0.16, 0.0 );
-        glEnd( );
+        a=1.0-((1.0/(float)(numHighScores*2))*(delta(hilight,i)));
+        glColor4f(1,1,1,a);
+        glText->write(menu->highScores[i], FONT_INTROHIGHSCORE, 1, 1.0, 0.0, 0.0);
       }
-      glTranslatef(0.0,-0.11,0.0);
+      glTranslatef(0.0,-glText->getHeight(FONT_INTROHIGHSCORE),0.0);
    }
    
     if(!rotDir)
@@ -322,5 +280,37 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
     globalMilliTicksSinceLastDraw=0;
     *frameAge = 0;
     
+  }
+}
+
+
+void titleScreenClass::readDescriptions(powerupDescriptionClass po[])
+{
+  ifstream f;
+  string line;
+  int p=0;
+  bool flip=0;
+  
+  f.open( useTheme("/powerupdescriptions.txt", setting.gfxTheme).data() );
+  if(f.is_open())
+  {
+    while(!f.eof())
+    {
+      getline(f, line);
+      if(!flip)
+      {
+        flip=1;
+        po[p].name=line;
+      } else {
+        flip=0;
+        po[p].description=line;
+      p++;
+      }
+      if(p == MAXPOTEXTURES)
+        break;
+    }
+    f.close();
+  } else {
+    cout << "Could not open powerupdescriptions"<<endl;
   }
 }

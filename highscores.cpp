@@ -20,19 +20,14 @@
 class highScoreClass {
   private:
     string name;
-    GLuint texText;
     textureManager texMgr;
-    textureClass tex[2];
+    textureClass tex;
   public:
   
     highScoreClass()
     {
       name="";
-      glGenTextures(1, &texText);
-          SDL_Color color = { 255,255,255 };
-      writeTxt(fonts[1], color, " ", texText,1);
-      texMgr.load(useTheme("/gfx/highscore/entername.png",setting.gfxTheme), tex[0]);
-
+      texMgr.load(useTheme("/gfx/highscore/entername.png",setting.gfxTheme), tex);
     }
   
     void draw()
@@ -42,7 +37,7 @@ class highScoreClass {
       glTranslatef(0,0,-3.0);
       glColor4f(1,1,1,1);
  
-      glBindTexture(GL_TEXTURE_2D, tex[0].prop.texture);
+      glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
       glBegin( GL_QUADS );
         glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 0.5f, 0.0f );
         glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, 0.5f, 0.0f );
@@ -50,14 +45,9 @@ class highScoreClass {
         glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,-0.5f, 0.0f );
       glEnd( );      
 
-      glTranslatef(0.0, -0.89, 0.0);
-      glBindTexture(GL_TEXTURE_2D, texText);
-      glBegin( GL_QUADS );
-        glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 0.0f );
-        glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, 1.0f, 0.0f );
-        glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,-1.0f, 0.0f );
-        glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,-1.0f, 0.0f );
-      glEnd( );
+
+      glColor4f(1,1,1,1);
+      glText->write(name, FONT_MENUHIGHSCORE, 1, 2.0, 0.0, 0.0);
       
     }
     
@@ -69,7 +59,7 @@ class highScoreClass {
         {
           var.showHighScores = 0;
           initNewGame();
-          menu.genHsTex();
+          menu.refreshHighScoreList();
           var.menu = 7;
           return;
         }
@@ -84,12 +74,6 @@ class highScoreClass {
             } else {
               name += e.key.keysym.unicode;
             }
-            
-            SDL_Color color = { 255,255,255 };
-            if(name.length() < 1)
-            writeTxt(fonts[1], color, " ", texText,1);
-            else
-            writeTxt(fonts[1], color, name.data(), texText,1);
           }
         } else {
           var.showHighScores = 0;
@@ -98,8 +82,7 @@ class highScoreClass {
           hsList << player.score << "|" << name << endl;
           hsList.close();
           initNewGame();
-          menu.genHsTex();
-//           var.menu = 7;
+          menu.refreshHighScoreList();
           resumeGame();
           var.titleScreenShow=1;
 

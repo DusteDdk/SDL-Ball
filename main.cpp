@@ -52,7 +52,7 @@
 #define WITH_SOUND
 // #define WITH_WIIUSE
 
-#define VERSION "0.12-RC4"
+#define VERSION "0.13SVN"
 #define SAVEGAMEVERSION 2
 
 #ifdef WITH_WIIUSE
@@ -134,6 +134,8 @@
 
 using namespace std;
 
+GLfloat debugC=1.0;
+
 void writeSettings();
 void initScreen();
 void initNewGame();
@@ -143,10 +145,6 @@ float rndflt(float total, float negative);
 class ball;
 class paddle_class;
 float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
-
-bool writeTxt(TTF_Font *font, SDL_Color textColor,const char text[], GLuint texture, bool center);
-
-TTF_Font *fonts[4] = {NULL,NULL,NULL,NULL};
 
 int globalTicks;
 float globalMilliTicks;
@@ -429,6 +427,9 @@ vector<struct themeInfo> getThemes() {
   return(v);
 }
 
+#include "text.cpp"
+glTextClass *glText; //Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
+
 class textureClass {
   private:
     float age; //Hvor gammel er den frame vi er ved?
@@ -616,7 +617,7 @@ class textureManager {
         {
           set=line.substr(0,line.find('='));
           val=line.substr(line.find('=')+1);
-      if(set=="xoffset")
+          if(set=="xoffset")
           {
             tex.prop.xoffset=atof(val.data());
           } else if(set=="yoffset")
@@ -2901,64 +2902,6 @@ void initGL() {
 
 }
 
-bool writeTxt(TTF_Font *font, SDL_Color textColor,const char text[], GLuint texture, bool center)
-{
-  SDL_Surface *temp,*tempb;
-
-  Uint32 rmask, gmask, bmask, amask;
-  #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-  #else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-  #endif
-
-  if(font == NULL)
-  {
-    cout << SDL_GetError() << endl;;
-    SDL_FreeSurface(temp);
-    SDL_FreeSurface(tempb);
-    return(FALSE);
-  }
-
-  temp = TTF_RenderText_Blended(font, text, textColor);
-  SDL_SetAlpha(temp, 0, 0);
-
-  tempb = SDL_CreateRGBSurface(0, 512, 512, 32, rmask,gmask,bmask,amask);
-
-  int w,h;
-  TTF_SizeUTF8(font,text, &w,&h);
-
-  SDL_Rect src,dst;
-  src.x=0;
-  src.y=0;
-  src.w=w;
-  src.h=h;
-
-  if(center)
-  {
-    dst.x=(512.0-w)/2.0;
-  } else {
-    dst.x=0;
-  }
-  dst.y=0;
-  dst.w=w;
-  dst.h=h;
-
-  SDL_BlitSurface(temp, &src, tempb, &dst);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, tempb->w, tempb->h, GL_RGBA, GL_UNSIGNED_BYTE, tempb->pixels);
-
-  SDL_FreeSurface(temp);
-  SDL_FreeSurface(tempb);
-  return(TRUE);
-}
-
 float rndflt(float total, float negative)
 {
 
@@ -4086,16 +4029,9 @@ int main (int argc, char *argv[]) {
 
   initGL();
 
-
+  glText = new glTextClass; // instantiate the class now that settings have been read.
 
   soundMan.init();
-  TTF_Init();
-
-  
-  fonts[0] = TTF_OpenFont( useTheme("/font/DejaVuSans.ttf",setting.gfxTheme).data(), 50 ); //Announcements
-  fonts[3] = TTF_OpenFont( useTheme("/font/FreeSans.ttf",setting.gfxTheme).data(), 25); //Highscore list
-  fonts[1] = TTF_OpenFont( useTheme("/font/FreeSans.ttf",setting.gfxTheme).data(), 60 ); //Enter text for highscore
-  fonts[2] = TTF_OpenFont( useTheme("/font/DejaVuSans.ttf",setting.gfxTheme).data(), 80 ); //Announcements
 
   SDL_WM_SetCaption("SDL-Ball", "SDL-Ball");
   SDL_WarpMouse(var.halfresx, var.halfresy);
@@ -4178,7 +4114,7 @@ int main (int argc, char *argv[]) {
 
 
   int i=0; //bruges i for loop xD
-  glScoreBoard scoreboard(texMgr);
+  glScoreBoard scoreboard;
   menuClass menu;
 
 
@@ -4278,11 +4214,12 @@ int main (int argc, char *argv[]) {
           pauseGame();
           if( hKeeper.isHighScore() )
           {
-            announce.write("Highscore!", 3000,fonts[0]);
+          // announce.write(string text, int mslife, int fontnum);
+            announce.write("Highscore!", 3000,FONT_ANNOUNCE_GOOD);
             var.showHighScores=1;
             soundMan.add(SND_HIGHSCORE, 0);
           } else {
-            announce.write("GameOver!", 3000,fonts[0]);
+            announce.write("GameOver!", 3000,FONT_ANNOUNCE_BAD);
             soundMan.add(SND_GAMEOVER, 0);
             initNewGame();
             var.titleScreenShow=1;
@@ -4295,14 +4232,14 @@ int main (int argc, char *argv[]) {
         if(var.transiteffectnum == -1)
         {
 
-          announce.write("Well Done!", 1000, fonts[2]);
+          announce.write("Well Done!", 1000, FONT_ANNOUNCE_GOOD);
           soundMan.add(SND_NEXTLEVEL, 0);
 
           if(bMan.activeBalls > 1)
           {
             sprintf(txt, "Bonus: %i", bMan.activeBalls*150);
             player.score += (bMan.activeBalls*150)*player.multiply;
-            announce.write(txt, 2000, fonts[2]);
+            announce.write(txt, 2000, FONT_ANNOUNCE_GOOD);
           }
 
           fxMan.set(FX_VAR_TYPE, FX_TRANSIT);
@@ -4330,11 +4267,11 @@ int main (int argc, char *argv[]) {
               {
                 player.multiply += player.multiply*3;
                 player.level=0;
-                announce.write("Finished!",3500,fonts[2]);
+                announce.write("Finished!",3500,FONT_ANNOUNCE_GOOD);
               }
 
               sprintf(txt, "Level %i",player.level+1); //+1 fordi levels starter fra 0
-              announce.write(txt,1500,fonts[2]);
+              announce.write(txt,1500,FONT_ANNOUNCE_GOOD);
 
               //check om vi skal fjerne powerups
               if(player.difficulty > EASY)
@@ -4573,7 +4510,7 @@ int main (int argc, char *argv[]) {
         }
 
         announce.draw();
-
+        
         SDL_GL_SwapBuffers( );
 
         frameAge = 0;
@@ -4639,6 +4576,15 @@ int main (int argc, char *argv[]) {
           } else if( sdlevent.key.keysym.sym == setting.keyPrevPo)
           {
             gVar.shopNextItem=1;
+          }
+          
+          else if(sdlevent.key.keysym.sym == SDLK_y)
+          {
+            debugC+=0.1;
+          }
+          else if(sdlevent.key.keysym.sym == SDLK_u)
+          {
+            debugC-=0.1;
           }
             
           #ifdef WITH_WIIUSE

@@ -188,10 +188,13 @@ Tweaked gameplay:
 Remembers difficulty.
 Detonate powerup had same icon as Multiball, fixed now.
 
-Todo for 0.12:
-Fix bugs found in 0.12rc3
+
+0.13:
+Changed from "string in a texture" to string-of-quads text rendering.
 
 Todo for 0.13:
+REMOVE description pix, make file with descriptions
+
 GPL sounds.
 More levels.
 Get more liniar increase in difficulty by sorting/adding/removing levels.

@@ -17,36 +17,19 @@
  * ************************************************************************* */
 // #include <list>
 
-struct glQuad {
-  GLfloat x[2],y[2],z;
-  int frame;
-};
 
 class glScoreBoard
 {
   private:
   unsigned int lastScoreTick;
-  
   uint tempScore;
-  list<struct glQuad> glNum;
-  int numQuads;
-
-  textureClass tex;
   uint score;
+  char tempText[255];
   public:
   
 
-  glScoreBoard(textureManager & texMgr)
+  glScoreBoard()
   {
-    texMgr.load(useTheme("/gfx/highscore/numbers.png",setting.gfxTheme), tex);
-    tex.prop.ticks=1000;
-    tex.prop.cols=4;
-    tex.prop.rows=4;
-    tex.prop.xoffset=0.25;
-    tex.prop.yoffset=0.25;
-    tex.prop.frames=16;
-    tex.prop.playing=0;
-    
     init();
   }
   
@@ -67,13 +50,11 @@ class glScoreBoard
     int dif=score - tempScore;
     
     int i,n;
-    struct glQuad tempNum;
 
     if(tempScore != score )
     {
       if(lastScoreTick + 50 < SDL_GetTicks())
       {
-//         soundMan.add(SND_SCORE_TICK, 0.0);
         tempScore+= (float)dif/5.0 +1; ;
         if(tempScore >= score)
           tempScore=score;
@@ -81,47 +62,16 @@ class glScoreBoard
 
         n = tempScore;
         i=0;
-        
-        //This might be slow
-        glNum.clear();
-        
-        do
-        {
-          i++;
-          tempNum.frame=(n%10)+1;
-          tempNum.x[0]= -1.50 -0.10;
-          tempNum.x[1]= -1.50 +0.10;
-          tempNum.y[0]= 1.15 +0.10;
-          tempNum.y[1]= 1.15 -0.10;
-          tempNum.z=-0.0;
-  
-          glNum.push_front(tempNum);
-          n /= 10;
-          i++;
-        } while (n > 0);
+        sprintf(tempText, "%i", tempScore);
       }
     }
     
     glLoadIdentity();
-    glTranslatef(0.0, 0.0, -3.0);
+    glTranslatef(-1.55, 1.24-(glText->getHeight(FONT_HIGHSCORE)/2.0), -3.0);
+    
+    glColor4f(1.0,1.0,1.0,1.0);
+    glText->write(tempText, FONT_HIGHSCORE, 0, 1.0, 0.0, 0.0);
 
-    glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);    
-    glColor4f( 1,1,1,1 );
-    i=0;
-    for(list<struct glQuad>::iterator it=glNum.begin(); it != glNum.end(); ++it)
-    {
-      tex.frame=it->frame;
-      tex.play();
-      glBegin( GL_QUADS );
-       glTexCoord2f(tex.pos[0],tex.pos[1]); glVertex3f(it->x[0]+ (i*0.20), it->y[0], it->z);
-       glTexCoord2f(tex.pos[2],tex.pos[3]); glVertex3f(it->x[1]+ (i*0.20), it->y[0], it->z);
-       glTexCoord2f(tex.pos[4],tex.pos[5]); glVertex3f(it->x[1]+ (i*0.20), it->y[1], it->z);
-       glTexCoord2f(tex.pos[6],tex.pos[7]); glVertex3f(it->x[0]+ (i*0.20), it->y[1], it->z);
-       i++;
-      glEnd( );
-    }
 
   }
 };

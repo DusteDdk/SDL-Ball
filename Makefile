@@ -3,7 +3,7 @@ DATADIR?=data/
 CC=g++ -DDATADIR="\"$(DATADIR)\""
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
-CFLAGS+=-c -Wall
+CFLAGS+=-g -c -Wall
 
 #append -lwiiuse to compile with WIIUSE support
 #remove -lSDL_mixer if NOT compiling WITH_SOUND
