@@ -413,7 +413,7 @@ public:
 
       //sound
       glTranslatef(0.0,-0.22,0.0f);
-      #ifdef WITH_SOUND
+      #ifndef NOSOUND
       if(var.menuItem==5)
         glCallList(dl+2);
       else

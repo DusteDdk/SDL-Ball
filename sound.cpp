@@ -24,13 +24,13 @@ struct sampleQueuedItem {
 
 class soundClass {
   private:
-  #ifdef WITH_SOUND
+  #ifndef NOSOUND
   //The actual sound samples
   Mix_Chunk *sample[SNDSAMPLES];
-  #endif 
   //List of queued samples
   vector<struct sampleQueuedItem> q;
   void loadSample(const char *SampleName, int sampleNum);
+  #endif 
   
   public:
   bool init();
@@ -41,7 +41,7 @@ class soundClass {
 };
 
 bool soundClass::init() {
-  #ifdef WITH_SOUND
+  #ifndef NOSOUND
   int audio_rate = 44100;
   Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
   int audio_channels = 2;
@@ -59,9 +59,9 @@ bool soundClass::init() {
   return(1);
 }
 
+#ifndef NOSOUND
 void soundClass::loadSample(const char *SampleName, int sampleNum)
 {
-  #ifdef WITH_SOUND
   string F="snd/";
   F += SampleName;
   
@@ -70,14 +70,14 @@ void soundClass::loadSample(const char *SampleName, int sampleNum)
   {
     cout << "SoundManager '"<< F <<"' : " << Mix_GetError() << endl;
   }
-  #endif
 }
+#endif
 
 
 /* This function puts a sample in queue for playing */
 void soundClass::add(int i, GLfloat x)
 {
-  #ifdef WITH_SOUND
+  #ifndef NOSOUND
   if(setting.sound==0)
     return;
   
@@ -98,7 +98,7 @@ void soundClass::add(int i, GLfloat x)
 void soundClass::loadsounds()
 {
 
-  #ifdef WITH_SOUND
+  #ifndef NOSOUND
   loadSample("start.ogg", SND_START);
   loadSample("ball-hit-border.ogg", SND_BALL_HIT_BORDER);
   loadSample("ball-hit-paddle.ogg", SND_BALL_HIT_PADDLE);
@@ -128,7 +128,7 @@ void soundClass::loadsounds()
    It will average the x/stereo position of a sample if it is queued more than once */
 void soundClass::play()
 {
-  #ifdef WITH_SOUND
+  #ifndef NOSOUND
   if(setting.sound==0)
     return;
 
@@ -192,7 +192,7 @@ void soundClass::play()
 
 soundClass::~soundClass()
 {
-  #ifdef WITH_SOUND
+  #ifndef NOSOUND
   for(int i=0; i < SNDSAMPLES; i++)
   {
     Mix_FreeChunk(sample[i]);

@@ -190,9 +190,9 @@ Detonate powerup had same icon as Multiball, fixed now.
 
 0.13:
 Changed from "string in a texture" to string-of-quads text rendering.
-Changed max-min bounceoff angle from 10-170 to 30-150
+Changed max-min bounceoff angle from 10-170 to 15-165
 Fixed bug that made custom colored bricks invisible.
-It now show how many levels you have left besides your current ball.
+It now show how many levels you have left AFTER dropping your current ball, instead of before.
 Fixed bug that made game paused after having gameover without a highscore.
 Removed "Gravity" powerdown.
 Added Cash Powerup.

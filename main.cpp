@@ -48,28 +48,28 @@
   #define DATADIR "data/"
 #endif
 
-
-#define WITH_SOUND
-// #define WITH_WIIUSE
-
-#define VERSION "0.13SVN"
-#define SAVEGAMEVERSION 2
+//To disable sound support:
+//#define NOSOUND
 
 #ifdef WITH_WIIUSE
   #include <wiiuse.h>
   #define MAX_WIIMOTES	1
 #endif
-#ifdef WITH_SOUND
+#ifndef NOSOUND
   #define MIX_CHANNELS 16
   #include <SDL/SDL_mixer.h>
 #endif
+
+#define VERSION "0.13SVN"
+#define SAVEGAMEVERSION 2
+
 
 #include "declerations.h"
 
 #define PI 3.14159265
 #define RAD 6.28318531
-#define BALL_MAX_DEGREE 2.0943951 //150 degrees
-#define BALL_MIN_DEGREE 0.523598776 //30 degrees
+#define BALL_MAX_DEGREE 2.61799388 //150+15 = 165 degrees
+#define BALL_MIN_DEGREE 0.261799388 //15 degrees
 
 #define FALSE 0
 #define TRUE 1
@@ -2039,7 +2039,6 @@ class ballManager {
           coldet(bri, b[i], p, fxMan);
           if(p.x < 50) //we totally hit?? :P
           {
-
             getSpeed();
 
             if(setting.eyeCandy)
@@ -2080,8 +2079,6 @@ class ballManager {
           {
             hits++;
             getSpeed();
-
-
 
             if(player.powerup[PO_GLUE])
             {
@@ -2273,7 +2270,7 @@ class powerupClass : public moving_object {
         switch(type)
         {
           case PO_COIN:
-            player.coins += 500;
+            player.coins += 1000;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_GLUE:
@@ -3074,13 +3071,17 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
             br.type='B';
           }
 
+          //Update p, used by caller to find out if we hit anything..
+          p.x = ba.posx+px;
+          p.y = ba.posy+py;
+
 
           ba.hit(br.tex.prop.glParColorInfo);
 
-           if(!player.powerup[PO_THRU] || player.difficulty == HARD)
-           {
-            ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
-           }
+          if(!player.powerup[PO_THRU] || player.difficulty == HARD)
+          {
+          ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
+          }
         } else {
           cout << "Collision detection error: Dont know where the ball hit." <<endl;
         }
@@ -3927,7 +3928,7 @@ int main (int argc, char *argv[]) {
   }
 
   //Initialize SDL
-  #ifdef WITH_SOUND
+  #ifndef NOSOUND
   if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) <0 )
   #else
   if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) <0 )

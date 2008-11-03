@@ -1,12 +1,13 @@
 DATADIR?=data/
 
+#append -DWITH_WIIUSE to compile with WIIUSE support!
+#append -DNOSOUND to compile WITHOUT sound support
 CC=g++ -DDATADIR="\"$(DATADIR)\""
 
-#append -DWITH_WIIUSE to compile with WIIUSE support!
 CFLAGS+=-g -c -Wall
 
 #append -lwiiuse to compile with WIIUSE support
-#remove -lSDL_mixer if NOT compiling WITH_SOUND
+#remove -lSDL_mixer if compiling with -DNOSOUND
 LDFLAGS+=-lGL -lGLU -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer
 
 SOURCES=main.cpp 
