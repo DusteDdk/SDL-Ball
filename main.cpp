@@ -68,8 +68,8 @@
 
 #define PI 3.14159265
 #define RAD 6.28318531
-#define BALL_MAX_DEGREE 2.7925268 //160 degrees
-#define BALL_MIN_DEGREE 0.174532925 //10 degrees
+#define BALL_MAX_DEGREE 2.0943951 //150 degrees
+#define BALL_MIN_DEGREE 0.523598776 //30 degrees
 
 #define FALSE 0
 #define TRUE 1
@@ -77,7 +77,7 @@
 //#define debugBall 1
 //     #define DEBUG_DRAW_BALL_QUAD
 
-#define PO_GRAVITY    0
+#define PO_COIN 0
 #define PO_BIGBALL    1
 #define PO_NORMALBALL 2
 #define PO_SMALLBALL  3
@@ -233,7 +233,7 @@ struct vars {
   bool enterSaveGameName;
   bool startedPlaying;
 
-  int transiteffectnum;
+  int effectnum;
 
   struct scrollInfoScruct scrollInfo;
 };
@@ -1536,9 +1536,6 @@ class ball : public moving_object {
 
   public:
   tracer tail;
-  int died; //When did this ball get gravity?
-
-  bool gravity; //did we get gravity
   bool explosive; //Makes brick explosive (to get a explosion effect) and explode it
 
   bool glued; //Sidder vi fast på padden for øjeblikket?
@@ -1561,53 +1558,31 @@ class ball : public moving_object {
     aimdir=0;
   }
 
-  void hit(pos p, GLfloat c[])
+  void hit(GLfloat c[])
   {
-    if(gravity)
-    {
-      yvel /= 1.4;
-      xvel /= 1.01;
-      posy = p.y+height;
-      if(globalTicks-died > 6000)
-      {
-        active=0;
-      }
-    }
-
       if(setting.eyeCandy)
         tail.colorRotate(explosive, c);
   }
 
   void move()
   {
-    bool col=0;
+
     //vi laver lige den her coldet her...
     if(posx+width > 1.6 && xvel > 0.0)
     {
-      col=1;
+      soundMan.add(SND_BALL_HIT_BORDER, posx);
       xvel *= -1;
     } else if(posx-width < -1.6 && xvel < 0.0)
     {
-      col=1;
+      soundMan.add(SND_BALL_HIT_BORDER, posx);
       xvel *= -1;
     } else if(posy+width > 1.25 && yvel > 0.0)
     {
-      col=1;
+      soundMan.add(SND_BALL_HIT_BORDER, posx);
       yvel *= -1;
     } else if(posy-width < -1.24)
     {
       active=0;
-    }
-
-    if(col)
-    {
-      soundMan.add(SND_BALL_HIT_BORDER, posx);
-    }
-
-    if(gravity)
-    {
-      if(yvel != 0)
-        yvel -= 0.6*globalMilliTicks;
     }
 
     posx +=xvel*globalMilliTicks;
@@ -1984,7 +1959,6 @@ class ballManager {
           b[i].lastY = p.y;
           b[i].posx = p.x;
           b[i].posy = p.y;
-          b[i].gravity=0;
           b[i].explosive=0;
           b[i].setspeed(speed);
           b[i].setangle(angle);
@@ -2070,22 +2044,19 @@ class ballManager {
 
             if(setting.eyeCandy)
             {
-              if(!b[i].gravity)
-              {
-                //spawn partikler
-                fxMan.set(FX_VAR_TYPE, FX_SPARKS);
-                fxMan.set(FX_VAR_COLDET,1);
+              //spawn partikler
+              fxMan.set(FX_VAR_TYPE, FX_SPARKS);
+              fxMan.set(FX_VAR_COLDET,1);
 
-                fxMan.set(FX_VAR_SPEED, 1.0f);
+              fxMan.set(FX_VAR_SPEED, 1.0f);
 
-                fxMan.set(FX_VAR_LIFE, 1500);
-                fxMan.set(FX_VAR_NUM, 16);
-                fxMan.set(FX_VAR_SIZE, 0.015f);
+              fxMan.set(FX_VAR_LIFE, 1500);
+              fxMan.set(FX_VAR_NUM, 16);
+              fxMan.set(FX_VAR_SIZE, 0.015f);
 
-                fxMan.set(FX_VAR_COLOR, 1.0,1.0,0.8);
+              fxMan.set(FX_VAR_COLOR, 1.0,1.0,0.8);
 
-                fxMan.spawn(p);
-              }
+              fxMan.spawn(p);
             }
           }
         }
@@ -2110,18 +2081,15 @@ class ballManager {
             hits++;
             getSpeed();
 
-            if(b[i].gravity)
-            {
-              player.score += 1000*player.multiply;
-            } else {
 
-              if(player.powerup[PO_GLUE])
-              {
-                soundMan.add(SND_GLUE_BALL_HIT_PADDLE, p.x);
-              } else {
-                soundMan.add(SND_BALL_HIT_PADDLE, p.x);
-              }
+
+            if(player.powerup[PO_GLUE])
+            {
+              soundMan.add(SND_GLUE_BALL_HIT_PADDLE, p.x);
+            } else {
+              soundMan.add(SND_BALL_HIT_PADDLE, p.x);
             }
+            
 
             if(setting.eyeCandy)
             {
@@ -2137,32 +2105,6 @@ class ballManager {
               fxMan.set(FX_VAR_SPEED, 0.5f);
               fxMan.spawn(p);
 
-              if(b[i].gravity)
-              {
-                p.y = paddle.posy+paddle.height;
-
-                fxMan.set(FX_VAR_LIFE, 1000);
-                fxMan.set(FX_VAR_NUM, 32);
-
-                fxMan.set(FX_VAR_COLOR, 1.0,1.0,0.7);
-
-
-                fxMan.set(FX_VAR_SPEED, 0.6f);
-                fxMan.spawn(p);
-
-                fxMan.set(FX_VAR_LIFE, 1500);
-                fxMan.set(FX_VAR_NUM, 32);
-                fxMan.set(FX_VAR_COLOR, 1.0,0.0,0.0);
-                fxMan.spawn(p);
-
-                fxMan.set(FX_VAR_SPEED, 0.7f);
-                fxMan.set(FX_VAR_LIFE, 1500);
-                fxMan.set(FX_VAR_NUM, 32);
-                fxMan.set(FX_VAR_COLOR, 1.0,1.0,1.0);
-                fxMan.spawn(p);
-
-                b[i].active=0;
-              }
             } //eyecandy
           } // if col
         } //if active
@@ -2192,10 +2134,6 @@ class ballManager {
         {
           switch(powerup)
           {
-            case PO_GRAVITY: //gravity
-              b[i].gravity=1;
-              b[i].died=globalTicks;
-              break;
             case PO_BIGBALL: //big balls
               b[i].setSize(0.04);
               b[i].setspeed(difficulty.ballspeed[player.difficulty]);
@@ -2334,6 +2272,10 @@ class powerupClass : public moving_object {
         //Apply powerup:
         switch(type)
         {
+          case PO_COIN:
+            player.coins += 500;
+            soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+            break;
           case PO_GLUE:
             player.coins += 150;
             player.powerup[PO_GLUE] = 1;
@@ -2361,11 +2303,6 @@ class powerupClass : public moving_object {
             player.powerup[PO_SMALLBALL]=1;
             player.powerup[PO_BIGBALL]=0;
             player.powerup[PO_NORMALBALL]=0;
-            soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
-            break;
-          case PO_GRAVITY:
-            player.coins += 5;
-            bMan.powerup(PO_GRAVITY);
             soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
             break;
           case PO_MULTIBALL:
@@ -2584,10 +2521,6 @@ class powerupManager {
             p[i].score = 500;
           }
 
-          if(type==PO_GRAVITY)
-          {
-            p[i].score = -600;
-          }
 
           if(type==PO_MULTIBALL)
           {
@@ -2773,10 +2706,10 @@ void spawnpowerup(char powerup, pos a, pos b)
   {
     pMan.spawn(a,b,PO_AIMHELP);
   }
-
+  
   if(powerup == 'E')
   {
-    pMan.spawn(a,b,PO_GRAVITY);
+    pMan.spawn(a,b,PO_COIN);
   }
 
   if(powerup == '5')
@@ -3119,6 +3052,7 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
         a.y = br.posy;
 
         //Hastigheden en powerup blier sendt afsted med
+
         if(player.difficulty == EASY)
         {
           b.x = ba.xvel/2.0;
@@ -3140,10 +3074,8 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
             br.type='B';
           }
 
-          p.x = ba.posx+px;
-          p.y = ba.posy+py;
 
-          ba.hit(p, br.tex.prop.glParColorInfo);
+          ba.hit(br.tex.prop.glParColorInfo);
 
            if(!player.powerup[PO_THRU] || player.difficulty == HARD)
            {
@@ -3199,7 +3131,6 @@ void padcoldet(ball & b, paddle_class & p, pos & po)
         py /= (float)points;
 
         px = b.posx+px;
-
 
         //Ved at reagere herinde fungerer yvel som en switch, så det kun sker een gang ;)
         if(b.yvel < 0)
@@ -3294,7 +3225,7 @@ class hudClass {
     glBindTexture(GL_TEXTURE_2D, texBall.prop.texture);
     texBall.play();
     glBegin( GL_QUADS );
-    for(i=0; i < player.lives; i++)
+    for(i=0; i < player.lives-1; i++)
     {
        glTexCoord2f(texBall.pos[0],texBall.pos[1]); glVertex3f(1.55-(0.05*i), 1.2, 0.0);
        glTexCoord2f(texBall.pos[2],texBall.pos[3]); glVertex3f(1.5 -(0.05*i), 1.2, 0.0);
@@ -4077,8 +4008,8 @@ int main (int argc, char *argv[]) {
 
   texMgr.load(useTheme("/gfx/border.png",setting.gfxTheme), texBorder);
 
+  texMgr.readTexProps(useTheme("/gfx/powerup/coin.txt",setting.gfxTheme),texPowerup[PO_COIN]);
   texMgr.readTexProps(useTheme("/gfx/powerup/glue.txt",setting.gfxTheme),texPowerup[PO_GLUE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/gravity.txt",setting.gfxTheme),texPowerup[PO_GRAVITY]);
   texMgr.readTexProps(useTheme("/gfx/powerup/multiball.txt",setting.gfxTheme),texPowerup[PO_MULTIBALL]);
   texMgr.readTexProps(useTheme("/gfx/powerup/bigball.txt",setting.gfxTheme),texPowerup[PO_BIGBALL]);
   texMgr.readTexProps(useTheme("/gfx/powerup/normalball.txt",setting.gfxTheme),texPowerup[PO_NORMALBALL]);
@@ -4145,7 +4076,7 @@ int main (int argc, char *argv[]) {
 
   hudClass hud(texBall[0], texPowerup); //This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
 
-  var.transiteffectnum=-1;
+  var.effectnum=-1;
 
   int lastTick = SDL_GetTicks();
   int nonpausingLastTick = lastTick;
@@ -4202,7 +4133,7 @@ int main (int argc, char *argv[]) {
       if(bMan.activeBalls == 0 && !gVar.newLevel) //check kun om vi er døde hvis vi faktisk er kommet igang med at spille
       {
         player.lives--;
-        if(player.lives >= 1)
+        if(player.lives > 0)
         {
           resetPlayerPowerups();
           gVar.newLife=1;
@@ -4218,18 +4149,41 @@ int main (int argc, char *argv[]) {
             announce.write("Highscore!", 3000,FONT_ANNOUNCE_GOOD);
             var.showHighScores=1;
             soundMan.add(SND_HIGHSCORE, 0);
-          } else {
-            announce.write("GameOver!", 3000,FONT_ANNOUNCE_BAD);
-            soundMan.add(SND_GAMEOVER, 0);
-            initNewGame();
-            var.titleScreenShow=1;
           }
+        } else if(gVar.gameOver && !var.showHighScores)
+        {
+          //Only ran if there is gameover and no highscore
+          if(var.effectnum == -1)
+          {
+            fxMan.set(FX_VAR_TYPE, FX_TRANSIT);
+            fxMan.set(FX_VAR_LIFE, 3000);
+            fxMan.set(FX_VAR_COLOR, 0.0,0.0,0.0);
+            p.x = 0.0;
+            p.y = 0.0;
+  
+              //Kør en transition effekt
+            var.effectnum = fxMan.spawn(p);
+            announce.write("GameOver!", 1500,FONT_ANNOUNCE_BAD);
+            soundMan.add(SND_GAMEOVER, 0);
+          } else {
+          
+            if(var.transition_half_done)
+            {
+              var.titleScreenShow=1;
+              fxMan.kill(var.effectnum);
+              var.effectnum = -1;
+              initNewGame();
+              resumeGame();
+            }
+          }
+          
+
         }
       }
 
       if(gVar.nextlevel)
       {
-        if(var.transiteffectnum == -1)
+        if(var.effectnum == -1)
         {
 
           announce.write("Well Done!", 1000, FONT_ANNOUNCE_GOOD);
@@ -4249,7 +4203,7 @@ int main (int argc, char *argv[]) {
           p.y = 0.0;
 
             //Kør en transition effekt
-          var.transiteffectnum = fxMan.spawn(p);
+          var.effectnum = fxMan.spawn(p);
 
           var.idiotlock = 0;
 
@@ -4284,9 +4238,9 @@ int main (int argc, char *argv[]) {
 
           }
 
-          if(!fxMan.isActive(var.transiteffectnum))
+          if(!fxMan.isActive(var.effectnum))
           {
-            var.transiteffectnum = -1; //nulstil så den er klar igen
+            var.effectnum = -1; //nulstil så den er klar igen
             gVar.nextlevel = 0;
             var.paused = 0;
             var.idiotlock=0;

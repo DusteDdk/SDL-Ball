@@ -1,4 +1,3 @@
-file=brick/base.png
 ticks=1000
 cols=1
 rows=1
@@ -7,3 +6,4 @@ yoffset=1.0
 frames=0
 playing=0
 padding=1
+file=brick/base.png

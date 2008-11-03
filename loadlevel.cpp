@@ -31,7 +31,7 @@ class powerupLoaderClass {
     string line;
     
     //Which powerups are evil?
-    evilPowerups = "2HE37"; //P
+    evilPowerups = "2H37"; //P
     
     ifstream powerFile(useTheme("/powerups.txt",setting.lvlTheme).data());
     if(!powerFile.is_open())
@@ -214,7 +214,12 @@ void loadlevel(string file, brick bricks[] ,int level)
                 bricks[brick].tex.prop.glTexColorInfo[0] = 0.003921569*strtol(rgb[0], NULL, 16);
                 bricks[brick].tex.prop.glTexColorInfo[1] = 0.003921569*strtol(rgb[1], NULL, 16);
                 bricks[brick].tex.prop.glTexColorInfo[2] = 0.003921569*strtol(rgb[2], NULL, 16);
-  
+                
+                bricks[brick].tex.prop.glParColorInfo[0] = 0.003921569*strtol(rgb[0], NULL, 16);
+                bricks[brick].tex.prop.glParColorInfo[1] = 0.003921569*strtol(rgb[1], NULL, 16);
+                bricks[brick].tex.prop.glParColorInfo[2] = 0.003921569*strtol(rgb[2], NULL, 16);
+                
+                bricks[brick].tex.prop.glTexColorInfo[3] = 1.0;
                 ch +=6;
               }
               //cout << "Level: " << levelnum  << " brick: " << brick << " Powerup: " << line[ch] << " Type: " << line[ch+1]<<"\n";
@@ -240,6 +245,9 @@ void initlevels(brick bricks[], textureClass texLvl[])
   int brick;
   powerupLoaderClass powerupLoader;
 
+  //Temp storage for custom colors
+  GLfloat tempCol[4], tempParCol[3];
+
   //Set dem op
   int row,i;
   i=0;
@@ -255,8 +263,6 @@ void initlevels(brick bricks[], textureClass texLvl[])
       
       if(bricks[i].type != '0')
       {
-
-        
         bricks[i].active=1;
         bricks[i].collide=1;
         bricks[i].isdyingnormally=0;
@@ -355,10 +361,20 @@ void initlevels(brick bricks[], textureClass texLvl[])
         bricks[i].tex=texLvl[3];
         bricks[i].opacity=texLvl[3].prop.glTexColorInfo[3];
         bricks[i].powerup = powerupLoader.randomEvilPowerup();
-      } else if(bricks[i].type != 'D') //type D får farverne fra loadlevel
+      } else if(bricks[i].type == 'D') //type D get colors applied by loadlevel.
       {
-        bricks[i].tex=texLvl[1];
-        bricks[i].opacity=1.0f;
+        //Hold the colors while applying texture props
+        memcpy(tempCol, bricks[i].tex.prop.glTexColorInfo, sizeof(tempCol));
+        memcpy(tempParCol, bricks[i].tex.prop.glParColorInfo, sizeof(tempParCol));
+
+        bricks[i].tex = texLvl[1];
+        
+        //Put pack the colors
+        memcpy(bricks[i].tex.prop.glTexColorInfo,tempCol, sizeof(tempCol));
+        memcpy(bricks[i].tex.prop.glParColorInfo,tempParCol,sizeof(tempParCol));
+
+        bricks[i].opacity = tempCol[3];
+        
       }
 
       i++;

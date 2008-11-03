@@ -188,20 +188,24 @@ Tweaked gameplay:
 Remembers difficulty.
 Detonate powerup had same icon as Multiball, fixed now.
 
-
 0.13:
 Changed from "string in a texture" to string-of-quads text rendering.
+Changed max-min bounceoff angle from 10-170 to 30-150
+Fixed bug that made custom colored bricks invisible.
+It now show how many levels you have left besides your current ball.
+Fixed bug that made game paused after having gameover without a highscore.
+Removed "Gravity" powerdown.
+Added Cash Powerup.
+Changed fonts.
+Polished stuff..
 
 Todo for 0.13:
-REMOVE description pix, make file with descriptions
-
 GPL sounds.
 More levels.
-Get more liniar increase in difficulty by sorting/adding/removing levels.
 
 Stuff that needs doing some time:
-use locking for joystick and wii buttons instead of timebased shoot interval
-Find alternative fonts
+Get more liniar increase in difficulty by sorting/adding/removing levels.
+Use locking for joystick and wii buttons instead of timebased shoot interval
 Pad the rest of the blocks and update their props accordingly.
 
 May never get fixed:

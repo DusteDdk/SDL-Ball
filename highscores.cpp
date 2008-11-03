@@ -85,7 +85,6 @@ class highScoreClass {
           menu.refreshHighScoreList();
           resumeGame();
           var.titleScreenShow=1;
-
         }
       }
     }

@@ -432,7 +432,7 @@ class effect_class {
       }
       
       //Ugley hack, to prevent transit from flickering when spark effects are deleted.
-      if(var.transiteffectnum != -1 && vars.type != FX_TRANSIT)
+      if(var.effectnum != -1 && vars.type != FX_TRANSIT)
         stay=1;
 
       if(!stay)
@@ -633,6 +633,17 @@ class effectManager {
       }
     }
     return(0);
+  }
+  
+  void kill(int id)
+  {
+    for(list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it)
+    {
+      if(it->vars.effectId)
+      {
+        it->vars.active=0;
+      }
+    }
   }
 };
 

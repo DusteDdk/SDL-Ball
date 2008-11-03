@@ -5,11 +5,11 @@ Size - A whole number, the size that the TTF font is rendered.
 menufile=font/subgamefont.ttf
 menusize=30
 
-announcegoodfile=font/subgamefont.ttf
+announcegoodfile=font/Bandal.ttf
 announcegoodsize=60
 
 announcebadfile=font/Bandal.ttf
-announcebadsize=30
+announcebadsize=60
 
 highscorefile=font/Bandal.ttf
 highscoresize=120

@@ -1,5 +1,5 @@
-Gravity
-Makes your ball fall
+Cash
+Use to buy powerups
 Big ball
 Big and slow
 Normal ball
