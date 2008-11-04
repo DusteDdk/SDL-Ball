@@ -236,7 +236,7 @@ levels - other levelsets are always nice.
 graphics - all the graphics in sdl-ball can be changed by the theme.
 sounds - you can customise sounds aswell.
 Themes can be stored in 2 diffrent places: Either in ~/.config/sdl-ball/themes/
-or in sdl-balls own data/themes folder.
+or in sdl-balls own sdl-ball/themes folder.
 
 3.1 How to use a diffrent theme
 You can choose a theme from the options menu.
