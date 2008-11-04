@@ -1,0 +1,12 @@
+file=powerup/glue.png
+ticks=100
+cols=2
+rows=4
+xoffset=0.5
+yoffset=0.25
+frames=6
+playing=1
+bidir=0
+padding=1
+texcolor=FFFFFFFF
+parcolor=00FF00

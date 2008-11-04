@@ -1,0 +1,12 @@
+file=brick/invisible.png
+ticks=1000
+cols=1
+rows=3
+xoffset=1.0
+yoffset=0.25
+frames=3
+playing=0
+bidir=0
+padding=1
+texcolor=FF00FFA0
+parcolor=FF00FF

@@ -1,0 +1,12 @@
+file=brick/explosive.png
+ticks=100
+cols=1
+rows=8
+xoffset=1.0
+yoffset=0.125
+frames=8
+bidir=1
+playing=1
+padding=1
+texcolor=FFFFFFFF
+parcolor=FFA000

@@ -1,0 +1,12 @@
+file=ball/tail.png
+ticks=1000
+cols=1
+rows=1
+xoffset=1.0
+yoffset=1.0
+frames=1
+playing=0
+bidir=0
+padding=0
+texcolor=FFFFFFFF //No effect, since this is allready colored by hitting bricks
+parcolor=FFFFFF //Obviously no effect

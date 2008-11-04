@@ -1,0 +1,12 @@
+file=brick/base.png
+ticks=1000
+cols=1
+rows=1
+xoffset=1.0
+yoffset=1.0
+frames=0
+playing=0
+padding=1
+texcolor=7F7F7FFF
+parcolor=7F7F7F
+file=brick/base.png

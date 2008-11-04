@@ -1,0 +1,30 @@
+//Powerup chance definitions, case sensitive.
+
+Most:
+2 //Shrink
+F //bigball
+G //normalball
+H //smallball
+P //gun
+5 //Multiball
+4 //Glue
+R //laser sight
+
+More:
+1 //Extend
+6 //Go thru
+B //explosive ball
+8 //detonate explosive bricks
+A //All bricks have 1 hit left
+I //aim
+E //Coins
+
+Less:
+7 //drop down powerup
+3 //Die
+9 //Grow explosives
+D //Aim helper
+
+Least:
+O //Extra life
+C //Next level

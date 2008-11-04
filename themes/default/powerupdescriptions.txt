@@ -1,0 +1,42 @@
+Cash
+Use to buy powerups
+Big ball
+Big and slow
+Normal ball
+Normal size and speed
+Small ball
+Small and fast
+Fireball
+Explodes bricks!
+Glue paddle
+Ball sticks
+Multiball
+Multiplies balls by 2
+Grow Paddle
+Wider paddle = Easier
+Shrink Paddle
+Narrow paddle = Harder
+Aim
+If you have glue
+Gun
+Shootin them bricks!
+Go-Thru
+Ball goes thru all!
+Laser Sight
+When you have glue
+Extra Life
+Everyone Likes that
+Die
+Loose a life
+Drop
+Level drops down!!
+Detonate
+Detonate all explosive bricks!
+Explosive Grow
+More explosives, more fun!
+Soften Bricks
+All types dies from 1 hit
+Next Level
+Skip this level
+AimHelp
+See bounceoff angle of the ball

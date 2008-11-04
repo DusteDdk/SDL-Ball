@@ -1,0 +1,12 @@
+file=brick/glass.png
+ticks=1000
+cols=1
+rows=2
+xoffset=1.0
+yoffset=0.5
+frames=2
+playing=0
+bidir=0
+padding=0
+texcolor=FFFFFFA0
+parcolor=FFFFFF

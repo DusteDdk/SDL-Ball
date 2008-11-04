@@ -1,0 +1,12 @@
+file=powerup/aimhelp.png
+ticks=100
+cols=2
+rows=3
+xoffset=0.5
+yoffset=0.25
+frames=6
+playing=1
+bidir=1
+padding=1
+texcolor=FFFFFFFF
+parcolor=00FF00

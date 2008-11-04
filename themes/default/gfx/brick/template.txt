@@ -1,0 +1,12 @@
+file=
+ticks=
+cols=
+rows=
+xoffset=
+yoffset=
+frames=
+playing=
+bidir=
+padding=
+texcolor=
+parcolor
