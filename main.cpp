@@ -3989,14 +3989,14 @@ int main (int argc, char *argv[]) {
 
 
 
-  texMgr.readTexProps(useTheme("/gfx/paddle/base.txt",setting.gfxTheme), texPaddleBase);
-  texMgr.readTexProps(useTheme("/gfx/paddle/glue.txt",setting.gfxTheme), texPaddleLayers[0]);
-  texMgr.readTexProps(useTheme("/gfx/paddle/gun.txt",setting.gfxTheme), texPaddleLayers[1]);
+  texMgr.readTexProps(useTheme("gfx/paddle/base.txt",setting.gfxTheme), texPaddleBase);
+  texMgr.readTexProps(useTheme("gfx/paddle/glue.txt",setting.gfxTheme), texPaddleLayers[0]);
+  texMgr.readTexProps(useTheme("gfx/paddle/gun.txt",setting.gfxTheme), texPaddleLayers[1]);
 
 
-  texMgr.readTexProps(useTheme("/gfx/ball/normal.txt",setting.gfxTheme), texBall[0]);
-  texMgr.readTexProps(useTheme("/gfx/ball/fireball.txt",setting.gfxTheme), texBall[1]);
-  texMgr.readTexProps(useTheme("/gfx/ball/tail.txt",setting.gfxTheme), texBall[2]);
+  texMgr.readTexProps(useTheme("gfx/ball/normal.txt",setting.gfxTheme), texBall[0]);
+  texMgr.readTexProps(useTheme("gfx/ball/fireball.txt",setting.gfxTheme), texBall[1]);
+  texMgr.readTexProps(useTheme("gfx/ball/tail.txt",setting.gfxTheme), texBall[2]);
 
   texMgr.readTexProps(useTheme("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
   texMgr.readTexProps(useTheme("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
@@ -4013,33 +4013,33 @@ int main (int argc, char *argv[]) {
   texMgr.readTexProps(useTheme("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
 
 
-  texMgr.load(useTheme("/gfx/border.png",setting.gfxTheme), texBorder);
+  texMgr.load(useTheme("gfx/border.png",setting.gfxTheme), texBorder);
 
-  texMgr.readTexProps(useTheme("/gfx/powerup/coin.txt",setting.gfxTheme),texPowerup[PO_COIN]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/glue.txt",setting.gfxTheme),texPowerup[PO_GLUE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/multiball.txt",setting.gfxTheme),texPowerup[PO_MULTIBALL]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/bigball.txt",setting.gfxTheme),texPowerup[PO_BIGBALL]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/normalball.txt",setting.gfxTheme),texPowerup[PO_NORMALBALL]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/smallball.txt",setting.gfxTheme),texPowerup[PO_SMALLBALL]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/aim.txt",setting.gfxTheme),texPowerup[PO_AIM]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/explosive.txt",setting.gfxTheme),texPowerup[PO_EXPLOSIVE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/gun.txt",setting.gfxTheme),texPowerup[PO_GUN]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/go-thru.txt",setting.gfxTheme),texPowerup[PO_THRU]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/laser.txt",setting.gfxTheme),texPowerup[PO_LASER]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/life.txt",setting.gfxTheme),texPowerup[PO_LIFE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/die.txt",setting.gfxTheme),texPowerup[PO_DIE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/drop.txt",setting.gfxTheme),texPowerup[PO_DROP]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/detonate.txt",setting.gfxTheme),texPowerup[PO_DETONATE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/explosive-grow.txt",setting.gfxTheme),texPowerup[PO_EXPLOSIVE_GROW]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/easybrick.txt",setting.gfxTheme),texPowerup[PO_EASYBRICK]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/nextlevel.txt",setting.gfxTheme),texPowerup[PO_NEXTLEVEL]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/aimhelp.txt",setting.gfxTheme),texPowerup[PO_AIMHELP]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/growbat.txt",setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/shrinkbat.txt",setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
-  texMgr.readTexProps(useTheme("/gfx/powerup/bullet.txt",setting.gfxTheme), texBullet);
+  texMgr.readTexProps(useTheme("gfx/powerup/coin.txt",setting.gfxTheme),texPowerup[PO_COIN]);
+  texMgr.readTexProps(useTheme("gfx/powerup/glue.txt",setting.gfxTheme),texPowerup[PO_GLUE]);
+  texMgr.readTexProps(useTheme("gfx/powerup/multiball.txt",setting.gfxTheme),texPowerup[PO_MULTIBALL]);
+  texMgr.readTexProps(useTheme("gfx/powerup/bigball.txt",setting.gfxTheme),texPowerup[PO_BIGBALL]);
+  texMgr.readTexProps(useTheme("gfx/powerup/normalball.txt",setting.gfxTheme),texPowerup[PO_NORMALBALL]);
+  texMgr.readTexProps(useTheme("gfx/powerup/smallball.txt",setting.gfxTheme),texPowerup[PO_SMALLBALL]);
+  texMgr.readTexProps(useTheme("gfx/powerup/aim.txt",setting.gfxTheme),texPowerup[PO_AIM]);
+  texMgr.readTexProps(useTheme("gfx/powerup/explosive.txt",setting.gfxTheme),texPowerup[PO_EXPLOSIVE]);
+  texMgr.readTexProps(useTheme("gfx/powerup/gun.txt",setting.gfxTheme),texPowerup[PO_GUN]);
+  texMgr.readTexProps(useTheme("gfx/powerup/go-thru.txt",setting.gfxTheme),texPowerup[PO_THRU]);
+  texMgr.readTexProps(useTheme("gfx/powerup/laser.txt",setting.gfxTheme),texPowerup[PO_LASER]);
+  texMgr.readTexProps(useTheme("gfx/powerup/life.txt",setting.gfxTheme),texPowerup[PO_LIFE]);
+  texMgr.readTexProps(useTheme("gfx/powerup/die.txt",setting.gfxTheme),texPowerup[PO_DIE]);
+  texMgr.readTexProps(useTheme("gfx/powerup/drop.txt",setting.gfxTheme),texPowerup[PO_DROP]);
+  texMgr.readTexProps(useTheme("gfx/powerup/detonate.txt",setting.gfxTheme),texPowerup[PO_DETONATE]);
+  texMgr.readTexProps(useTheme("gfx/powerup/explosive-grow.txt",setting.gfxTheme),texPowerup[PO_EXPLOSIVE_GROW]);
+  texMgr.readTexProps(useTheme("gfx/powerup/easybrick.txt",setting.gfxTheme),texPowerup[PO_EASYBRICK]);
+  texMgr.readTexProps(useTheme("gfx/powerup/nextlevel.txt",setting.gfxTheme),texPowerup[PO_NEXTLEVEL]);
+  texMgr.readTexProps(useTheme("gfx/powerup/aimhelp.txt",setting.gfxTheme),texPowerup[PO_AIMHELP]);
+  texMgr.readTexProps(useTheme("gfx/powerup/growbat.txt",setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
+  texMgr.readTexProps(useTheme("gfx/powerup/shrinkbat.txt",setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
+  texMgr.readTexProps(useTheme("gfx/powerup/bullet.txt",setting.gfxTheme), texBullet);
   pMan.init(texPowerup);
 
-  texMgr.load(useTheme("/gfx/particle.png",setting.gfxTheme), texParticle);
+  texMgr.load(useTheme("gfx/particle.png",setting.gfxTheme), texParticle);
 
   GLuint sceneDL;
 
@@ -4047,7 +4047,7 @@ int main (int argc, char *argv[]) {
 
   brick bricks[598];
 
-  string levelfile = useTheme("/levels.txt",setting.lvlTheme);
+  string levelfile = useTheme("levels.txt",setting.lvlTheme);
 
 
 
