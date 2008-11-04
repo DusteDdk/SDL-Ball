@@ -201,6 +201,8 @@ Polished stuff..
 Ship items are more expensive
 
 Todo for 0.13:
+Renamed datadir to themes and put the default theme in there, which makes more sense, since the default theme contains all data anyway..
+Optional clock.
 GPL sounds.
 More levels.
 

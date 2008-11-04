@@ -313,17 +313,16 @@ string useTheme(string path, string theme)
     {
       return(name);
     }
-    //Try in DATADIR/themes/themename/
-    name = DATADIR"themes/"+ theme+"/"+path;
+    //Try in DATADIR/themename/
+    name = DATADIR + theme+"/"+path;
     if( stat(name.data(), &st) == 0)
     {
       return(name);
     }
 
   }
-  
   //Fall back on default file.
-  name = DATADIR + path;
+  name = DATADIR"default/" + path;
   if( stat(name.data(), &st) == 0)
   {
      return(name);
@@ -355,13 +354,13 @@ vector<struct themeInfo> getThemes() {
   string themeDir;
   string temp;
   vector<struct themeInfo> v;
-  //Start with the default theme.
-  ti.name="default";
-  ti.gfx=1;
-  ti.snd=1;
-  ti.lvl=1;
-  ti.valid=1;
-  v.push_back(ti);
+//   //Start with the default theme.
+//   ti.name="default";
+//   ti.gfx=1;
+//   ti.snd=1;
+//   ti.lvl=1;
+//   ti.valid=1;
+//   v.push_back(ti);
   
   for(int i=0; i < 2; i++)
   {
@@ -370,7 +369,7 @@ vector<struct themeInfo> getThemes() {
       themeDir = privFile.programRoot + "/themes";
     } else if(i==1)
     {
-      themeDir = DATADIR"/themes";
+      themeDir = DATADIR;
     }
     pdir = opendir(themeDir.data());
     if (pdir)
@@ -2877,14 +2876,21 @@ void initNewGame()
   gVar.newLife=1;
 
   player.multiply = 1;
-
-  player.lives=5;
-  player.coins = 600;
   
-  if(player.difficulty > EASY)
+  switch(player.difficulty)
   {
-    player.coins = 0;
-    player.lives -= 2;
+    case EASY:
+      player.coins = 600;
+      player.lives = 5;
+      break;
+    case NORMAL:
+      player.coins = 0;
+      player.lives = 3;
+      break;
+    case HARD:
+      player.coins = 0;
+      player.lives = 3;
+      break;
   }
 
   resetPlayerPowerups();

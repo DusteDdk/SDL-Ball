@@ -1,4 +1,4 @@
-DATADIR?=data/
+DATADIR?=themes/
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
 #append -DNOSOUND to compile WITHOUT sound support
