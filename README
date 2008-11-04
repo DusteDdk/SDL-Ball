@@ -39,7 +39,7 @@ Web site: http://sdl-ball.sourceforge.net/
 
 License:
 Code, Graphics, Levels are GPLv3
-Sound are (until replaced) Creative Commons Sampling Plus 1.0 License.
+Sound are Creative Commons Sampling Plus 1.0 License. ( http://creativecommons.org/licenses/sampling+/1.0/ )
 See data/font/COPYING for font licenses.
 
 SDL-Ball is my hobby project, I'm using it to learn C++ and

@@ -3186,31 +3186,31 @@ class hudClass {
     texBall=texB;
 
     item[0].type = PO_LASER;
-    item[0].price = 400;
+    item[0].price = 600;
     item[1].type = PO_NORMALBALL;
-    item[1].price = 450;
+    item[1].price = 750;
     item[2].type = PO_BIGBALL;
-    item[2].price = 500;
+    item[2].price = 800;
     item[3].type = PO_AIMHELP;
-    item[3].price = 600;
+    item[3].price = 900;
     item[4].type = PO_GROWPADDLE;
-    item[4].price = 600;
+    item[4].price = 960;
     item[5].type = PO_MULTIBALL;
-    item[5].price = 700;
+    item[5].price = 980;
     item[6].type = PO_EXPLOSIVE_GROW;
-    item[6].price = 750;
+    item[6].price = 990;
     item[7].type = PO_EXPLOSIVE;
-    item[7].price = 800;
+    item[7].price = 1000;
     item[8].type = PO_GLUE;
-    item[8].price = 800;
+    item[8].price = 1000;
     item[9].type = PO_EASYBRICK;
-    item[9].price = 850;
+    item[9].price = 2000;
     item[10].type = PO_GUN;
-    item[10].price = 900;
+    item[10].price = 3000;
     item[11].type = PO_THRU;
-    item[11].price = 1000;
+    item[11].price = 4000;
     item[12].type = PO_LIFE;
-    item[12].price = 3000;
+    item[12].price = 6000;
     
     shopItemSelected=0;
   }
