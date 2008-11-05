@@ -3366,7 +3366,6 @@ void writeSettings()
 
   if(conf.is_open())
   {
-    conf << "clearscreen="<<var.clearScreen<<endl;
     conf << "eyecandy="<<setting.eyeCandy<<endl;
     conf << "resx="<<setting.resx<<endl;
     conf << "resy="<<setting.resy<<endl;
@@ -3862,10 +3861,7 @@ int main (int argc, char *argv[]) {
         set=line.substr(0,line.find('='));
         val=line.substr(line.find('=')+1);
 
-        if(set=="clearscreen")
-        {
-          var.clearScreen=atoi(val.data());
-        } else if(set=="eyecandy")
+        if(set=="eyecandy")
         {
           setting.eyeCandy=atoi(val.data());
         } else if(set=="resx")
@@ -4567,8 +4563,10 @@ int main (int argc, char *argv[]) {
           } else if( sdlevent.key.keysym.sym == setting.keyPrevPo)
           {
             gVar.shopNextItem=1;
+          } else if(sdlevent.key.keysym.sym == SDLK_u)
+          {
+            var.clearScreen ? var.clearScreen=0:var.clearScreen=1;
           }
-          
           else if(sdlevent.key.keysym.sym == SDLK_y)
           {
             var.debugChars ? var.debugChars=0:var.debugChars=1;
