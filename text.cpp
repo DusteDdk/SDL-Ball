@@ -44,6 +44,7 @@ class glTextClass {
     GLfloat getHeight(int font);
     void write(string text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y);
     glTextClass();
+    bool DEBUG; //DEBUG_EVG
 };
 
 GLfloat glTextClass::getHeight(int font)
@@ -227,6 +228,11 @@ void glTextClass::write(string text, int font,bool center, GLfloat scale, GLfloa
 
   glEnable( GL_TEXTURE_2D );
   glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
+  if(DEBUG)
+  {
+    DEBUG=0;
+    cout << "TextDraw just bound texture from font '"<<font<<"'<< TextureId:" << fontInfo[font].tex << endl;
+  }
 
   //Draw the quads
   for(unsigned int i=0; i < text.length(); i++)

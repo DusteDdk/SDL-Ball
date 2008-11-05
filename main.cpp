@@ -4543,6 +4543,7 @@ int main (int argc, char *argv[]) {
           {
             var.debugChars ? var.debugChars=0:var.debugChars=1;
             scoreboard.DEBUG=1;
+            glText->DEBUG=1;
           }
             
           #ifdef WITH_WIIUSE
