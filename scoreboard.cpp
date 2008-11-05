@@ -25,7 +25,11 @@ class glScoreBoard
   uint tempScore;
   uint score;
   char tempText[255];
+  
+  int DEBUGCALL; //DEBUG_EVG
+  
   public:
+  bool DEBUG; //DEBUG_EVG
   
 
   glScoreBoard()
@@ -35,8 +39,10 @@ class glScoreBoard
   
   void init()
   {
+    DEBUG=0;
+    DEBUGCALL=0;
     tempScore=1;
-    
+    score=0;
     lastScoreTick = SDL_GetTicks();
   }
   
@@ -48,30 +54,48 @@ class glScoreBoard
   void draw()
   {
     int dif=score - tempScore;
-    
-    int i,n;
 
     if(tempScore != score )
     {
       if(lastScoreTick + 50 < SDL_GetTicks())
       {
         tempScore+= (float)dif/7.0 +1; ;
-        if(tempScore >= score)
+        if(tempScore > score)
           tempScore=score;
         lastScoreTick = SDL_GetTicks();
 
-        n = tempScore;
-        i=0;
         sprintf(tempText, "%i", tempScore);
       }
     }
     
     glLoadIdentity();
     glTranslatef(-1.55, 1.24-(glText->getHeight(FONT_HIGHSCORE)/2.0), -3.0);
-    GLfloat s=1;
-    
+        
     glColor4f(1.0,1.0,1.0,1.0);
-    glText->write(tempText, FONT_HIGHSCORE, 0, s, 0.0, 0.0);
+    glText->write(tempText, FONT_HIGHSCORE, 0, 1.0, 0.0, 0.0);
+    
+    //The texture from glText is still bound DEBUG_EVG -->
+    if(DEBUG)
+    {
+      DEBUG=0;
+      GLint *id;
+      glGetIntegerv(GL_TEXTURE_BINDING_2D, id);
+      DEBUGCALL++;
+      cout << "(" << DEBUGCALL <<")DebugTextureId:" << *id << endl;
+    }
+    if(var.debugChars)
+    {
+      glLoadIdentity( );
+      glTranslatef(0.0, 0.0, -3.0);
+      glBegin( GL_QUADS );
+        glTexCoord2f( 0.0,0.0 ); glVertex3f(-1, 1,0);
+        glTexCoord2f( 1.0,0.0 ); glVertex3f( 1, 1,0);
+        glTexCoord2f( 1.0,1.0 ); glVertex3f( 1,-1,0);
+        glTexCoord2f( 0.0,1.0 ); glVertex3f(-1,-1,0);
+      glEnd( );
+    }
+    //<<--- DEBUG_EVG
+    
   }
 };
 

@@ -165,7 +165,6 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font)
     src.h=sY;
     
 
-    
     if(dst.x + sX > 512)
     {
       dst.x=1;
@@ -198,6 +197,9 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font)
   }
   
   glGenTextures(1, &fontInfo[font].tex); //Generate a gltexture for this font
+  
+  cout << "FontLoader (" << TTFfontName << ") (Num:"<< font<<") Rendered on glTextureId: " << fontInfo[font].tex << endl;
+  
   glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
   gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, t->w, t->h, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
 
@@ -209,9 +211,6 @@ void glTextClass::write(string text, int font,bool center, GLfloat scale, GLfloa
 {
   int c;
   GLfloat sX,sY,posX=0;
-  
-  glEnable( GL_TEXTURE_2D );
-  glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
 
   //We need to find out half of the string width in order to center
   if(center)
@@ -225,6 +224,9 @@ void glTextClass::write(string text, int font,bool center, GLfloat scale, GLfloa
     posX *= -1;
   }
   posX += x;
+
+  glEnable( GL_TEXTURE_2D );
+  glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
 
   //Draw the quads
   for(unsigned int i=0; i < text.length(); i++)

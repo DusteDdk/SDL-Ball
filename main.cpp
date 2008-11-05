@@ -134,8 +134,6 @@
 
 using namespace std;
 
-GLfloat debugC=1.0;
-
 void writeSettings();
 void initScreen();
 void initNewGame();
@@ -208,6 +206,7 @@ struct privFileStruct {
 struct privFileStruct privFile;
 
 struct vars {
+  bool debugChars;
   bool titleScreenShow;
   int frame;
   int halfresx;
@@ -584,7 +583,8 @@ class textureManager {
 
       glGenTextures(1, &tex.prop.texture);
       glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-
+      cout << "Debug: Texture " << file << " to glTextureId: " << tex.prop.texture << endl; //DEBUG_EVG
+      
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -4541,11 +4541,8 @@ int main (int argc, char *argv[]) {
           
           else if(sdlevent.key.keysym.sym == SDLK_y)
           {
-            debugC+=0.1;
-          }
-          else if(sdlevent.key.keysym.sym == SDLK_u)
-          {
-            debugC-=0.1;
+            var.debugChars ? var.debugChars=0:var.debugChars=1;
+            scoreboard.DEBUG=1;
           }
             
           #ifdef WITH_WIIUSE
