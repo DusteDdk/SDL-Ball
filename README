@@ -67,12 +67,14 @@ but you can also use your keyboard, joystick or wiimote (wiimote, see 1.4.5 2.0 
 
 1.2.1 Keyboard controls
 w   - Bring up wiimote connection dialog (only if compiled with wiiuse)
-p   - Pause
 s   - Take Screenshot (saves in ~/.config/sdl-ball/screenshots/)
 u   - Turn off screen clearing (gives some really cool/weird effects if background is turned off)
+p   - Pause
+Pause -Pause
 ESC - Pause and Show Menu
 F1  - Show titlescreen
 F11 - Toggle Fullscreen
+c   - Show/Hide clock (Shows what time it is)
 
 v   - Select Powerup (Next)
 b   - Buy selected Powerup

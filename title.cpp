@@ -77,7 +77,7 @@ class titleScreenClass {
 titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClass *me)
 {
   menu = me;
-  numHighScores=8;
+  numHighScores=7;
   texPowerups = tp;
   fxMan = m;
   ticksSinceLastSpawn=100;

@@ -4540,12 +4540,9 @@ int main (int argc, char *argv[]) {
         {
           menu.enterSaveGameName(sdlevent);
         } else {
-          if( sdlevent.key.keysym.sym==SDLK_p)
+          if( sdlevent.key.keysym.sym==SDLK_p || sdlevent.key.keysym.sym==SDLK_PAUSE)
           {
-            if(var.paused)
-              resumeGame();
-            else
-              pauseGame();
+            var.paused ? resumeGame() : pauseGame();
           }
 
           if( sdlevent.key.keysym.sym == SDLK_q )
@@ -4566,6 +4563,10 @@ int main (int argc, char *argv[]) {
           } else if(sdlevent.key.keysym.sym == SDLK_u)
           {
             var.clearScreen ? var.clearScreen=0:var.clearScreen=1;
+          } else if(sdlevent.key.keysym.sym == SDLK_c)
+          {
+            setting.showClock ? setting.showClock=0 : setting.showClock=1;
+            writeSettings();
           }
           else if(sdlevent.key.keysym.sym == SDLK_y)
           {
