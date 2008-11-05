@@ -175,6 +175,7 @@ struct settings {
   int resx;
   int resy;
   int fps;
+  bool showClock;
   bool fullscreen;
   bool showBg;
   bool sound;
@@ -3178,6 +3179,13 @@ class hudClass {
   private:
   textureClass texBall;
   
+  //For the hud text
+  int ticksSinceLastClockCheck;
+  time_t nixTime; //Seconds since epoch
+  tm timeStruct; //Time struct
+  char clockString[13]; //Clock: 00:00\0
+
+  
   //For the powerup "shop"
   textureClass *texPowerup; //Pointer to array of powerup textures
   int shopItemSelected;
@@ -3190,6 +3198,7 @@ class hudClass {
   {
     texPowerup = texPo;
     texBall=texB;
+    ticksSinceLastClockCheck=1001;
 
     item[0].type = PO_LASER;
     item[0].price = 600;
@@ -3241,6 +3250,21 @@ class hudClass {
     }
     glEnd( );
 
+    if(setting.showClock)
+    {
+      ticksSinceLastClockCheck += globalTicksSinceLastDraw;
+      if(ticksSinceLastClockCheck > 1000)
+      {
+        ticksSinceLastClockCheck=0;
+        time(&nixTime);
+        timeStruct = *(localtime(&nixTime));
+        sprintf(clockString, "Clock: %02i:%02i", timeStruct.tm_hour, timeStruct.tm_min); //Array is exactly 13 chars wide
+      }
+      glColor4f(1.0,1.0,1.0,1.0);
+      glText->write(clockString, FONT_INTRODESCRIPTION, 0, 1.0, -1.58, -1.25 + glText->getHeight(FONT_INTRODESCRIPTION));
+      
+    }
+    
     //Draw the "shop"
     //First, find out how many items the player can afford, so we can center them
     int canAfford=0;
@@ -3370,6 +3394,7 @@ void writeSettings()
     conf << "gfxtheme="<<setting.gfxTheme<<endl;
     conf << "lvltheme="<<setting.lvlTheme<<endl;
     conf << "startingdifficulty="<<player.difficulty<<endl;
+    conf << "showclock="<<setting.showClock<<endl;
     conf.close();
   } else {
     cout << "Could not open ' ' for writing." << endl;
@@ -3718,6 +3743,7 @@ bool screenShot()
 }
 
 int main (int argc, char *argv[]) {
+  
   var.quit=0;
   var.clearScreen=1;
   var.titleScreenShow=1;
@@ -3742,6 +3768,7 @@ int main (int argc, char *argv[]) {
   setting.controlMaxSpeed = 5;
   setting.joyEnabled = 1;
   setting.joyIsDigital = 1;
+  setting.showClock = 0;
   //Default calibaration.
   setting.JoyCalMin=-32767;
   setting.JoyCalMax=32767;
@@ -3921,6 +3948,9 @@ int main (int argc, char *argv[]) {
         } else if(set=="startingdifficulty")
         {
           player.difficulty=atoi(val.data());
+        } else if(set=="showclock")
+        {
+          setting.showClock=atoi(val.data());
         }
         else
         {
