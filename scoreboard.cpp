@@ -39,8 +39,8 @@ class glScoreBoard
   
   void init()
   {
-    DEBUG=0;
-    DEBUGCALL=0;
+    DEBUG=0;//DEBUG_EVG
+    DEBUGCALL=0;//DEBUG_EVG
     tempScore=1;
     score=0;
     lastScoreTick = SDL_GetTicks();
@@ -78,10 +78,10 @@ class glScoreBoard
     if(DEBUG)
     {
       DEBUG=0;
-      GLint *id;
-      glGetIntegerv(GL_TEXTURE_BINDING_2D, id);
+      GLint id;
+      glGetIntegerv(GL_TEXTURE_BINDING_2D, &id);
       DEBUGCALL++;
-      cout << "(" << DEBUGCALL <<")DebugTextureId:" << *id << endl;
+      cout << "(" << DEBUGCALL <<")DebugTextureId:" << id << endl;
     }
     if(var.debugChars)
     {
