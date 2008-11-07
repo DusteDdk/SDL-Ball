@@ -84,18 +84,18 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
   texMgr.load(useTheme("/gfx/title/title.png",setting.gfxTheme), texTitle);
   glTitleList = glGenLists(1);
   glNewList(glTitleList, GL_COMPILE);
-    for(int i=0; i < 32; i++)
-    {
-      glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
-      glBegin( GL_QUADS );
+    glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
+    glBegin( GL_QUADS );
+      for(int i=0; i < 32; i++)
+      {
         glColor4f(1,1,1,0.1);
         glTexCoord2f(0.0, 0.0); glVertex3f(-1.2,1.15, 0.005*i );
         glTexCoord2f(1.0, 0.0); glVertex3f( 1.2,1.15, 0.005*i );
         glColor4f(0,0,1,0.00);
         glTexCoord2f(1.0, 1.0); glVertex3f( 1.2, 0.75, 0.005*i );
         glTexCoord2f(0.0, 1.0); glVertex3f(-1.2, 0.75, 0.005*i );
-      glEnd( );
-    }
+      }
+    glEnd( );
   glEndList();
 
 

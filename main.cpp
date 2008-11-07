@@ -207,7 +207,6 @@ struct privFileStruct {
 struct privFileStruct privFile;
 
 struct vars {
-  bool debugChars;
   bool titleScreenShow;
   int frame;
   int halfresx;
@@ -584,7 +583,6 @@ class textureManager {
 
       glGenTextures(1, &tex.prop.texture);
       glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-      cout << "Debug: Texture " << file << " to glTextureId: " << tex.prop.texture << endl; //DEBUG_EVG
       
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -4567,13 +4565,6 @@ int main (int argc, char *argv[]) {
           {
             setting.showClock ? setting.showClock=0 : setting.showClock=1;
             writeSettings();
-          }
-          else if(sdlevent.key.keysym.sym == SDLK_y)
-          {
-            var.debugChars ? var.debugChars=0:var.debugChars=1;
-            scoreboard.DEBUG=1;
-            glText->DEBUG=1;
-            player.score++;
           }
             
           #ifdef WITH_WIIUSE

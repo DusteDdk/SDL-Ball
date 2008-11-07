@@ -44,7 +44,6 @@ class glTextClass {
     GLfloat getHeight(int font);
     void write(string text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y);
     glTextClass();
-    bool DEBUG; //DEBUG_EVG
 };
 
 GLfloat glTextClass::getHeight(int font)
@@ -198,9 +197,7 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font)
   }
   
   glGenTextures(1, &fontInfo[font].tex); //Generate a gltexture for this font
-  
-  cout << "FontLoader (" << TTFfontName << ") (Num:"<< font<<") Rendered on glTextureId: " << fontInfo[font].tex << endl; //DEBUG_EVG
-  
+ 
   glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
   gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, t->w, t->h, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
 
@@ -228,14 +225,6 @@ void glTextClass::write(string text, int font,bool center, GLfloat scale, GLfloa
 
   glEnable( GL_TEXTURE_2D );
   glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
-  
-  //DEBUG_EVG --->
-  if(DEBUG)
-  {
-    DEBUG=0;
-    cout << "TextDraw just bound texture from font '"<<font<<"'<< TextureId:" << fontInfo[font].tex << endl;
-  }
-  //<< --- DEBUG_EVG
 
   //Draw the quads
   for(unsigned int i=0; i < text.length(); i++)

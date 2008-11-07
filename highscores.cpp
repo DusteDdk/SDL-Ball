@@ -79,7 +79,7 @@ class highScoreClass {
           var.showHighScores = 0;
           ofstream hsList;
           hsList.open(privFile.highScoreFile.data(), ios::out | ios::app);
-          hsList << player.score << "|" << name << endl;
+          hsList << "[" << player.level+1 << "]" << player.score << "|" << name << endl;
           hsList.close();
           initNewGame();
           menu.refreshHighScoreList();

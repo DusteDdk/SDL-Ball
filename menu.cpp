@@ -18,6 +18,7 @@
 
 struct score {
   int score;
+  string level;
   string name;
 };
 
@@ -26,6 +27,7 @@ struct score *sortScores(int *rl)
   ifstream hsList;
   string line;
   int i=0,t;
+  int delim[2];
 
   struct score *final=NULL, *temp=NULL;
   final = new struct score[1];
@@ -40,8 +42,20 @@ struct score *sortScores(int *rl)
 
       if(line != "")
       {
-        final[i].score = atoi(line.substr(0, line.find('|')).data());
-        final[i].name = line.substr(line.find('|')+1);
+        if(line[0]=='[')
+        {
+          delim[0] = line.find(']');
+          delim[1] = line.find('|', delim[0]+1);
+          
+          final[i].level=line.substr(0, delim[0]+1);
+          final[i].level+="  ";
+          final[i].score = atoi(line.substr(delim[0]+1, delim[1]).data());
+          final[i].name = line.substr(delim[1]+1);
+        } else {
+          final[i].level.clear();
+          final[i].score = atoi(line.substr(0, line.find('|')).data());
+          final[i].name = line.substr(line.find('|')+1);
+        }
 
         temp = new struct score[i+1];
 
@@ -220,7 +234,7 @@ public:
      //Highscores list
      for(int t=0; t < lines; t++)
      {
-        sprintf(highScores[t], "%i - %s", final[t].score, final[t].name.data());
+        sprintf(highScores[t], "%s%i - %s", final[t].level.data(), final[t].score, final[t].name.data());
      }
  
      if(lines>0)

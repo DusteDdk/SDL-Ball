@@ -4,7 +4,7 @@ DATADIR?=themes/
 #append -DNOSOUND to compile WITHOUT sound support
 CC=g++ -DDATADIR="\"$(DATADIR)\""
 
-CFLAGS+=-g -c -Wall
+CFLAGS+=-c -Wall
 
 #append -lwiiuse to compile with WIIUSE support
 #remove -lSDL_mixer if compiling with -DNOSOUND
