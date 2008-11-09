@@ -3392,6 +3392,7 @@ void writeSettings()
     conf << "lvltheme="<<setting.lvlTheme<<endl;
     conf << "startingdifficulty="<<player.difficulty<<endl;
     conf << "showclock="<<setting.showClock<<endl;
+    conf << "fps="<<setting.fps<<endl;
     conf.close();
   } else {
     cout << "Could not open ' ' for writing." << endl;
@@ -3774,6 +3775,10 @@ int main (int argc, char *argv[]) {
   //Default starting difficulty
   player.difficulty = NORMAL;
   
+  setting.fps=120;
+  int maxFrameAge= (1000/setting.fps); //When frame has been displayed this long
+
+  
   GLfloat mousex,mousey;
 
   static_difficulty.ballspeed[EASY] = 0.7f;
@@ -3945,7 +3950,10 @@ int main (int argc, char *argv[]) {
         } else if(set=="showclock")
         {
           setting.showClock=atoi(val.data());
-        }
+        } else if(set=="fps")
+        {
+          setting.fps=atoi(val.data());
+          maxFrameAge= (1000/setting.fps);        }
         else
         {
           cout << "I did not understand '"<<set<<"' in settings.cfg" << endl;
@@ -3988,7 +3996,6 @@ int main (int argc, char *argv[]) {
    SDL_EnableUNICODE (1);
 
   initScreen();
-
   initGL();
 
   glText = new glTextClass; // instantiate the class now that settings have been read.
@@ -4113,9 +4120,8 @@ int main (int argc, char *argv[]) {
   int nonpausingLastTick = lastTick;
   char txt[256];
   int frameAge=0; //How long have the current frame been shown
-  int maxFrameAge=8; //When frame has been displayed this long
 
-  #define performanceTimer
+//   #define performanceTimer
 
   #ifdef performanceTimer
   struct timeval timeStart,timeStop;
@@ -4389,7 +4395,7 @@ int main (int argc, char *argv[]) {
         }
       }
 
-        bMan.move();
+      bMan.move();
 
       if(setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
         fxMan.pcoldet(paddle);

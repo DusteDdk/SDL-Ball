@@ -18,10 +18,10 @@ B //explosive ball
 A //All bricks have 1 hit left
 I //aim
 E //Coins
+3 //Die
 
 Less:
 7 //drop down powerup
-3 //Die
 9 //Grow explosives
 D //Aim helper
 
