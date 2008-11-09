@@ -208,6 +208,8 @@ GPL sounds.
 More levels.
 Update TEST theme.
 
+Todo for 0.14:
+
 Stuff that needs doing some time:
 Get more liniar increase in difficulty by sorting/adding/removing levels.
 Use locking for joystick and wii buttons instead of timebased shoot interval

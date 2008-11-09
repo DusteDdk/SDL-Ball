@@ -4115,7 +4115,7 @@ int main (int argc, char *argv[]) {
   int frameAge=0; //How long have the current frame been shown
   int maxFrameAge=8; //When frame has been displayed this long
 
-//   #define performanceTimer
+  #define performanceTimer
 
   #ifdef performanceTimer
   struct timeval timeStart,timeStop;
@@ -4679,7 +4679,7 @@ int main (int argc, char *argv[]) {
 #ifdef WIN32
 	Sleep( 1 );
 #else
-    usleep( 100 );
+    usleep( 500 );
 #endif
   }
 
