@@ -30,6 +30,9 @@ class soundClass {
   //List of queued samples
   vector<struct sampleQueuedItem> q;
   void loadSample(const char *SampleName, int sampleNum);
+  
+  int m; //Secret undocumented variable
+  
   #endif 
   
   public:
@@ -42,6 +45,7 @@ class soundClass {
 
 bool soundClass::init() {
   #ifndef NOSOUND
+  m=0;
   int audio_rate = 44100;
   Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
   int audio_channels = 2;
@@ -102,7 +106,14 @@ void soundClass::loadsounds()
   loadSample("start.ogg", SND_START);
   loadSample("ball-hit-border.ogg", SND_BALL_HIT_BORDER);
   loadSample("ball-hit-paddle.ogg", SND_BALL_HIT_PADDLE);
-  loadSample("norm-brick-break.ogg", SND_NORM_BRICK_BREAK);
+  loadSample("norm-brick-breaka.ogg", SND_NORM_BRICK_BREAK); //breaka
+  
+  loadSample("norm-brick-breakb.ogg", SND_NORM_BRICK_BREAKB);
+  loadSample("norm-brick-breakc.ogg", SND_NORM_BRICK_BREAKC);
+  loadSample("norm-brick-breakd.ogg", SND_NORM_BRICK_BREAKD);
+  loadSample("norm-brick-breake.ogg", SND_NORM_BRICK_BREAKE);
+  
+  
   loadSample("expl-brick-break.ogg", SND_EXPL_BRICK_BREAK);
   loadSample("glass-brick-hit.ogg", SND_GLASS_BRICK_HIT);
   loadSample("glass-brick-break.ogg", SND_GLASS_BRICK_BREAK);
@@ -120,7 +131,6 @@ void soundClass::loadsounds()
   loadSample("menuclick.ogg", SND_MENUCLICK);
   loadSample("glue-ball-hit-paddle.ogg", SND_GLUE_BALL_HIT_PADDLE);
   loadSample("buy-powerup.ogg", SND_BUY_POWERUP);
-//   loadSample("score-tick.ogg", SND_SCORE_TICK); //Not sure if this is a good idea..
   #endif
 }
 
@@ -180,6 +190,31 @@ void soundClass::play()
     {
       plIt->p /=plIt->num;
       Mix_SetPanning(freeChannel, 255-plIt->p, plIt->p);
+    }
+    
+    if(plIt->s == SND_NORM_BRICK_BREAK)
+    {
+      switch(m)
+      {
+        //Case 0 = SND_NORM_BREAK(a)
+        case 1:
+          plIt->s = SND_NORM_BRICK_BREAKB;
+          break;
+        case 2:
+          plIt->s = SND_NORM_BRICK_BREAKC;
+          break;
+        case 3:
+          plIt->s = SND_NORM_BRICK_BREAKD;
+          break;
+        case 4:
+          plIt->s = SND_NORM_BRICK_BREAKE;
+          break;
+      }
+      
+      m++;
+      if(m==5)
+        m=0;
+      
     }
     
     if(Mix_PlayChannel(freeChannel, sample[plIt->s], 0) == -1)

@@ -40,9 +40,8 @@ Project page: https://sourceforge.net/projects/sdl-ball/
 Web site: http://sdl-ball.sourceforge.net/
 
 License:
-Code, Graphics, Levels are GPLv3
-Sound are Creative Commons Sampling Plus 1.0 License. ( http://creativecommons.org/licenses/sampling+/1.0/ )
-See data/font/COPYING for font licenses.
+Code, Graphics, Levels, Sound are GPLv3
+See themes/default/font/COPYING for font licenses.
 
 SDL-Ball is my hobby project, I'm using it to learn C++ and
 how not to design software, I learn by trial and error, thats
@@ -225,13 +224,12 @@ You need to edito two files to enable WiiMote support:
 Makefile: add -lwiiuse to LDFLAGS
 main.cpp: remove the // in front of #define WITH_WIIUSE
 
-2.3  For systemwide installation
-Because every linux dist is diffrent, I can't know where it would be nice
-to put the datafiles for sdl-ball, you might want to use a dir like /usr/local/share/sdl-ball/data
-In that case, make a directory there, and put the data dir into it.
-Then edit main.cpp: Change #define DATADIR "data/" to whatever you want, like:
-#define DATADIR "/usr/local/share/sdl-ball/data/"
-Notice the trailing /
+2.3 For systemwide installation Because every linux dist is diffrent, 
+I can't know where it would be nice to put the datafiles (themes) for sdl-ball,
+you might want to use a dir like /usr/local/share/sdl-ball
+In that case, make a directory there, and put 
+the themes dir into it. Then compile with
+make -DDATADIR="/usr/share/sdl-ball/themes"
 
 ------------------------------------
 
@@ -259,7 +257,3 @@ Ciddk - Website and Bugreports
 Evgeni Golov - Helped debug strange bug in the highsore display.
 
 ------------------------------------
-
-5.0 Frequently Asked Questions (FAQ)
-
-Ask some
