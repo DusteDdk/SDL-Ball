@@ -202,6 +202,9 @@ Shop items are more expensive
 Renamed datadir to themes and put the default theme in there, which makes more sense, since all data is in the themes.
 Added option to show time (the system time), this wont be available from menu, pres C to enable/disable.
 Achieved level saved and shown in higshcore.
+FPS (Frames Per Second) option added, default to 120 fps (without vsync), a higher value then screen-refresh is ignored if vsync is on.
+Player can only buy a powerup once per level, not per life.
+Fixed bug in collision detection
 
 Todo for 0.13:
 GPL sounds.

@@ -2955,10 +2955,10 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
   GLfloat dist[4] = { 4.0, 4.0, 4.0, 4.0 }; //measure the distance from last pos to each possible impact, the shortest should be the right one
 
   //vi tager y først da der er mindst brikker
-  if(ba.posy <= br.posy+br.height+ba.height && ba.posy >= br.posy-br.height-ba.height)
+  if(ba.posy < br.posy+br.height+ba.height && ba.posy > br.posy-br.height-ba.height)
   {
     //cout << " y " << endl;
-    if(ba.posx >= br.posx-br.width-ba.width && ba.posx <= br.posx+br.width+ba.width)
+    if(ba.posx > br.posx-br.width-ba.width && ba.posx < br.posx+br.width+ba.width)
     {
       //cout << " x " << endl;
       for(i=0; i < 32; i++) // 32 punkter præcis
@@ -2983,8 +2983,8 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
       if(col)
       {
 
-        px /= (float)points;
-        py /= (float)points;
+        px /= points;
+        py /= points;
 
         if(ba.lastX-px <= br.posx-br.width && !br.n(0)) //
         {
@@ -4298,13 +4298,13 @@ int main (int argc, char *argv[]) {
         paddle.posx = 0.0;
         var.startedPlaying=0;
         bg.init(texMgr);
+        hud.clearShop();
       }
 
       if(gVar.newLife)
       {
         gVar.newLife=0;
         paddle.init();
-        hud.clearShop();
         p.x=paddle.posx;
 
         p.y=paddle.posy+paddle.height+0.025;

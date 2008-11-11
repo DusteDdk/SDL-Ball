@@ -35,6 +35,7 @@ struct glFontInfo_struct {
   struct glCharInfo_struct ch[255];
 };
 
+
 class glTextClass {
   private:
     void genFontTex(string TTFfontName, int fontSize, int font);
@@ -225,6 +226,7 @@ void glTextClass::write(string text, int font,bool center, GLfloat scale, GLfloa
 
   glEnable( GL_TEXTURE_2D );
   glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
+  
 
   //Draw the quads
   for(unsigned int i=0; i < text.length(); i++)
@@ -242,5 +244,4 @@ void glTextClass::write(string text, int font,bool center, GLfloat scale, GLfloa
     glEnd( );
     posX += sX;
   }
-    
 }
