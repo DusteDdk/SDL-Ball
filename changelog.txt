@@ -192,7 +192,7 @@ Detonate powerup had same icon as Multiball, fixed now.
 Changed from "string in a texture" to string-of-quads text rendering.
 Changed max-min bounceoff angle from 10-170 to 15-165
 Fixed bug that made custom colored bricks invisible.
-It now show how many levels you have left AFTER dropping your current ball, instead of before.
+It now show how many lives you have left AFTER dropping your current ball, instead of before.
 Fixed bug that made game paused after having gameover without a highscore.
 Removed "Gravity" powerdown.
 Added Cash Powerup.
@@ -205,11 +205,12 @@ Achieved level saved and shown in higshcore.
 FPS (Frames Per Second) option added, default to 120 fps (without vsync), a higher value then screen-refresh is ignored if vsync is on.
 Player can only buy a powerup once per level, not per life.
 Fixed bug in collision detection
+GPL sounds. (made in sfxr, other sounds are most welcome! but they need be GPL!)
+More levels.
 
 Todo for 0.13:
-GPL sounds.
-More levels.
 Update TEST theme.
+Non-free soundtheme can be downloaded here:
 
 Todo for 0.14:
 
