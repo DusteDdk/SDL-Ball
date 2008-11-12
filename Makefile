@@ -4,11 +4,11 @@ DATADIR?=themes/
 #append -DNOSOUND to compile WITHOUT sound support
 CC=g++ -DDATADIR="\"$(DATADIR)\""
 
-CFLAGS+=-c -Wall
+CFLAGS+=-c -Wall `sdl-config --cflags`
 
 #append -lwiiuse to compile with WIIUSE support
 #remove -lSDL_mixer if compiling with -DNOSOUND
-LDFLAGS+=-lGL -lGLU -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer
+LDFLAGS+=-lGL -lGLU `sdl-config --libs` -lSDL_image -lSDL_ttf -lSDL_mixer
 
 SOURCES=main.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)

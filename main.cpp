@@ -45,7 +45,7 @@
 
 //WIN32
 #ifndef DATADIR
-  #define DATADIR "data/"
+  #define DATADIR "themes/"
 #endif
 
 //To disable sound support:

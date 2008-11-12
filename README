@@ -257,3 +257,7 @@ Ciddk - Website and Bugreports
 Evgeni Golov - Helped debug strange bug in the highsore display.
 
 ------------------------------------
+
+5.0 Frequently Asked Questions
+Q: The paddle moves around randomly, or is stuck in one of the sides?
+A: try disabling joystick support in the settings.cfg

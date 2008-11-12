@@ -207,6 +207,7 @@ Player can only buy a powerup once per level, not per life.
 Fixed bug in collision detection
 GPL sounds. (made in sfxr, other sounds are most welcome! but they need be GPL!)
 More levels.
+Added the rest of the background images
 
 Todo for 0.13:
 Update TEST theme.
