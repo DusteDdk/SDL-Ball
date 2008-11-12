@@ -3067,7 +3067,7 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
         {
           b.x = ba.xvel/1.5;
           b.y = ba.yvel/1.5;
-        } else if(player.difficulty == HARD)
+        } else //if(player.difficulty == HARD)
         {
           b.x = ba.xvel/1.25;
           b.y = ba.yvel/1.25;
