@@ -60,7 +60,7 @@
   #include <SDL/SDL_mixer.h>
 #endif
 
-#define VERSION "0.13"
+#define VERSION "0.14SVN"
 #define SAVEGAMEVERSION 2
 
 
@@ -3301,6 +3301,10 @@ class hudClass {
       if(shopItemSelected < 0)
       {
         shopItemSelected=canAfford-1;
+        if(shopItemSelected < 0)
+        {
+          shopItemSelected=0;
+        }
       }
     } else if(gVar.shopBuyItem)
     {
