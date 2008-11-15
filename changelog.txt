@@ -212,6 +212,7 @@ Added the rest of the background images
 0.14:
 Changed logo to use a power of two texture (this removed lagging from introscreen, shows logo on some cards)
 Fixed crashbug that made it segfault when pressing pressing "next item" and then "buy"
+Possible to save game at all time.
 
 Todo for 0.14:
 Update TEST theme.

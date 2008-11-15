@@ -313,7 +313,7 @@ public:
       
       //Save
       glTranslatef(0.0,0.22,0.0f);
-      if(player.level > 0 && !var.startedPlaying)
+      if(player.level > 0)// && !var.startedPlaying)
       {
         if(var.menuItem==4)
           glCallList(dl+2);
@@ -374,7 +374,7 @@ public:
             var.menu=7;
             break;
           case 4: //Save Game
-            if(player.level > 0 && !var.startedPlaying)
+            if(player.level > 0)// && !var.startedPlaying)
               var.menu=9;
             break;
           case 5: //Load game

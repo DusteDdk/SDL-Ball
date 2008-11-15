@@ -270,6 +270,7 @@ void saveGame(int slot, string name);
 
 struct settings setting;
 struct player_struct player;
+struct player_struct SOLPlayer;
 struct vars var;
 
 typedef GLfloat texPos[8];
@@ -3443,7 +3444,7 @@ void saveGame(int slot, string name) {
   fstream file;
   struct savedGame game;
   strcpy(game.name, name.data() );
-  game.player = player;
+  game.player = SOLPlayer; //StartOfLevelPlayer, player as it was in the start of the level
   file.open(privFile.saveGameFile.data(), ios::out | ios::in | ios::binary);
   if(!file.is_open())
   {
@@ -4259,9 +4260,9 @@ int main (int argc, char *argv[]) {
             if(!var.idiotlock)
             {
               var.idiotlock=1;
-
-              //If player completed all levels, restart the game with higher multiplier
               player.level++;
+              SOLPlayer = player; // Capture how player is at the start of this level
+              //If player completed all levels, restart the game with higher multiplier
               if(player.level == var.numlevels)
               {
                 player.multiply += player.multiply*3;
