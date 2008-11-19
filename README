@@ -106,13 +106,11 @@ Y axis - Selevt powerup to buy.
 ------------------------------------
 
 1.3 Saving and Loading
-IMPORTANT:
-You can only save your game at one time each level:
-Just after entering the level, BEFORE launcing any balls!!
-If you launch the ball, you can't save until next level.
 To save your game, press ESC, and click the save-button in the menu
 choose a slot and enter a name for the savegame,
 then press enter to save.
+Saving only saves the game as it is in the START of the level.
+You can't save in level 1... Obviously, since you made no progress :)
 
 To load a game, press ESC and click the load-button in the menu
 then choose a game.

@@ -215,6 +215,7 @@ Fixed crashbug that made it segfault when pressing pressing "next item" and then
 Possible to save game at all time.
 
 Todo for 0.14:
+Pressing a savegame slot when saving will write a name that can be used, so user don't have to.
 Update TEST theme.
 Non-free soundtheme can be downloaded here:
 

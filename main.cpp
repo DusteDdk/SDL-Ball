@@ -3536,7 +3536,7 @@ int listSaveGames(string slotName[])
   if(sgHead!=SAVEGAMEVERSION)
   {
     cout << "Savegame format error, is v" << sgHead << " should be v'"  << SAVEGAMEVERSION << "'." << endl;
-    cout << "Overriding old savegames..." << endl;
+    cout << "Overwriting old savegames..." << endl;
     file.close();
     clearSaveGames();
 
