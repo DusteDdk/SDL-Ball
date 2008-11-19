@@ -60,7 +60,7 @@
   #include <SDL/SDL_mixer.h>
 #endif
 
-#define VERSION "0.14SVN"
+#define VERSION "0.14"
 #define SAVEGAMEVERSION 2
 
 
@@ -4694,7 +4694,7 @@ int main (int argc, char *argv[]) {
 #ifdef WIN32
 	Sleep( 1 );
 #else
-    usleep( 500 );
+    usleep( 1000 );
 #endif
   }
 

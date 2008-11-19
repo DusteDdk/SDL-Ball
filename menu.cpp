@@ -323,6 +323,20 @@ public:
         glColor4f(0,0,0,1);
         glText->write("Save Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
         glColor4f(1,1,1,1);
+      } else {
+        glColor4f(1,1,1,1);
+        if(var.menuItem==4)
+        {
+          glCallList(dl+2);
+          glColor4f(0.5,0.5,0.5,1);
+          glText->write("Not in Level 1", FONT_MENU, 1, 1.0, 0.0, -0.005);
+        } else {
+          glCallList(dl+1);
+          glColor4f(0.5,0.5,0.5,1);
+          glText->write("Save Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
+        }
+        glColor4f(1,1,1,1);
+  
       }
       
       
@@ -954,8 +968,21 @@ public:
     {
       //Save game
       //Back
+      
+      if(var.enterSaveGameName)
+      {
+        glLoadIdentity();
+        glTranslatef(0.0, 0.54,-3.0f);
+        glTranslatef(0.0, 0.12,0.0f);
+
+        glColor4f(0,0,0,1);
+        glText->write("Enter name and press Enter to save. ESC to cancel", FONT_MENU, 1, 1.0, 0.0, -0.005);
+        glColor4f(1,0,0,1);
+      }
+      
       glLoadIdentity();
       glTranslatef(0.0, 0.54,-3.0f);
+      
       if(var.menuItem==8)
         glCallList(dl+2);
       else
@@ -1107,10 +1134,10 @@ public:
       glColor4f(1,1,1,1);
 
 
-        glCallList(dl+3);
+      glCallList(dl+3);
 
-      glTranslatef(0.0,-0.22,0.0f);
-      glTranslatef(0.0,-0.88,0.0f);
+      
+      glTranslatef(0.0,-1.0,0.0);
 
       if(var.menuItem==1)
         glCallList(dl+2);
