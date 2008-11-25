@@ -60,7 +60,7 @@
   #include <SDL/SDL_mixer.h>
 #endif
 
-#define VERSION "0.14"
+#define VERSION "0.15SVN"
 #define SAVEGAMEVERSION 2
 
 
@@ -3815,11 +3815,16 @@ int main (int argc, char *argv[]) {
 
   cout << "SDL-Ball v "VERSION << endl;
 
-
-#ifdef WIN32
-  privFile.programRoot = ""; // default to ./ on win32
-#else
-  privFile.programRoot = getenv("HOME");
+  // default to "" (If this have a 0 len after trying to getenv, it defaults to ./)
+  privFile.programRoot = ""; 
+#ifndef WIN32
+  if(getenv("XDG_CONFIG_HOME") != NULL)
+  {
+    privFile.programRoot = getenv("XDG_CONFIG_HOME");
+  } else if(getenv("HOME") != NULL) { 
+    privFile.programRoot = getenv("HOME");
+    privFile.programRoot.append("/.config");
+  }
 #endif
 
   //Default places if it can't place files another place.
@@ -3832,7 +3837,6 @@ int main (int argc, char *argv[]) {
   {
     cout << "Could not locate home directory defaulting to ./" << endl;
   } else {
-     privFile.programRoot.append("/.config");
 
     if( checkDir(privFile.programRoot))
     {

@@ -216,5 +216,8 @@ Possible to save game at all times (after level 2).
 Pressing a savegame slot when saving will write  help, so the user know what to do.
 Savegame box always shown, greyed out.
 
+0.15:
+Will use $XDG_CONFIG_HOME enviroment variable over $HOME if found.
+
 Stuff that needs doing some time:
 Get more liniar increase in difficulty by sorting/adding/removing levels.
