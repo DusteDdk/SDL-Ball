@@ -219,6 +219,7 @@ Savegame box always shown, greyed out.
 0.15:
 Uses $XDG_CONFIG_HOME enviroment variable over $HOME if found.
 Updated Makefile accordingly to advice from Christian "idl0r" Ruppert.
+Added dio-sound-theme as an optional sound-theme, try it out and give feedback on sf.net
 
 Stuff that needs doing some time:
 Get more liniar increase in difficulty by sorting/adding/removing levels.
