@@ -221,5 +221,8 @@ Uses $XDG_CONFIG_HOME enviroment variable over $HOME if found.
 Updated Makefile accordingly to advice from Christian "idl0r" Ruppert.
 Added dio-sound-theme as an optional sound-theme, try it out and give feedback on sf.net
 
+Planned features:
+"Checkboxes" on the themes selection, for selecting what part of which theme to use.
+
 Stuff that needs doing some time:
 Get more liniar increase in difficulty by sorting/adding/removing levels.
