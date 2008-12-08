@@ -217,7 +217,8 @@ Pressing a savegame slot when saving will write  help, so the user know what to 
 Savegame box always shown, greyed out.
 
 0.15:
-Will use $XDG_CONFIG_HOME enviroment variable over $HOME if found.
+Uses $XDG_CONFIG_HOME enviroment variable over $HOME if found.
+Updated Makefile accordingly to advice from Christian "idl0r" Ruppert.
 
 Stuff that needs doing some time:
 Get more liniar increase in difficulty by sorting/adding/removing levels.

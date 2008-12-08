@@ -8,7 +8,7 @@ CFLAGS+=-c -Wall `sdl-config --cflags`
 
 #append -lwiiuse to compile with WIIUSE support
 #remove -lSDL_mixer if compiling with -DNOSOUND
-LDFLAGS+=-lGL -lGLU `sdl-config --libs` -lSDL_image -lSDL_ttf -lSDL_mixer
+LIBS+=-lGL -lGLU `sdl-config --libs` -lSDL_image -lSDL_ttf -lSDL_mixer
 
 SOURCES=main.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -18,7 +18,7 @@ EXECUTABLE=sdl-ball
 all: $(SOURCES) $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $@
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
@@ -28,3 +28,4 @@ clean:
 
 remove:
 	rm -R ~/.config/sdl-ball
+	
