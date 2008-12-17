@@ -196,9 +196,9 @@ struct settings {
 };
 
 struct scrollInfoScruct {
-  bool direction[4]; //0 right, 1 left, 2 up, 3 down
-  unsigned int speed[4]; //right, left, up, down, in ms/ticks.
-  unsigned int lastTick[4]; // what was the time last they moved
+  bool drop; //0 right, 1 left, 2 up, 3 down
+  unsigned int dropspeed;
+  unsigned int lastTick; // what was the time last they moved
 };
 
 struct privFileStruct {
@@ -3582,77 +3582,23 @@ void detonateExplosives(brick bricks[], effectManager & fxMan)
   }
 }
 
-void moveBoard(brick bricks[], int dir)
+void dropBoard(brick bricks[])
 {
-  int i;
-
-  switch(dir)
+  for(int i=0; i < 598; i++)
   {
-    case 0:    //Move to the right
-    for(i=0; i < 598; i++)
+    if(bricks[i].active)
     {
-      if(bricks[i].active)
+      bricks[i].posy -= bricks[i].height*2;
+      if(bricks[i].posy < -1.00-bricks[i].height)
       {
-        bricks[i].posx += bricks[i].width*2;
-        if(bricks[i].posx > 1.60)
-        {
-          bricks[i].posx=-1.6+bricks[i].width;
-        }
+        //Destroy brick, and subtract score
+        bricks[i].active=0;
+        updated_nbrick[bricks[i].row][bricks[i].bricknum]=-1;
+        var.bricksHit=1;
+        player.score -= bricks[i].score;
+        gVar.deadTime=0;
       }
     }
-    break;
-
-    case 1: // move to the left
-    for(i=0; i < 598; i++)
-    {
-      if(bricks[i].active)
-      {
-        bricks[i].posx -= bricks[i].width*2;
-        if(bricks[i].posx < -1.60)
-        {
-          bricks[i].posx= 1.6-bricks[i].width;
-        }
-      }
-    }
-    break;
-
-    case 2: // move up
-    for(i=0; i < 598; i++)
-    {
-      if(bricks[i].active)
-      {
-        bricks[i].posy += bricks[i].height*2;
-        if(bricks[i].posy > 1.15-bricks[i].height)
-        {
-         //Destroy brick, and subtract score
-          bricks[i].active=0;
-          updated_nbrick[bricks[i].row][bricks[i].bricknum]=-1;
-          var.bricksHit=1;
-          player.score -= bricks[i].score;
-          gVar.deadTime=0;
-        }
-      }
-    }
-    break;
-
-    case 3: // move down
-    for(i=0; i < 598; i++)
-    {
-      if(bricks[i].active)
-      {
-        bricks[i].posy -= bricks[i].height*2;
-        if(bricks[i].posy < -1.00-bricks[i].height)
-        {
-          //Destroy brick, and subtract score
-          bricks[i].active=0;
-          updated_nbrick[bricks[i].row][bricks[i].bricknum]=-1;
-          var.bricksHit=1;
-          player.score -= bricks[i].score;
-          gVar.deadTime=0;
-        }
-      }
-    }
-    break;
   }
 }
 
@@ -4015,7 +3961,8 @@ int main (int argc, char *argv[]) {
 
   soundMan.init();
 
-  SDL_WM_SetCaption("SDL-Ball", "SDL-Ball");
+  SDL_WM_SetCaption("SDL-Ball", "SDL-Ball" );
+  SDL_WM_SetIcon( IMG_Load( useTheme("icon32.png", setting.gfxTheme).data() ), 0 );
   SDL_WarpMouse(var.halfresx, var.halfresy);
 
   textureManager texMgr;
@@ -4343,17 +4290,16 @@ int main (int argc, char *argv[]) {
         //borders
         glCallList(sceneDL);
 
-        for(i=0; i < 4; i++)
+
+        if(var.scrollInfo.drop)
         {
-          if(var.scrollInfo.direction[i])
+          if( (SDL_GetTicks() - var.scrollInfo.lastTick ) > var.scrollInfo.dropspeed )
           {
-            if( (SDL_GetTicks() - var.scrollInfo.lastTick[i] ) > var.scrollInfo.speed[i] )
-            {
-              var.scrollInfo.lastTick[i]=SDL_GetTicks();
-              moveBoard(bricks, i);
-            }
+            var.scrollInfo.lastTick=SDL_GetTicks();
+            dropBoard(bricks);
           }
         }
+        
 
         if(gVar.bricksleft==1)
         {
@@ -4404,7 +4350,7 @@ int main (int argc, char *argv[]) {
       {
         if(player.powerup[PO_DROP])
         {
-          moveBoard(bricks, 3);
+          dropBoard(bricks);
         }
       }
 

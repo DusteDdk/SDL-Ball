@@ -144,12 +144,9 @@ void loadlevel(string file, brick bricks[] ,int level)
   }
   string line;
   int levelread=0,brick=0,ch=0;
-  bool useCustomDifficulty=0; //If this is still 0 when level is loaded, set difficulty = static_difficulty
   var.numlevels=0;
-  var.scrollInfo.direction[0] = 0;
-  var.scrollInfo.direction[1] = 0;
-  var.scrollInfo.direction[2] = 0;
-  var.scrollInfo.direction[3] = 0;
+  var.scrollInfo.drop = 0;
+
   
   while(!levelfile.eof())
   {
@@ -176,26 +173,10 @@ void loadlevel(string file, brick bricks[] ,int level)
         {
           if(line[0] == '>')
           {
-            if(line.substr(0,7) == "> right")
+            if(line.substr(0,6) == "> down")
             {
-              var.scrollInfo.speed[0] = atol( line.substr(8,line.length()).data() );
-              var.scrollInfo.direction[0] = 1;
-            } else if(line.substr(0,6) == "> left")
-            {
-              var.scrollInfo.speed[1] = atol( line.substr(7,line.length()).data() );
-              var.scrollInfo.direction[1] = 1;
-            } else if(line.substr(0,4) == "> up")
-            {
-              var.scrollInfo.speed[2] = atol( line.substr(5,line.length()).data() );
-              var.scrollInfo.direction[2] = 1;
-            } else if(line.substr(0,6) == "> down")
-            {
-              var.scrollInfo.speed[3] = atol( line.substr(7,line.length()).data() );
-              var.scrollInfo.direction[3] = 1;
-            } else if(line.substr(0,5) =="> inc")
-            {
-              useCustomDifficulty=1;
-              difficulty.hitbrickinc[NORMAL] = atof( line.substr(6, line.length()).data() );
+              var.scrollInfo.dropspeed = atol( line.substr(7,line.length()).data() );
+              var.scrollInfo.drop = 1;
             }
           } else {
             while(line[ch] != 0)
@@ -235,9 +216,6 @@ void loadlevel(string file, brick bricks[] ,int level)
   }
    cout << "Read " << var.numlevels << " levels from '"<< file <<"'"  << endl;
   levelfile.close();
-  
-  if(!useCustomDifficulty)
-    difficulty = static_difficulty;
 }
 
 void initlevels(brick bricks[], textureClass texLvl[])
