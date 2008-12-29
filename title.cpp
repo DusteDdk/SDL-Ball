@@ -269,11 +269,13 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
       }
     }
     glLoadIdentity();
+    
     glTranslatef(0.0,0.0,-3.0);
+    
     glRotatef(20, 1,0,0);
     glRotatef(rot, 0,1,0);
     glCallList(glTitleList);
-
+    
     SDL_GL_SwapBuffers( );
     
     globalTicksSinceLastDraw=0;

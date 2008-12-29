@@ -4105,11 +4105,13 @@ int main (int argc, char *argv[]) {
     nonpausingGlobalMilliTicks = nonpausingGlobalTicks/1000.0;
     nonpausingLastTick = SDL_GetTicks();
 
-    if(var.paused)
-      lastTick = SDL_GetTicks();
-
-    globalTicks = SDL_GetTicks() - lastTick;
-    globalMilliTicks = globalTicks/1000.0;
+    if(!var.paused)
+    {
+      globalTicks = SDL_GetTicks() - lastTick;
+      globalMilliTicks = globalTicks/1000.0;
+    } else {
+      globalTicks = globalMilliTicks = 0;
+    }
     lastTick = SDL_GetTicks();
 
     globalTicksSinceLastDraw += nonpausingGlobalTicks;
