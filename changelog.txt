@@ -225,6 +225,7 @@ Removed "> up", "> left" and "> right" from levels.txt
 More levels.
 Added Window manager Icon to the program when it's running.
 Balls now stop completely when the game is paused (ball moved a bit in earlier versions)
+Added http address to the intro screen.
 
 Planned features:
 Some gui way of selecting individual parts of themes.
