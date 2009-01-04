@@ -256,7 +256,7 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
    
    //Draw the info string with website and version
    glColor4f(1,1,0,1);
-   glText->write("Visit http://sdl-ball.sf.net/ for info, help and updates!", FONT_INTROHIGHSCORE, 1, 1.2, 0,0);
+   glText->write("Visit http://sdl-ball.sf.net/ for info, help and updates!", FONT_INTROHIGHSCORE, 1, 1.0, 0,0);
    
     if(!rotDir)
     {
