@@ -34,6 +34,7 @@ class backgroundClass {
     
     void init(textureManager & texMgr)
     {
+      bool l;
       //Så vi ikke kommer til at slette texture 0 første gang funktionen bliver kaldt
       if(!firstTexture)
         glDeleteTextures(1, &tex.prop.texture);
@@ -41,58 +42,63 @@ class backgroundClass {
       float t = 0.25 * ((float)player.level+1);
 
       if(t <= 1.0)
-        texMgr.load(useTheme("/gfx/bg/1.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/1.jpg",setting.gfxTheme), tex);
       else if(t <= 2.0)
-        texMgr.load(useTheme("/gfx/bg/2.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/2.jpg",setting.gfxTheme), tex);
       else if(t <= 3.0)
-        texMgr.load(useTheme("/gfx/bg/3.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/3.jpg",setting.gfxTheme), tex);
       else if(t <= 4.0)
-        texMgr.load(useTheme("/gfx/bg/4.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/4.jpg",setting.gfxTheme), tex);
       else if(t <= 5.0)
-        texMgr.load(useTheme("/gfx/bg/5.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/5.jpg",setting.gfxTheme), tex);
       else if(t <= 6.0)
-        texMgr.load(useTheme("/gfx/bg/6.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/6.jpg",setting.gfxTheme), tex);
       else if(t <= 7.0)
-        texMgr.load(useTheme("/gfx/bg/7.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/7.jpg",setting.gfxTheme), tex);
       else if(t <= 8.0)
-        texMgr.load(useTheme("/gfx/bg/8.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/8.jpg",setting.gfxTheme), tex);
       else if(t <= 9.0)
-        texMgr.load(useTheme("/gfx/bg/9.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/9.jpg",setting.gfxTheme), tex);
       else if(t <= 10.0)
-        texMgr.load(useTheme("/gfx/bg/10.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/10.jpg",setting.gfxTheme), tex);
       else if(t <= 11.0)
-        texMgr.load(useTheme("/gfx/bg/11.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/11.jpg",setting.gfxTheme), tex);
       else if(t <= 12.0)
-        texMgr.load(useTheme("/gfx/bg/12.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/12.jpg",setting.gfxTheme), tex);
       else if(t <= 13.0)
-        texMgr.load(useTheme("/gfx/bg/13.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/13.jpg",setting.gfxTheme), tex);
       else if(t <= 14.0)
-        texMgr.load(useTheme("/gfx/bg/14.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/14.jpg",setting.gfxTheme), tex);
       else if(t <= 15.0)
-        texMgr.load(useTheme("/gfx/bg/15.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/15.jpg",setting.gfxTheme), tex);
       else if(t <= 16.0)
-        texMgr.load(useTheme("/gfx/bg/16.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/16.jpg",setting.gfxTheme), tex);
       else if(t <= 17.0)
-        texMgr.load(useTheme("/gfx/bg/17.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/17.jpg",setting.gfxTheme), tex);
       else if(t <= 18.0)
-        texMgr.load(useTheme("/gfx/bg/18.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/18.jpg",setting.gfxTheme), tex);
       else if(t <= 19.0)
-        texMgr.load(useTheme("/gfx/bg/19.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/19.jpg",setting.gfxTheme), tex);
       else if(t <= 20.0)
-        texMgr.load(useTheme("/gfx/bg/20.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/20.jpg",setting.gfxTheme), tex);
       else if(t <= 21.0)
-        texMgr.load(useTheme("/gfx/bg/21.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/21.jpg",setting.gfxTheme), tex);
       else if(t <= 22.0)
-        texMgr.load(useTheme("/gfx/bg/22.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/22.jpg",setting.gfxTheme), tex);
       else if(t <= 23.0)
-        texMgr.load(useTheme("/gfx/bg/23.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/23.jpg",setting.gfxTheme), tex);
       else if(t <= 24.0)
-        texMgr.load(useTheme("/gfx/bg/24.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/24.jpg",setting.gfxTheme), tex);
       else if(t <= 25.0)
-        texMgr.load(useTheme("/gfx/bg/25.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/25.jpg",setting.gfxTheme), tex);
       else
-        texMgr.load(useTheme("/gfx/bg/final.jpg",setting.gfxTheme), tex);
+        l=texMgr.load(useTheme("/gfx/bg/final.jpg",setting.gfxTheme), tex);
       
+      if(!l)
+      {
+        setting.showBg=0;
+        cout << "Backgrounds disabled." << endl;
+      }
 
       firstTexture=0;
 

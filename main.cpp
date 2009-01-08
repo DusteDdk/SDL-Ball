@@ -358,14 +358,7 @@ vector<struct themeInfo> getThemes() {
   string themeDir;
   string temp;
   vector<struct themeInfo> v;
-//   //Start with the default theme.
-//   ti.name="default";
-//   ti.gfx=1;
-//   ti.snd=1;
-//   ti.lvl=1;
-//   ti.valid=1;
-//   v.push_back(ti);
-  
+
   for(int i=0; i < 2; i++)
   {
     if(i==0)
@@ -570,7 +563,7 @@ class textureManager {
 
       if(temp == NULL)
       {
-        cout << "Texture manager ERROR: " << file << " : "<< SDL_GetError() << endl;
+        cout << "Texture manager: " << file << " : "<< SDL_GetError() << endl;
         SDL_FreeSurface( temp );
         return(FALSE);
       }
@@ -580,9 +573,9 @@ class textureManager {
       //Hvis større end tilladt:
       if(temp->w > maxTexSize)
       {
-        cout << "Texture manager ERROR: '" << file << "' texturesize too large." << endl;
-        //TODO:
-        //Resize surface.
+        cout << "Texture manager: '" << file << "' texturesize too large." << endl;
+        SDL_FreeSurface( temp );
+        return(FALSE);
       }
 
 
