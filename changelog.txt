@@ -216,7 +216,7 @@ Possible to save game at all times (after level 2).
 Pressing a savegame slot when saving will write  help, so the user know what to do.
 Savegame box always shown, greyed out.
 
-0.15:
+0.15 aka 1.0:
 More levels. (50 Levels in total)
 Added dio-sound-theme as an optional sound-theme, try it out and give feedback on the sf.net forum
 Balls now stop completely when the game is paused.
@@ -227,6 +227,10 @@ Uses $XDG_CONFIG_HOME enviroment variable over $HOME if found.
 Updated Makefile accordingly to advice from Christian "idl0r" Ruppert.
 Removed "> inc" option from levels.txt
 Removed "> up", "> left" and "> right" from levels.txt
+
+1.01:
+Added some code to try and handle segfault on resolution change (that might be caused by sdl reporting a void current resolution).
+If resolution change fail, the game will quit, and not write the wrong resolution to config.
 
 Planned features:
 Some gui way of selecting individual parts of themes.

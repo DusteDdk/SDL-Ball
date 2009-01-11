@@ -622,17 +622,17 @@ public:
             setting.resx = 1024;
             setting.resy = 768;
 #ifndef WIN32
-            initScreen();
+            if(initScreen())
 #endif
-            writeSettings();
+              writeSettings();
             break;
           case 4:
             setting.resx = 1600;
             setting.resy = 1200;
 #ifndef WIN32
-            initScreen();
+            if(initScreen())
 #endif
-            writeSettings();
+              writeSettings();
             break;
           case 5:
             if(setting.eyeCandy)
@@ -647,9 +647,9 @@ public:
               else
               setting.fullscreen=1;
 #ifndef WIN32
-            initScreen();
+            if(initScreen())
 #endif
-            writeSettings();
+              writeSettings();
             break;
         }
         var.menuPressed=0;

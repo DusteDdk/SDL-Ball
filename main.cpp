@@ -60,7 +60,7 @@
   #include <SDL/SDL_mixer.h>
 #endif
 
-#define VERSION "1.0"
+#define VERSION "1.01-SVN"
 #define SAVEGAMEVERSION 2
 
 
@@ -139,7 +139,7 @@
 using namespace std;
 
 void writeSettings();
-void initScreen();
+bool initScreen();
 void initNewGame();
 void pauseGame();
 void resumeGame();
@@ -2834,12 +2834,19 @@ float rndflt(float total, float negative)
   return (rand()/(float(RAND_MAX)+1)*total)-negative;
 }
 
-void initScreen()
+bool initScreen()
 {
+  bool success=1;
   int SDL_videomodeSettings = SDL_OPENGL|SDL_RESIZABLE;
 
   if(setting.fullscreen)
     SDL_videomodeSettings |= SDL_FULLSCREEN;
+
+  /* Free the previously allocated surface */
+  if(screen != NULL)
+  {
+    SDL_FreeSurface( screen );
+  }
 
   screen = SDL_SetVideoMode(setting.resx,setting.resy,32, SDL_videomodeSettings);
   resizeWindow(setting.resx,setting.resy);
@@ -2847,12 +2854,14 @@ void initScreen()
   if( screen == NULL )
   {
     cout << "Error:" << SDL_GetError() << endl;
+    success=0;
+    var.quit=1;
   }
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
   var.halfresx = setting.resx /2;
   var.halfresy = setting.resy / 2;
-
+  return(success);
 }
 
 void resetPlayerPowerups()
@@ -3931,6 +3940,23 @@ int main (int argc, char *argv[]) {
    int oldResX = SDL_GetVideoInfo()->current_w;
    int oldResY = SDL_GetVideoInfo()->current_h;
    int oldColorDepth = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
+   
+  /* Handle those situations where sdl gets a void resolution */
+  if(oldResX < 128 || oldResY < 96)
+  {
+    cout << "SDL Reported a screen resolution below 128x96."<< endl;
+    cout << "Assuming this is a bug in SDL or driver." << endl;
+    cout << "Falling back on 128x96";
+    oldResX=128;
+    oldResY=96;
+    if(!setting.cfgRes[0] || !setting.cfgRes[1])
+    {
+      setting.fullscreen=0;
+      cout << ", windowed mode.";
+    }
+    cout << endl;
+  }
+  /* The above code is not tested and might not work */
 
    if(!setting.cfgRes[0] || !setting.cfgRes[1])
    {
