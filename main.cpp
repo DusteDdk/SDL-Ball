@@ -60,7 +60,7 @@
   #include <SDL/SDL_mixer.h>
 #endif
 
-#define VERSION "1.01-SVN"
+#define VERSION "1.01"
 #define SAVEGAMEVERSION 2
 
 
