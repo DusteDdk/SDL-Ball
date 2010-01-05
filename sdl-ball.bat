@@ -1,3 +1,3 @@
 @ECHO OFF
 ECHO Running SDL-Ball...
-win32\sdl-ball.exe
+start win32\sdl-ball.exe

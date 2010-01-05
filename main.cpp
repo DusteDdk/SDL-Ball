@@ -290,10 +290,10 @@ struct texProp {
 
   bool padding; //Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
   float pxw, pxh; //pixels width, and height
-  
-  GLfloat glTexColorInfo[4]; 
+
+  GLfloat glTexColorInfo[4];
   GLfloat glParColorInfo[3]; //This and above  replaced object::color and particle colors
-  
+
   string fileName; //Quite the fugly.. This will be set by readTexProps();
 };
 
@@ -308,7 +308,7 @@ string useTheme(string path, string theme)
 {
   struct stat st;
   string name;
-  
+
   if(theme.compare("default") != 0)
   {
     //Try in ~/.config/sdl-ball/themes/themename
@@ -336,7 +336,7 @@ string useTheme(string path, string theme)
   }
 }
 
-   
+
 struct themeInfo {
   string name;
   bool snd,gfx,lvl,valid; //Valid means that there seems to be data of some kind (ie. not just an empty folder)
@@ -392,7 +392,7 @@ vector<struct themeInfo> getThemes() {
             } else {
               ti.gfx=0;
             }
-            
+
             //Check if theme have sound
             temp=themeDir + pent->d_name +"/snd";
             if(stat(temp.data(), &st) == 0)
@@ -402,7 +402,7 @@ vector<struct themeInfo> getThemes() {
             } else {
               ti.snd=0;
             }
-            
+
             //Check if theme have levels
             temp=themeDir + pent->d_name +"/levels.txt";
             if(stat(temp.data(), &st) == 0)
@@ -412,14 +412,14 @@ vector<struct themeInfo> getThemes() {
             } else {
               ti.lvl=0;
             }
-            
+
             v.push_back(ti);
           }
         }
       }
     }
   }
-  
+
   return(v);
 }
 
@@ -581,7 +581,7 @@ class textureManager {
 
       glGenTextures(1, &tex.prop.texture);
       glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-      
+
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -603,7 +603,7 @@ class textureManager {
     ifstream f;
     string line,set,val;
     f.open( fileName.data() );
-  
+
     if(f.is_open())
     {
       while(!f.eof())
@@ -668,17 +668,17 @@ class textureManager {
           } else {
             cout << "Error: '"<<fileName<<"'invalid setting '"<< set <<"' with value '" << val <<"'"<<endl;
           }
-          
+
         }
       }
-      
+
       //Load the texture if we have a filename.
       if(tex.prop.fileName.length() > 1)
       {
         string name = "gfx/"+tex.prop.fileName;
         load(useTheme(name,setting.gfxTheme), tex);
       }
-      
+
     } else {
       cout << "readTexProps: Cannot open '" << fileName << "'"<<endl;
     }
@@ -1910,7 +1910,7 @@ class ballManager {
             a++;
           }
         }
-        
+
         for(i=0; i < MAXBALLS; i++)
         {
           if(b[i].active && c != a)
@@ -2082,7 +2082,7 @@ class ballManager {
             } else {
               soundMan.add(SND_BALL_HIT_PADDLE, p.x);
             }
-            
+
 
             if(setting.eyeCandy)
             {
@@ -2699,7 +2699,7 @@ void spawnpowerup(char powerup, pos a, pos b)
   {
     pMan.spawn(a,b,PO_AIMHELP);
   }
-  
+
   if(powerup == 'E')
   {
     pMan.spawn(a,b,PO_COIN);
@@ -2882,7 +2882,7 @@ void initNewGame()
   gVar.newLife=1;
 
   player.multiply = 1;
-  
+
   switch(player.difficulty)
   {
     case EASY:
@@ -3183,21 +3183,21 @@ struct shopItemStruct {
 class hudClass {
   private:
   textureClass texBall;
-  
+
   //For the hud text
   int ticksSinceLastClockCheck;
   time_t nixTime; //Seconds since epoch
   tm timeStruct; //Time struct
   char clockString[13]; //Clock: 00:00\0
 
-  
+
   //For the powerup "shop"
   textureClass *texPowerup; //Pointer to array of powerup textures
   int shopItemSelected;
   #define NUMITEMSFORSALE 13
   struct shopItemStruct item[NUMITEMSFORSALE];
   bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
-  
+
   public:
   hudClass(textureClass texB, textureClass texPo[])
   {
@@ -3231,7 +3231,7 @@ class hudClass {
     item[11].price = 4000;
     item[12].type = PO_LIFE;
     item[12].price = 6000;
-    
+
     shopItemSelected=0;
   }
 
@@ -3267,9 +3267,9 @@ class hudClass {
       }
       glColor4f(1.0,1.0,1.0,1.0);
       glText->write(clockString, FONT_INTRODESCRIPTION, 0, 1.0, -1.58, -1.25 + glText->getHeight(FONT_INTRODESCRIPTION));
-      
+
     }
-    
+
     //Draw the "shop"
     //First, find out how many items the player can afford, so we can center them
     int canAfford=0;
@@ -3280,12 +3280,12 @@ class hudClass {
         canAfford++;
       }
     }
-    
+
     if(shopItemSelected > canAfford || shopItemSelected < 0)
     {
       shopItemSelected=canAfford-1;
     }
-    
+
     GLfloat shopListStartX = -((0.11*canAfford)/2.0);
     if(gVar.shopNextItem)
     {
@@ -3326,7 +3326,7 @@ class hudClass {
         soundMan.add(SND_BUY_POWERUP, 0.0);
       }
     }
-    
+
     glTranslatef( shopListStartX, 1.15, 0.0f);
     for(i=0; i < canAfford; i++)
     {
@@ -3350,13 +3350,13 @@ class hudClass {
       glBindTexture( GL_TEXTURE_2D, texPowerup[item[i].type].prop.texture);
       glBegin( GL_QUADS );
         glTexCoord2f(texPowerup[item[i].type].pos[0],texPowerup[item[i].type].pos[1]);glVertex3f( -0.055, 0.055, 0.00 );
-        glTexCoord2f(texPowerup[item[i].type].pos[2],texPowerup[item[i].type].pos[3]);glVertex3f(  0.055, 0.055, 0.00 ); 
-        glTexCoord2f(texPowerup[item[i].type].pos[4],texPowerup[item[i].type].pos[5]);glVertex3f(  0.055,-0.055, 0.00 ); 
-        glTexCoord2f(texPowerup[item[i].type].pos[6],texPowerup[item[i].type].pos[7]);glVertex3f( -0.055,-0.055, 0.00 ); 
+        glTexCoord2f(texPowerup[item[i].type].pos[2],texPowerup[item[i].type].pos[3]);glVertex3f(  0.055, 0.055, 0.00 );
+        glTexCoord2f(texPowerup[item[i].type].pos[4],texPowerup[item[i].type].pos[5]);glVertex3f(  0.055,-0.055, 0.00 );
+        glTexCoord2f(texPowerup[item[i].type].pos[6],texPowerup[item[i].type].pos[7]);glVertex3f( -0.055,-0.055, 0.00 );
       glEnd( );
       glTranslatef( 0.11, 0.0, 0.0f);
     }
-    
+
   }
 
   void clearShop()
@@ -3452,7 +3452,7 @@ void saveGame(int slot, string name) {
   {
     cout << "Could not open '"<<privFile.saveGameFile<<"' for Read+Write." << endl;
   }
-    
+
   //move to the slot, mind the header
   file.seekp( (sizeof(int))+((sizeof(savedGame)*slot)) );
 
@@ -3473,7 +3473,7 @@ void clearSaveGames()
   file.write( (char *)(&sgHead), sizeof(int));
   file.close();
 
-  
+
   saveGame(0, "Empty Slot");
   saveGame(1, "Empty Slot");
   saveGame(2, "Empty Slot");
@@ -3530,10 +3530,10 @@ int listSaveGames(string slotName[])
       return(0);
     }
   }
-  
+
     //First we check if this is the right version
   int sgHead=0x00; //Invalid version
-  
+
   file.read((char *)(&sgHead), sizeof(int));
   if(sgHead!=SAVEGAMEVERSION)
   {
@@ -3698,7 +3698,7 @@ bool screenShot()
 }
 
 int main (int argc, char *argv[]) {
-  
+
   var.quit=0;
   var.clearScreen=1;
   var.titleScreenShow=1;
@@ -3731,11 +3731,11 @@ int main (int argc, char *argv[]) {
   setting.JoyCalHighJitter=20;
   //Default starting difficulty
   player.difficulty = NORMAL;
-  
+
   setting.fps=120;
   int maxFrameAge= (1000/setting.fps); //When frame has been displayed this long
 
-  
+
   GLfloat mousex,mousey;
 
   static_difficulty.ballspeed[EASY] = 0.7f;
@@ -3764,12 +3764,12 @@ int main (int argc, char *argv[]) {
   cout << "SDL-Ball v "VERSION << endl;
 
   // default to "" (If this have a 0 len after trying to getenv, it defaults to ./)
-  privFile.programRoot = ""; 
+  privFile.programRoot = "";
 #ifndef WIN32
   if(getenv("XDG_CONFIG_HOME") != NULL)
   {
     privFile.programRoot = getenv("XDG_CONFIG_HOME");
-  } else if(getenv("HOME") != NULL) { 
+  } else if(getenv("HOME") != NULL) {
     privFile.programRoot = getenv("HOME");
     privFile.programRoot.append("/.config");
   }
@@ -3939,8 +3939,10 @@ int main (int argc, char *argv[]) {
   //Save current resolution so it can be restored at exit
    int oldResX = SDL_GetVideoInfo()->current_w;
    int oldResY = SDL_GetVideoInfo()->current_h;
+#ifndef WIN32
    int oldColorDepth = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
-   
+#endif
+
   /* Handle those situations where sdl gets a void resolution */
   if(oldResX < 128 || oldResY < 96)
   {
@@ -4076,7 +4078,7 @@ int main (int argc, char *argv[]) {
   effectManager fxMan;
   fxMan.set(FX_VAR_TEXTURE, texParticle);
   fxMan.set(FX_VAR_GRAVITY, 0.6f);
-  
+
   titleScreenClass titleScreen(&fxMan, texPowerup, &menu);
 
   ballManager bMan(texBall);
@@ -4111,7 +4113,7 @@ int main (int argc, char *argv[]) {
 
 
   soundMan.add(SND_START,0);
-  
+
   while(!var.quit)
   {
     #ifdef performanceTimer
@@ -4178,13 +4180,13 @@ int main (int argc, char *argv[]) {
             fxMan.set(FX_VAR_COLOR, 0.0,0.0,0.0);
             p.x = 0.0;
             p.y = 0.0;
-  
+
               //Kør en transition effekt
             var.effectnum = fxMan.spawn(p);
             announce.write("GameOver!", 1500,FONT_ANNOUNCE_BAD);
             soundMan.add(SND_GAMEOVER, 0);
           } else {
-          
+
             if(var.transition_half_done)
             {
               var.titleScreenShow=1;
@@ -4194,7 +4196,7 @@ int main (int argc, char *argv[]) {
               resumeGame();
             }
           }
-          
+
 
         }
       }
@@ -4320,7 +4322,7 @@ int main (int argc, char *argv[]) {
             dropBoard(bricks);
           }
         }
-        
+
 
         if(gVar.bricksleft==1)
         {
@@ -4481,7 +4483,7 @@ int main (int argc, char *argv[]) {
         }
 
         announce.draw();
-        
+
         SDL_GL_SwapBuffers( );
 
         frameAge = 0;
@@ -4552,7 +4554,7 @@ int main (int argc, char *argv[]) {
             setting.showClock ? setting.showClock=0 : setting.showClock=1;
             writeSettings();
           }
-            
+
           #ifdef WITH_WIIUSE
           if( sdlevent.key.keysym.sym == SDLK_w )
           {

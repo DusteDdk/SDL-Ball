@@ -265,3 +265,283 @@
 
 1222011154 c:\media\files\devel\sdl-ball\input.cpp
 
+1262676726 source:c:\work\sdl-ball\main.cpp
+	<iostream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<SDL/SDL.h>
+	<SDL/SDL_ttf.h>
+	<SDL/SDL_image.h>
+	<math.h>
+	<string.h>
+	<list>
+	<vector>
+	<sys/time.h>
+	<sys/stat.h>
+	<dirent.h>
+	<windows.h>
+	<GL/glext.h>
+	<wiiuse.h>
+	<SDL/SDL_mixer.h>
+	"declerations.h"
+	"text.cpp"
+	"sound.cpp"
+	"menu.cpp"
+	"scoreboard.cpp"
+	"loadlevel.cpp"
+	"effects.cpp"
+	"background.cpp"
+	"highscores.cpp"
+	"input.cpp"
+	"title.cpp"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_config.h
+	"SDL_platform.h"
+	"SDL_config_dreamcast.h"
+	"SDL_config_macos.h"
+	"SDL_config_macosx.h"
+	"SDL_config_symbian.h"
+	"SDL_config_win32.h"
+	"SDL_config_os2.h"
+	"SDL_config_minimal.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_platform.h
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_config_macosx.h
+	"SDL_platform.h"
+	<AvailabilityMacros.h>
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_config_win32.h
+	"SDL_platform.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\begin_code.h
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\close_code.h
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_endian.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_keysym.h
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1234602638 c:\work\sdl-ball\win32\include\sdl\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1262240085 c:\work\sdl-ball\win32\include\sdl\sdl_image.h
+	"SDL.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1225324142 c:\work\sdl-ball\win32\include\gl\glext.h
+	<windows.h>
+	<stddef.h>
+
+1224017648 c:\work\sdl-ball\win32\include\wiiuse.h
+	<windows.h>
+	<bluetooth/bluetooth.h>
+
+1262240085 c:\work\sdl-ball\win32\include\sdl\sdl_mixer.h
+	"SDL_types.h"
+	"SDL_rwops.h"
+	"SDL_audio.h"
+	"SDL_endian.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1257227933 c:\work\sdl-ball\win32\include\sdl\sdl_types.h
+	"SDL_stdinc.h"
+
+1224017780 c:\work\sdl-ball\declerations.h
+
+1226414109 c:\work\sdl-ball\text.cpp
+
+1262676726 c:\work\sdl-ball\sound.cpp
+	<vector>
+
+1238498934 c:\work\sdl-ball\menu.cpp
+
+1226162641 c:\work\sdl-ball\scoreboard.cpp
+
+1230913095 c:\work\sdl-ball\loadlevel.cpp
+
+1226162641 c:\work\sdl-ball\effects.cpp
+
+1238498934 c:\work\sdl-ball\background.cpp
+
+1226162641 c:\work\sdl-ball\highscores.cpp
+
+1262676733 c:\work\sdl-ball\input.cpp
+
+1238498934 c:\work\sdl-ball\title.cpp
+

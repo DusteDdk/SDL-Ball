@@ -1,5 +1,5 @@
-/* ************************************************************************* * 
-    SDL-Ball - DX-Ball/Breakout remake with openGL and SDL for Linux 
+/* ************************************************************************* *
+    SDL-Ball - DX-Ball/Breakout remake with openGL and SDL for Linux
     Copyright (C) 2008 Jimmy Christensen ( dusted at dusted dot dk )
 
     This program is free software: you can redistribute it and/or modify
@@ -13,9 +13,9 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * ************************************************************************* */
- 
+
 class controllerClass {
   private:
   paddle_class *paddle;
@@ -118,7 +118,7 @@ void controllerClass::btnPress()
     SDL_WarpMouse(var.halfresx,0);
     return;
   }
-  
+
   struct pos p;
   if(shotTime > 150)
   {
@@ -149,7 +149,7 @@ bool controllerClass::get()
   keyDown[0] = keyStates[setting.keyLeft];
   keyDown[1] = keyStates[setting.keyRight];
   keyDown[2] = keyStates[setting.keyShoot];
-  
+
   itemSelectTime += globalTicks;
   //Read joystick here so we can override keypresses if the joystick is digital
   //We shouldn't need to check if the joystick is enabled, since it won't be opened if its not enabled anyway.
@@ -189,9 +189,9 @@ bool controllerClass::get()
         itemSelectTime=0;
         gVar.shopPrevItem = 1;
       }
-      
+
     } else {
-      GLfloat x; //This is the actual traveling speed of the paddle
+      GLfloat x = 0.f; //This is the actual traveling speed of the paddle
       if(joystickx > setting.JoyCalHighJitter)
       {
         x = joystickRightX * joystickx;
@@ -199,7 +199,7 @@ bool controllerClass::get()
       {
         x = -(joystickLeftX * joystickx);
       }
-      
+
       if(joysticky < setting.JoyCalLowJitter && itemSelectTime > ITEMSELECTTIME)
       {
         itemSelectTime=0;
