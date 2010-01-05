@@ -119,6 +119,9 @@
 		<Unit filename="include\close_code.h" />
 		<Unit filename="include\wiiuse.h" />
 		<Unit filename="include\wincompat.h" />
+		<Unit filename="sdl-ball.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
