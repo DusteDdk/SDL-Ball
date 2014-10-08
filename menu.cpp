@@ -210,7 +210,7 @@ public:
           sprintf(highScores[t], "-----------------------");
           break;
           case 2:
-          sprintf(highScores[t], "Copyleft GPLv3 2008 Jimmy Christensen");
+          sprintf(highScores[t], "Copyleft GPLv3 2008-2014 Jimmy Christensen");
           break;
           case 3:
           sprintf(highScores[t], "Based on Dx-Ball by Michael P. Welch");
@@ -222,8 +222,11 @@ public:
           sprintf(highScores[t], "-----------------------");
           break;
           case 6:
-          sprintf(highScores[t], "Greetings to everyone!");
+          sprintf(highScores[t], "Thanks to players, packagers and patchers!");
           break;
+	  case 7:
+          sprintf(highScores[t], "Greetings to everyone!");
+	  break;
           default:
           sprintf(highScores[t], "SDL-Ball - %i", (t*-1)+20 );
           break;

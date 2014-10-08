@@ -58,7 +58,7 @@ class powerupLoaderClass {
         chance=3;
       } else {
         //No matches, either its a comment or a powerup.
-        if(!line.compare(0,2,"//")==0 && line.compare("")!=0)
+        if(line.compare(0,2,"//")!=0 && line.compare("")!=0)
         {
           chances[chance] += line[0];
           powerups++;

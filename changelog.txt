@@ -237,3 +237,6 @@ Some gui way of selecting individual parts of themes.
 
 Stuff that needs doing some time:
 Get more liniar increase in difficulty by sorting/adding/removing levels.
+
+1.02:
+Applied patches from aur package, fix compile warnings, tweaked default settings.

@@ -252,8 +252,12 @@ http://sdl-ball.sourceforge.net/?page=themes for more information on themes, it'
 People who have directly helped the SDL-Ball project, chronologically:
 Quinton "quin" Reeves - Windows Port.
 Ciddk - Website and Bugreports
-Evgeni Golov - Suggestions, comments, insight.
+Evgeni Golov - Suggestions, comments, insight, Debian package
 "Dionos" - The dio-sound-theme.
+yugrotavele - The AUR package
+kfgz - Patching
+Yannickescu - AROS port
+
 
 ------------------------------------
 
