@@ -193,7 +193,7 @@ bool controllerClass::get()
       }
       
     } else {
-      GLfloat x; //This is the actual traveling speed of the paddle
+      GLfloat x = 0.0; //This is the actual traveling speed of the paddle
       if(joystickx > setting.JoyCalHighJitter)
       {
         x = joystickRightX * joystickx;

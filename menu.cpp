@@ -908,7 +908,8 @@ public:
       //Find out how many lines we have room for in the box.
       int nl= (1.26/glText->getHeight(FONT_MENUHIGHSCORE));
       //If theres room for more than 20, only show 20..
-      nl > 20 ? nl=20 : nl=nl;
+	  if (nl > 20)
+		  nl = 20;
 
       for(int i=0; i < nl; i++)
       {
