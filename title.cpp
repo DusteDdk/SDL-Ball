@@ -320,3 +320,4 @@ void titleScreenClass::readDescriptions(powerupDescriptionClass po[])
     cout << "Could not open powerupdescriptions"<<endl;
   }
 }
+

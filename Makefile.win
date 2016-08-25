@@ -1,0 +1,24 @@
+CC=i586-mingw32msvc-g++ -DWIN32 -DWIN32_CROSS -D_DEFAULT_SOURCE -D__USE_BSD
+WINDRES = i586-mingw32msvc-windres
+CFLAGS+=-c
+
+#append -lwiiuse to compile with WIIUSE support
+#remove -lSDL_mixer if compiling with -DNOSOUND
+LIBS+=-lmingw32 -lSDLmain -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer -lopengl32 -lglu32
+
+SOURCES=main.cpp 
+OBJECTS=$(SOURCES:.cpp=.o)
+
+EXECUTABLE=sdl-ball.exe
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(WINDRES) windows.rc -O coff -o windows.res
+	$(CC) $(LDFLAGS) $(OBJECTS) windows.res $(LIBS) -o $@
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm -f *.o sdl-ball.exe

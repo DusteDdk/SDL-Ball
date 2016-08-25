@@ -35,8 +35,9 @@
 #include <dirent.h>
 
 #ifdef WIN32
-#include <windows.h>
-#include <GL/glext.h>
+  #define _OBJC_NO_COM
+  #include <windows.h>
+  #include <GL/glext.h>
 #endif
 
 /* ******************************************** *
