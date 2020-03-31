@@ -4516,6 +4516,10 @@ int main (int argc, char *argv[]) {
     control.get(); //Check for keypresses and joystick events
     while (SDL_PollEvent(&sdlevent) )
     {
+      int mouseRelPosX;
+      int mouseRelPosY;
+      //must be read on each event to avoid the paddle to move to the mouse position after the game is resumed
+      SDL_GetRelativeMouseState(&mouseRelPosX, &mouseRelPosY);
       if( sdlevent.type == SDL_KEYDOWN ) {
 
         if(var.showHighScores)
@@ -4588,8 +4592,10 @@ int main (int argc, char *argv[]) {
           if(!var.titleScreenShow)
           {
             var.titleScreenShow=1;
+            pauseGame();
           } else {
             var.titleScreenShow=0;
+            resumeGame();
           }
         }
 #ifndef WIN32
@@ -4629,7 +4635,7 @@ int main (int argc, char *argv[]) {
           else
            var.menuItem = 0;
         } else {
-          control.movePaddle(mousex);
+          control.movePaddle(paddle.posx + (mouseRelPosX * var.glunits_per_xpixel));
         }
       } else if( sdlevent.type == SDL_MOUSEBUTTONDOWN )
       {
