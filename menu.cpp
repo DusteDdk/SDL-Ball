@@ -683,23 +683,26 @@ public:
       
       //Stereo
       glTranslatef(0.0,-0.22,0.0f);
-      if(var.menuItem==5)
+      if(var.menuItem==5) {
         glCallList(dl+2);
-      else
+      } else {
         glCallList(dl+1);
         glColor4f(0,0,0,1);
-      if(setting.stereo)
+      }
+      if(setting.stereo) {
         glText->write("Stereo:On", FONT_MENU, 1, 1.0, 0.0, -0.005);
-      else
+      } else {
         glText->write("Stereo:Off", FONT_MENU, 1, 1.0, 0.0, -0.005);
+      }
       glColor4f(1,1,1,1);
 
       //Back
       glTranslatef(0.0,-0.88,0.0f);
-      if(var.menuItem==1)
+      if(var.menuItem==1) {
         glCallList(dl+2);
-      else
+      } else {
         glCallList(dl+1);
+      }
       glColor4f(0,0,0,1);
       glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
       glColor4f(1,1,1,1);
@@ -719,11 +722,12 @@ public:
             writeSettings();
             break;
           case 6:
-            if(setting.sound)
+            if(setting.sound) {
               setting.sound=0;
-            else
+            } else {
               setting.sound=1;
               soundMan.loadsounds();
+            }
             writeSettings();
 
             break;

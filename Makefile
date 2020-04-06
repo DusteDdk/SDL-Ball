@@ -1,8 +1,16 @@
+ifndef PREFIX
+	PREFIX=/usr/local/
+endif
+
+DESTDIR?=$(PREFIX)share/games/sdl-ball/
+
 DATADIR?=themes/
+BINDIR=bin/
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
 #append -DNOSOUND to compile WITHOUT sound support
 CC=g++ -DDATADIR="\"$(DATADIR)\""
+STRIP=strip
 
 CFLAGS+=-c -Wall `sdl-config --cflags`
 
@@ -19,12 +27,24 @@ all: $(SOURCES) $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $@
+	$(STRIP) $@
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
 	rm -f *.o sdl-ball
+
+install: $(EXECUTABLE) install-bin install-data
+
+install-bin:
+	mkdir -p $(DESTDIR)
+	cp $(EXECUTABLE) $(DESTDIR)
+	ln -s $(DESTDIR)$(EXECUTABLE) $(PREFIX)$(BINDIR)
+
+install-data:
+	mkdir -p $(DESTDIR)$(DATADIR)
+	cp -p -R themes/* $(DESTDIR)$(DATADIR)
 
 remove:
 	rm -R ~/.config/sdl-ball

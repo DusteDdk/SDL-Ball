@@ -18,18 +18,18 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <unistd.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_image.h>
-#include <math.h>
-#include <string.h>
+#include <cmath>
+#include <cstring>
 #include <list>
 #include <vector>
-#include <sys/time.h>
 #include <sys/stat.h>
 
 #include <dirent.h>
@@ -1242,10 +1242,7 @@ class bulletsClass {
             {
               b.hit(fxMan, p, v,1);
 
-              if(!player.powerup[PO_THRU])
-              {
-                bullets[i].active=0;
-              }
+              bullets[i].active=0;
 
               p.x = bullets[i].posx;
               p.y = bullets[i].posy;
@@ -1270,8 +1267,7 @@ class bulletsClass {
                 fxMan.spawn(p);
               }
             }
-          } else if(bullets[i].posy > 1.6)
-          {
+          } else if(bullets[i].posy > 1.6) {
             bullets[i].active=0;
           }
         }
@@ -2321,13 +2317,14 @@ class powerupClass : public moving_object {
             break;
           case PO_GROWPADDLE:
             player.coins += 100;
-            if(p.width < 0.4)
-              p.grow(p.width+0.03);
+            if(p.width < 0.4) p.grow(p.width+0.03);
+            player.powerup[PO_GUN] = 0;
             soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
             break;
           case PO_SHRINKPADDLE:
             player.coins += 10;
             if(p.width > 0.02) p.grow(p.width-0.02);
+            player.powerup[PO_GUN]=0;
             soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
             break;
           case PO_EXPLOSIVE:
@@ -2906,17 +2903,13 @@ void initNewGame()
 void pauseGame()
 {
   var.paused=1;
-#ifndef WIN32
   SDL_WM_GrabInput(SDL_GRAB_OFF);
-#endif
   SDL_ShowCursor(SDL_ENABLE);
 }
 
 void resumeGame()
 {
-#ifndef WIN32
   SDL_WM_GrabInput(SDL_GRAB_ON);
-#endif
   SDL_ShowCursor(SDL_DISABLE);
   var.paused=0;
   var.menu=0;
@@ -3067,8 +3060,7 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
         {
           b.x = ba.xvel/2.0;
           b.y = ba.yvel/2.0;
-        } else if(player.difficulty == NORMAL)
-        {
+        } else if(player.difficulty == NORMAL) {
           b.x = ba.xvel/1.5;
           b.y = ba.yvel/1.5;
         } else //if(player.difficulty == HARD)
@@ -3093,10 +3085,10 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
 
           if(!player.powerup[PO_THRU] || player.difficulty == HARD)
           {
-          ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
+            ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
           }
         } else {
-          cout << "Collision detection error: Dont know where the ball hit." <<endl;
+          cout << "Collision detection error: Don't know where the ball hit." << endl;
         }
         br.hit(fxMan, a,b,1);
       } //collision
@@ -3667,10 +3659,14 @@ bool screenShot()
     sprintf(cName, "%s/sdl-ball_%i.tga",privFile.screenshotDir.data(),i);
     fscreen = fopen(cName,"rb");
     if(fscreen==NULL)
+    {
       found=1;
+    }
     else
+    {
       fclose(fscreen);
-      i++;
+    }
+    i++;
   }
   int nS = setting.resx * setting.resy * 3;
   GLubyte *px = new GLubyte[nS];
@@ -3967,9 +3963,7 @@ int main (int argc, char *argv[]) {
 
    SDL_Event sdlevent;
 
-#ifndef WIN32
    SDL_WM_GrabInput(SDL_GRAB_ON);
-#endif
    SDL_ShowCursor(SDL_DISABLE);
 
    SDL_EnableUNICODE (1);
@@ -4611,7 +4605,6 @@ int main (int argc, char *argv[]) {
       {
         mousex = (sdlevent.motion.x - var.halfresx) * var.glunits_per_xpixel;
         mousey = (sdlevent.motion.y - var.halfresy) * var.glunits_per_ypixel * -1;
-
         if(var.menu)
         {
           if(mousex > -0.5 && mousex < 0.5 && mousey < (-0.78)+(0.07) && mousey > (-0.78)-(0.07) )
@@ -4668,7 +4661,7 @@ int main (int argc, char *argv[]) {
 #ifdef WIN32
 	Sleep( 1 );
 #else
-    usleep( 1000 );
+  	usleep( 1000 );
 #endif
   }
 
@@ -4677,9 +4670,7 @@ int main (int argc, char *argv[]) {
     SDL_SetVideoMode(oldResX,oldResY,oldColorDepth, SDL_OPENGL);
 #endif
 
-#ifndef WIN32
   SDL_WM_GrabInput(SDL_GRAB_OFF);
-#endif
   SDL_ShowCursor(SDL_ENABLE);
   SDL_FreeSurface(screen);
   SDL_Quit();
