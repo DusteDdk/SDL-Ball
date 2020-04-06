@@ -4588,8 +4588,10 @@ int main (int argc, char *argv[]) {
           if(!var.titleScreenShow)
           {
             var.titleScreenShow=1;
+            pauseGame();
           } else {
             var.titleScreenShow=0;
+            resumeGame();
           }
         }
 #ifndef WIN32
@@ -4629,7 +4631,7 @@ int main (int argc, char *argv[]) {
           else
            var.menuItem = 0;
         } else {
-          control.movePaddle(mousex);
+          control.movePaddle(paddle.posx + (sdlevent.motion.xrel * var.glunits_per_xpixel));
         }
       } else if( sdlevent.type == SDL_MOUSEBUTTONDOWN )
       {
