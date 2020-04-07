@@ -240,3 +240,15 @@ Get more liniar increase in difficulty by sorting/adding/removing levels.
 
 1.02:
 Applied patches from aur package, fix compile warnings, tweaked default settings.
+
+1.03:
+Improved .desktop file
+Added metadata for Linux App store (whatever that is)
+Paddle no longer "jumps" to some weird place when menu was used.
+Hopefully, the bug is fixed where the paddle would lock up in one corner.
+Compiler warnings and stuff.
+
+Future:
+This is the last update to the changelog. For versions above 1.03,
+look at the official source-code repository commit log.
+https://github.com/DusteDdk/SDL-Ball/commits/master

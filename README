@@ -36,13 +36,26 @@
 
 1.0 SDL-Ball Info
 Author: Jimmy Christensen
-Project page: https://sourceforge.net/projects/sdl-ball/
+Project page: https://github.com/DusteDdk/SDL-Ball
 Web site: http://sdl-ball.sourceforge.net/
 
 License:
 Code, Graphics, Levels, Sound are GPLv3
 See themes/default/font/COPYING for font licenses.
 
+2020:
+SDL-Ball was a hobby project of mine, it was my first computer game,
+and I did learn a lot from it. Lots of things are done wrong here, because,
+at the time, I didn't know any better. So don't use this as an example
+of how to do a game. That being said, it WORKS, and I'm not going to
+rewrite it, or majorly refactor it to make it more "right".
+I'm also not going to hide it out of shame, I'm actually proud that I managed
+to make it back when I did.. As far as I recall, I wrote most of it in Kate.
+So, I'm keeping it up, it's actually a nice game and people would miss it if
+I take it down. I'll also try and maintain it a bit better than I've done the
+past.. Many years. Other than that, I've nothing to add :)
+
+200?
 SDL-Ball is my hobby project, I'm using it to learn C++ and
 how not to design software, I learn by trial and error, thats
 what makes it fun for me, so please, spare me the lessons.
