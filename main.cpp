@@ -20,6 +20,7 @@
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
 #include <unistd.h>
 #include <GL/gl.h>
 #include <GL/glu.h>

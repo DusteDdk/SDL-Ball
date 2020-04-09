@@ -5,17 +5,15 @@
 #These variables are available:
 # $WD = The workspace $BN = Zero padded build Number (%07i) and $BN_NUM for unpadded.
 # $OUT = This empty directory is created for you to store the output of the build.
-set -e;set -x
 
-#Add your build instructions below:
-
-echo "Wizznic build script."
+OUT=/tmp/sdlballout/
+mkdir /tmp/sdlballout
 
 make -f Makefile.win clean
 make -f Makefile clean
 
 
-OUTDIR="SDL-Ball_1.03_build-$BN_NUM"
+OUTDIR="SDL-Ball_1.04"
 
 WINPKG="$OUTDIR"_windows.zip
 LINPKG="$OUTDIR"_linux.tar.bz2
@@ -46,7 +44,7 @@ tar -c $OUTDIR | pbzip2 > $LINPKG
 rm $OUTDIR/sdl-ball_linux_x64
 
 # Package windows version
-mv sdl-ball.exe $OUTDIR/SDL-Ball_windows.exe
+mv sdl-ball.exe $OUTDIR/SDL-Ball.exe
 cp win32/readme_SDL.txt $OUTDIR
 unix2dos $OUTDIR/*.txt
 cp win32/*.dll $OUTDIR
@@ -54,8 +52,8 @@ zip -r $WINPKG $OUTDIR
 make -f Makefile.win clean
 
 # Build the source code
-git archive --prefix="SDL-Ball_source_build_$BN"_src/ HEAD > "$OUTDIR"_src.tar
-tar --file "$OUTDIR"_src.tar --append --transform 's%^%SDL-Ball_source_build_'$BN'_src/%' changelog.txt
+git archive --prefix="SDL-Ball_src/" HEAD > "$OUTDIR"_src.tar
+tar --file "$OUTDIR"_src.tar --append --transform 's%^%SDL-Ball_src/%' changelog.txt
 cat "$OUTDIR"_src.tar | pxz > "$OUT/$SRCPKG"
 
 rm -R $OUTDIR *.tar
@@ -64,3 +62,4 @@ rm changelog.txt
 mv $WINPKG $OUT
 mv $LINPKG $OUT
 
+mv $OUT .
