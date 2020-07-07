@@ -157,7 +157,7 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font)
 
     //Render to surface
     c = TTF_RenderText_Blended(ttfFont, tempChar, white);
-    SDL_SetAlpha(c, 0, 0);
+    SDL_SetSurfaceAlphaMod(c, 0);
     TTF_SizeUTF8(ttfFont, tempChar, &sX, &sY);
   
     src.x=0;

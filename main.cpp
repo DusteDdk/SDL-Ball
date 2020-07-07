@@ -24,9 +24,9 @@
 #include <unistd.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <cmath>
 #include <cstring>
 #include <list>
@@ -59,7 +59,7 @@
 #endif
 #ifndef NOSOUND
   #define MIX_CHANNELS 16
-  #include <SDL/SDL_mixer.h>
+  #include <SDL2/SDL_mixer.h>
 #endif
 
 #define VERSION "1.03"
@@ -189,7 +189,7 @@ struct settings {
   bool eyeCandy;
   bool particleCollide;
   //Add to menu:
-  SDLKey keyLeft, keyRight, keyShoot, keyNextPo, keyPrevPo, keyBuyPo;
+  SDL_Keycode keyLeft, keyRight, keyShoot, keyNextPo, keyPrevPo, keyBuyPo;
   float controlAccel;
   float controlStartSpeed;
   float controlMaxSpeed;
@@ -3934,9 +3934,12 @@ int main (int argc, char *argv[]) {
     printf("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
   }
 
+
   //Save current resolution so it can be restored at exit
-   int oldResX = SDL_GetVideoInfo()->current_w;
-   int oldResY = SDL_GetVideoInfo()->current_h;
+  SDL_VideoInfo const *currentVideoInfo = SDL_GetVideoInfo();
+
+   int oldResX = currentVideoInfo->current_w;
+   int oldResY = currentVideoInfo->current_h;
    int oldColorDepth = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
    
   /* Handle those situations where sdl gets a void resolution */
@@ -4104,6 +4107,9 @@ int main (int argc, char *argv[]) {
   #endif
 
   controllerClass control(&paddle, &bullet, &bMan);
+
+  menu.joystickAttached = (control.joystick != NULL)?true:false;
+
 
 
   soundMan.add(SND_START,0);
@@ -4677,4 +4683,10 @@ int main (int argc, char *argv[]) {
   SDL_Quit();
   cout << "Thank you for playing sdl-ball ;)" << endl;
   return EXIT_SUCCESS;
+}
+
+/**@brief Return True if the joystick is attached */
+SDL_bool joystickAttached()
+{
+	return SDL_JoystickGetAttached(joystick);
 }

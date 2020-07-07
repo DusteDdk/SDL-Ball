@@ -48,10 +48,12 @@ class controllerClass {
   void btnPress();
   bool get();
   void calibrate();
+  SDL_bool joystickAttached();
   #ifdef WITH_WIIUSE
   bool connectMote();
   #endif
 };
+
 
 controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm)
 {
@@ -66,9 +68,8 @@ controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager
   {
     joystickLeftX = setting.controlMaxSpeed / setting.JoyCalMin;
     joystickRightX = setting.controlMaxSpeed / setting.JoyCalMax;
-    joystick = NULL;
     joystick = SDL_JoystickOpen(0);
-    if(SDL_JoystickOpened(0))
+    if(joystick)
     {
       cout << "Using joystick: '"<<SDL_JoystickName(0)<<"' as "<<(setting.joyIsDigital ? "digital":"analog")<<"."<<endl;
       SDL_JoystickEventState( SDL_ENABLE );
@@ -155,7 +156,7 @@ bool controllerClass::get()
   itemSelectTime += globalTicks;
   //Read joystick here so we can override keypresses if the joystick is digital
   //We shouldn't need to check if the joystick is enabled, since it won't be opened if its not enabled anyway.
-  if(setting.joyEnabled && SDL_JoystickOpened(0))
+  if(setting.joyEnabled && joystick)
   {
     joystickx = SDL_JoystickGetAxis(joystick, 0);
     joysticky = SDL_JoystickGetAxis(joystick, 1);
@@ -290,7 +291,7 @@ void controllerClass::calibrate()
 {
 
   Sint16 x=0;
-  if(SDL_JoystickOpened(0))
+  if(SDL_TRUE == joystickAttached())
   {
 
     x = SDL_JoystickGetAxis(joystick, 0);
