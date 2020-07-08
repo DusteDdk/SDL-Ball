@@ -48,7 +48,7 @@ class controllerClass {
   void btnPress();
   bool get();
   void calibrate();
-  SDL_bool joystickAttached();
+  bool joystickAttached();
   #ifdef WITH_WIIUSE
   bool connectMote();
   #endif
@@ -118,7 +118,7 @@ void controllerClass::btnPress()
   if(var.titleScreenShow)
   {
     var.titleScreenShow=0;
-    SDL_WarpMouse(var.halfresx,0);
+    SDL_WarpMouseInWindow(sdlWindow, var.halfresx,0);
     return;
   }
   
@@ -144,11 +144,11 @@ void controllerClass::btnPress()
 
 bool controllerClass::get()
 {
-  Uint8 *keyStates;
+  const Uint8 *keyStates;
   Uint8 keyDown[3]; //Need this since its not a good idea to write to keyStates for some reason
   shotTime += globalTicks;
   SDL_PumpEvents();
-  keyStates = SDL_GetKeyState( NULL );
+  keyStates = SDL_GetKeyboardState(NULL);
   keyDown[0] = keyStates[setting.keyLeft];
   keyDown[1] = keyStates[setting.keyRight];
   keyDown[2] = keyStates[setting.keyShoot];
@@ -372,5 +372,10 @@ void controllerClass::calibrate()
     break;
     #endif
   }
+}
+
+bool controllerClass::joystickAttached()
+{
+	return joystick != NULL;
 }
 

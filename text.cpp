@@ -143,8 +143,14 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font)
     bmask = 0x00ff0000;
     amask = 0xff000000;
   #endif
-  
+
   ttfFont = TTF_OpenFont( useTheme(TTFfontName,setting.gfxTheme).data(), fontSize );
+
+  if(!ttfFont) {
+	  cout << "TTF_OpenFont: " << TTF_GetError() << endl;
+	  exit(0);
+  }
+
   t = SDL_CreateRGBSurface(0, 512, 512, 32, rmask,gmask,bmask,amask);
 
     dst.x=1;

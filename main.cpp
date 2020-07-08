@@ -27,6 +27,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+//#include <SDL2/SDL_mouse.h>
 #include <cmath>
 #include <cstring>
 #include <list>
@@ -2833,13 +2834,14 @@ float rndflt(float total, float negative)
   return (rand()/(float(RAND_MAX)+1)*total)-negative;
 }
 
+SDL_Window *sdlWindow = NULL;
 bool initScreen()
 {
   bool success=1;
-  int SDL_videomodeSettings = SDL_OPENGL|SDL_RESIZABLE;
+  int SDL_videomodeSettings = SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
 
   if(setting.fullscreen)
-    SDL_videomodeSettings |= SDL_FULLSCREEN;
+    SDL_videomodeSettings |= SDL_WINDOW_FULLSCREEN;
 
   /* Free the previously allocated surface */
   if(screen != NULL)
@@ -2847,10 +2849,18 @@ bool initScreen()
     SDL_FreeSurface( screen );
   }
 
-  screen = SDL_SetVideoMode(setting.resx,setting.resy,32, SDL_videomodeSettings);
+  sdlWindow = SDL_CreateWindow("SDL-Ball",
+                            SDL_WINDOWPOS_UNDEFINED,
+                            SDL_WINDOWPOS_UNDEFINED,
+							0, 0,
+							SDL_videomodeSettings);
+
+  // Create an OpenGL context associated with the window.
+  SDL_GLContext glcontext = SDL_GL_CreateContext(sdlWindow);
+
   resizeWindow(setting.resx,setting.resy);
 
-  if( screen == NULL )
+  if( (sdlWindow == NULL) ||  (glcontext == NULL))
   {
     cout << "Error:" << SDL_GetError() << endl;
     success=0;
@@ -2904,14 +2914,12 @@ void initNewGame()
 void pauseGame()
 {
   var.paused=1;
-  SDL_WM_GrabInput(SDL_GRAB_OFF);
-  SDL_ShowCursor(SDL_ENABLE);
+  SDL_SetRelativeMouseMode(SDL_FALSE);
 }
 
 void resumeGame()
 {
-  SDL_WM_GrabInput(SDL_GRAB_ON);
-  SDL_ShowCursor(SDL_DISABLE);
+  SDL_SetRelativeMouseMode(SDL_TRUE);
   var.paused=0;
   var.menu=0;
 }
@@ -3710,12 +3718,12 @@ int main (int argc, char *argv[]) {
   setting.sound = 1;
   setting.stereo=1;
   //Defaults for keyboard/joystick control
-  setting.keyLeft = (SDLKey)276;
-  setting.keyRight= (SDLKey)275;
-  setting.keyShoot= (SDLKey)273;
-  setting.keyNextPo=(SDLKey)SDLK_v;
-  setting.keyBuyPo =(SDLKey)SDLK_b;
-  setting.keyPrevPo=(SDLKey)SDLK_n;
+  setting.keyLeft = (SDL_Keycode)276;
+  setting.keyRight= (SDL_Keycode)275;
+  setting.keyShoot= (SDL_Keycode)273;
+  setting.keyNextPo=(SDL_Keycode)SDLK_v;
+  setting.keyBuyPo =(SDL_Keycode)SDLK_b;
+  setting.keyPrevPo=(SDL_Keycode)SDLK_n;
   setting.controlAccel = 7;
   setting.controlStartSpeed = 1.0;
   setting.controlMaxSpeed = 5;
@@ -3860,22 +3868,22 @@ int main (int argc, char *argv[]) {
           setting.controlStartSpeed = atof(val.data());
         } else if(set=="rightkey")
         {
-          setting.keyRight = (SDLKey)atoi(val.data());
+          setting.keyRight = (SDL_Keycode)atoi(val.data());
         } else if(set=="leftkey")
         {
-          setting.keyLeft = (SDLKey)atoi(val.data());
+          setting.keyLeft = (SDL_Keycode)atoi(val.data());
         } else if(set=="shootkey")
         {
-          setting.keyShoot = (SDLKey)atoi(val.data());
+          setting.keyShoot = (SDL_Keycode)atoi(val.data());
         } else if(set=="nextkey")
         {
-          setting.keyNextPo = (SDLKey)atoi(val.data());
+          setting.keyNextPo = (SDL_Keycode)atoi(val.data());
         } else if(set=="buykey")
         {
-          setting.keyBuyPo = (SDLKey)atoi(val.data());
+          setting.keyBuyPo = (SDL_Keycode)atoi(val.data());
         } else if(set=="prevkey")
         {
-          setting.keyPrevPo = (SDLKey)atoi(val.data());
+          setting.keyPrevPo = (SDL_Keycode)atoi(val.data());
         } else if(set=="joyenabled")
         {
           setting.joyEnabled = atoi(val.data());
@@ -3936,12 +3944,28 @@ int main (int argc, char *argv[]) {
 
 
   //Save current resolution so it can be restored at exit
-  SDL_VideoInfo const *currentVideoInfo = SDL_GetVideoInfo();
+  // Declare display mode structure to be filled in.
+  SDL_DisplayMode currentDisplayMode;
 
-   int oldResX = currentVideoInfo->current_w;
-   int oldResY = currentVideoInfo->current_h;
-   int oldColorDepth = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
-   
+  SDL_Init(SDL_INIT_VIDEO);
+
+  // Get current display mode of all displays.
+  for(int i = 0; i < SDL_GetNumVideoDisplays(); ++i){
+
+    int should_be_zero = SDL_GetCurrentDisplayMode(i, &currentDisplayMode);
+
+    if(should_be_zero != 0)
+      // In case of error...
+      SDL_Log("Could not get display mode for video display #%d: %s", i, SDL_GetError());
+
+    else
+      // On success, print the current display mode.
+      SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz.", i, currentDisplayMode.w, currentDisplayMode.h, currentDisplayMode.refresh_rate);
+  }
+
+   int oldResX = currentDisplayMode.w;
+   int oldResY = currentDisplayMode.h;
+
   /* Handle those situations where sdl gets a void resolution */
   if(oldResX < 128 || oldResY < 96)
   {
@@ -3967,10 +3991,7 @@ int main (int argc, char *argv[]) {
 
    SDL_Event sdlevent;
 
-   SDL_WM_GrabInput(SDL_GRAB_ON);
-   SDL_ShowCursor(SDL_DISABLE);
-
-   SDL_EnableUNICODE (1);
+   SDL_SetRelativeMouseMode(SDL_TRUE);
 
   initScreen();
   initGL();
@@ -3979,9 +4000,8 @@ int main (int argc, char *argv[]) {
 
   soundMan.init();
 
-  SDL_WM_SetCaption("SDL-Ball", "SDL-Ball" );
-  SDL_WM_SetIcon( IMG_Load( useTheme("icon32.png", setting.gfxTheme).data() ), 0 );
-  SDL_WarpMouse(var.halfresx, var.halfresy);
+  SDL_SetWindowIcon(sdlWindow,IMG_Load( useTheme("icon32.png", setting.gfxTheme).data()));
+  SDL_WarpMouseInWindow(sdlWindow, var.halfresx, var.halfresy);
 
   textureManager texMgr;
 
@@ -4108,7 +4128,7 @@ int main (int argc, char *argv[]) {
 
   controllerClass control(&paddle, &bullet, &bMan);
 
-  menu.joystickAttached = (control.joystick != NULL)?true:false;
+  menu.joystickAttached = control.joystickAttached();
 
 
 
@@ -4484,7 +4504,7 @@ int main (int argc, char *argv[]) {
 
         announce.draw();
         
-        SDL_GL_SwapBuffers( );
+        SDL_GL_SwapWindow(sdlWindow);
 
         frameAge = 0;
 
@@ -4658,10 +4678,10 @@ int main (int argc, char *argv[]) {
       }
       if( sdlevent.type == SDL_QUIT ) {
         var.quit = 1;
-      } else if( sdlevent.type == SDL_VIDEORESIZE )
+      } else if( sdlevent.type == SDL_WINDOWEVENT_RESIZED )
       {
-        setting.resx = sdlevent.resize.w;
-        setting.resy = sdlevent.resize.h;
+        setting.resx = sdlevent.window.data1;
+        setting.resy = sdlevent.window.data2;
         initScreen();
       }
     }
@@ -4674,19 +4694,12 @@ int main (int argc, char *argv[]) {
 
 #ifndef WIN32
   if(setting.fullscreen)
-    SDL_SetVideoMode(oldResX,oldResY,oldColorDepth, SDL_OPENGL);
 #endif
 
-  SDL_WM_GrabInput(SDL_GRAB_OFF);
-  SDL_ShowCursor(SDL_ENABLE);
+
+  SDL_SetRelativeMouseMode(SDL_FALSE);
   SDL_FreeSurface(screen);
   SDL_Quit();
   cout << "Thank you for playing sdl-ball ;)" << endl;
   return EXIT_SUCCESS;
-}
-
-/**@brief Return True if the joystick is attached */
-SDL_bool joystickAttached()
-{
-	return SDL_JoystickGetAttached(joystick);
 }
