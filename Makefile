@@ -16,7 +16,7 @@ CXXFLAGS+=-Wall `sdl-config --cflags` -DDATADIR="\"$(DATADIR)\""
 
 #append -lwiiuse to compile with WIIUSE support
 #remove -lSDL_mixer if compiling with -DNOSOUND
-LIBS+=-lGL -lGLU `sdl-config --libs` -lSDL_image -lSDL_ttf -lSDL_mixer
+LIBS+=-lGL -lGLU `sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 SOURCES=main.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)
