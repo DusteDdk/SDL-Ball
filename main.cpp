@@ -34,6 +34,8 @@
 #include <vector>
 #include <sys/stat.h>
 
+#include "display.hpp"
+
 #include <dirent.h>
 
 #ifdef WIN32
@@ -63,7 +65,7 @@
   #include <SDL2/SDL_mixer.h>
 #endif
 
-#define VERSION "1.03"
+#define VERSION "2.01"
 #define SAVEGAMEVERSION 2
 
 
@@ -142,7 +144,6 @@
 using namespace std;
 
 void writeSettings();
-bool initScreen();
 void initNewGame();
 void pauseGame();
 void resumeGame();
@@ -276,6 +277,8 @@ struct player_struct player;
 struct player_struct SOLPlayer;
 struct vars var;
 
+displayClass display;
+
 typedef GLfloat texPos[8];
 #ifndef uint // WIN32
 typedef unsigned int uint;
@@ -299,6 +302,7 @@ struct texProp {
   
   string fileName; //Quite the fugly.. This will be set by readTexProps();
 };
+
 
 /* This function attempts to open path
    It will first look for the file in ~/.config/sdl-ball/themes/theme/path
@@ -2834,45 +2838,6 @@ float rndflt(float total, float negative)
   return (rand()/(float(RAND_MAX)+1)*total)-negative;
 }
 
-SDL_Window *sdlWindow = NULL;
-bool initScreen()
-{
-  bool success=1;
-  int SDL_videomodeSettings = SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
-
-  if(setting.fullscreen)
-    SDL_videomodeSettings |= SDL_WINDOW_FULLSCREEN;
-
-  /* Free the previously allocated surface */
-  if(screen != NULL)
-  {
-    SDL_FreeSurface( screen );
-  }
-
-  sdlWindow = SDL_CreateWindow("SDL-Ball",
-                            SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED,
-							0, 0,
-							SDL_videomodeSettings);
-
-  // Create an OpenGL context associated with the window.
-  SDL_GLContext glcontext = SDL_GL_CreateContext(sdlWindow);
-
-  resizeWindow(setting.resx,setting.resy);
-
-  if( (sdlWindow == NULL) ||  (glcontext == NULL))
-  {
-    cout << "Error:" << SDL_GetError() << endl;
-    success=0;
-    var.quit=1;
-  }
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-  var.halfresx = setting.resx /2;
-  var.halfresy = setting.resy / 2;
-  return(success);
-}
-
 void resetPlayerPowerups()
 {
   for(int i=0; i < MAXPOTEXTURES; i++)
@@ -3932,16 +3897,6 @@ int main (int argc, char *argv[]) {
     cout << "No config file found, using default settings." << endl;
   }
 
-  //Initialize SDL
-  #ifndef NOSOUND
-  if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) <0 )
-  #else
-  if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) <0 )
-  #endif
-  {
-    printf("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
-  }
-
 
   //Save current resolution so it can be restored at exit
   // Declare display mode structure to be filled in.
@@ -3950,21 +3905,31 @@ int main (int argc, char *argv[]) {
   SDL_Init(SDL_INIT_VIDEO);
 
   // Get current display mode of all displays.
-  for(int i = 0; i < SDL_GetNumVideoDisplays(); ++i){
+  int numOfDisplays = SDL_GetNumVideoDisplays();
+  SDL_Rect displayBounds[numOfDisplays];
+
+  for(int i = 0; i < numOfDisplays; ++i){
 
     int should_be_zero = SDL_GetCurrentDisplayMode(i, &currentDisplayMode);
 
     if(should_be_zero != 0)
+    {
       // In case of error...
       SDL_Log("Could not get display mode for video display #%d: %s", i, SDL_GetError());
-
+    }
     else
+    {
       // On success, print the current display mode.
-      SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz.", i, currentDisplayMode.w, currentDisplayMode.h, currentDisplayMode.refresh_rate);
+      SDL_GetDisplayBounds( i, &displayBounds[i] );
+      SDL_Rect currentDisplayBounds = displayBounds[i];
+      SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. %d %d %d %d",
+    		  i, currentDisplayMode.w, currentDisplayMode.h, currentDisplayMode.refresh_rate,
+			  currentDisplayBounds.x,currentDisplayBounds.y,currentDisplayBounds.h,currentDisplayBounds.w);
+    }
   }
 
-   int oldResX = currentDisplayMode.w;
-   int oldResY = currentDisplayMode.h;
+   int oldResX = displayBounds[0].w;
+   int oldResY = displayBounds[0].h;
 
   /* Handle those situations where sdl gets a void resolution */
   if(oldResX < 128 || oldResY < 96)
@@ -3993,15 +3958,18 @@ int main (int argc, char *argv[]) {
 
    SDL_SetRelativeMouseMode(SDL_TRUE);
 
-  initScreen();
+  if(!display.init(setting.fullscreen))
+  {
+	  var.quit = 1;
+  }
   initGL();
 
   glText = new glTextClass; // instantiate the class now that settings have been read.
 
   soundMan.init();
 
-  SDL_SetWindowIcon(sdlWindow,IMG_Load( useTheme("icon32.png", setting.gfxTheme).data()));
-  SDL_WarpMouseInWindow(sdlWindow, var.halfresx, var.halfresy);
+  SDL_SetWindowIcon(display.sdlWindow,IMG_Load( useTheme("icon32.png", setting.gfxTheme).data()));
+  SDL_WarpMouseInWindow(display.sdlWindow, var.halfresx, var.halfresy);
 
   textureManager texMgr;
 
@@ -4504,7 +4472,7 @@ int main (int argc, char *argv[]) {
 
         announce.draw();
         
-        SDL_GL_SwapWindow(sdlWindow);
+        SDL_GL_SwapWindow(display.sdlWindow);
 
         frameAge = 0;
 
@@ -4619,11 +4587,19 @@ int main (int argc, char *argv[]) {
         else if( sdlevent.key.keysym.sym == SDLK_F11 )
         {
           if(setting.fullscreen)
-            setting.fullscreen=0;
+          {
+        	  setting.fullscreen=0;
+        	  SDL_SetWindowFullscreen(display.sdlWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+        	  cout << "SDL_WINDOW_FULLSCREEN_DESKTOP" << endl;
+          }
           else
-            setting.fullscreen=1;
+          {
+        	  setting.fullscreen=1;
+        	  SDL_SetWindowFullscreen(display.sdlWindow,SDL_WINDOW_FULLSCREEN);
+        	  cout << "SDL_WINDOW_FULLSCREEN" << endl;
+          }
 
-          initScreen();
+
         }
 #endif
       }
@@ -4682,7 +4658,7 @@ int main (int argc, char *argv[]) {
       {
         setting.resx = sdlevent.window.data1;
         setting.resy = sdlevent.window.data2;
-        initScreen();
+        display.resize();
       }
     }
 #ifdef WIN32

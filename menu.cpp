@@ -623,7 +623,7 @@ public:
             setting.resx = 1024;
             setting.resy = 768;
 #ifndef WIN32
-            if(initScreen())
+            if(display.updateForMenu())
 #endif
               writeSettings();
             break;
@@ -631,7 +631,7 @@ public:
             setting.resx = 1600;
             setting.resy = 1200;
 #ifndef WIN32
-            if(initScreen())
+            if(display.updateForMenu())
 #endif
               writeSettings();
             break;
@@ -648,7 +648,7 @@ public:
               else
               setting.fullscreen=1;
 #ifndef WIN32
-            if(initScreen())
+            if(display.updateForMenu())
 #endif
               writeSettings();
             break;
