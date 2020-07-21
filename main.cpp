@@ -4533,7 +4533,7 @@ int main (int argc, char *argv[]) {
           if(setting.fullscreen)
           {
         	  setting.fullscreen=0;
-        	  SDL_SetWindowFullscreen(display.sdlWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+        	  SDL_SetWindowFullscreen(display.sdlWindow,0);
         	  cout << "SDL_WINDOW_FULLSCREEN_DESKTOP" << endl;
           }
           else
@@ -4598,11 +4598,15 @@ int main (int argc, char *argv[]) {
       }
       if( sdlevent.type == SDL_QUIT ) {
         var.quit = 1;
-      } else if( sdlevent.type == SDL_WINDOWEVENT_RESIZED )
+      }
+      else if( sdlevent.type == SDL_WINDOWEVENT)
       {
-        setting.resx = sdlevent.window.data1;
-        setting.resy = sdlevent.window.data2;
-        display.resize(setting.resx, setting.resy);
+    	if( sdlevent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+    	{
+		  setting.resx = sdlevent.window.data1;
+		  setting.resy = sdlevent.window.data2;
+		  display.resize(setting.resx, setting.resy);
+    	}
       }
     }
 #ifdef WIN32
