@@ -23,15 +23,59 @@
  *      Author: Daniel Gullberg daniel_gullberg@hotmail.com
  */
 #include <iostream>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <SDL2/SDL.h>
 #include "display.hpp"
 
 using namespace std;
 
-bool displayClass::init(bool fullscreen)
+bool displayClass::init(bool fullscreen, int displayToUseIn)
 {
   bool success=1;
   int SDL_videomodeSettings = SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
+
+  //Save current resolution so it can be restored at exit
+  // Declare display mode structure to be filled in.
+  SDL_DisplayMode currentDisplayMode;
+
+  SDL_Init(SDL_INIT_VIDEO);
+
+  // Get current display mode of all displays.
+  numOfDisplays = SDL_GetNumVideoDisplays();
+  SDL_Rect displayBounds[numOfDisplays]={0};
+
+  for(int i = 0; i < numOfDisplays; ++i){
+
+    int should_be_zero = SDL_GetCurrentDisplayMode(i, &currentDisplayMode);
+
+    if(should_be_zero != 0)
+    {
+      // In case of error...
+      SDL_Log("Could not get display mode for video display #%d: %s", i, SDL_GetError());
+    }
+    else
+    {
+      // On success, print the current display mode.
+      SDL_GetDisplayBounds( i, &displayBounds[i] );
+      SDL_Rect currentDisplayBounds = displayBounds[i];
+      SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. %d %d %d %d",
+    		  i, currentDisplayMode.w, currentDisplayMode.h, currentDisplayMode.refresh_rate,
+			  currentDisplayBounds.x,currentDisplayBounds.y,currentDisplayBounds.h,currentDisplayBounds.w);
+    }
+  }
+
+  if((numOfDisplays > 0) && (displayToUseIn<numOfDisplays))
+  {
+	  displayToUse = displayToUseIn;
+  }
+  else
+  {
+	  displayToUse = 0;
+  }
+
+  currentW = displayBounds[displayToUse].w;
+  currentH = displayBounds[displayToUse].h;
 
   //Initialize SDL
   #ifndef NOSOUND
@@ -44,19 +88,21 @@ bool displayClass::init(bool fullscreen)
     success = 0;
   }
 
-  if(fullscreen)
-  {
-    SDL_videomodeSettings |= SDL_WINDOW_FULLSCREEN;
-  }
+//  if(fullscreen)
+//  {
+//    SDL_videomodeSettings |= SDL_WINDOW_FULLSCREEN;
+//  }
 
   sdlWindow = SDL_CreateWindow("SDL-Ball",
-		                    SDL_WINDOWPOS_CENTERED,
-		                    SDL_WINDOWPOS_CENTERED,
-							0, 0,
+		                    SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
+							SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
+							displayBounds[displayToUse].w, displayBounds[displayToUse].h,
 							SDL_videomodeSettings);
 
   // Create an OpenGL context associated with the window.
-  SDL_GLContext glcontext = SDL_GL_CreateContext(sdlWindow);
+  glcontext = SDL_GL_CreateContext(sdlWindow);
+
+  resize(currentW, currentH);
 
   if( (sdlWindow == NULL) ||  (glcontext == NULL))
   {
@@ -68,13 +114,49 @@ bool displayClass::init(bool fullscreen)
   return(success);
 }
 
+
 bool displayClass::updateForMenu()
 {
 	cout << "displayClass::updateForMenu() called" << endl;
 	return 1;
 }
 
-void displayClass::resize()
+/**@brief Method to reset our viewport after a window resize */
+void displayClass::resize(int width, int height )
 {
 	cout << "displayClass::resize() called" << endl;
+
+	/* Height / width ration */
+	GLfloat ratio;
+
+	/* Protect against a divide by zero */
+	if ( height == 0 )
+		height = 1;
+
+	ratio = ( GLfloat )width / ( GLfloat )height;
+	glunits_per_xpixel = (2.485281374*ratio) / currentH;
+	glunits_per_ypixel = 2.485281374 / currentW;
+
+
+	/* Setup our viewport. */
+	glViewport( 0, 0, ( GLsizei )width, ( GLsizei )height );
+
+	/* change to the projection matrix and set our viewing volume. */
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity( );
+
+	/* Set our perspective */
+	gluPerspective( 45.0f, ratio, 0.1f, 10.0f );
+
+	/* Make sure we're chaning the model view and not the projection */
+	glMatrixMode( GL_MODELVIEW );
+
+	/* Reset The View */
+	glLoadIdentity();
+}
+
+void displayClass::close()
+{
+	SDL_DestroyWindow(sdlWindow);
+	cout << "displayClass::close() called" << endl;
 }

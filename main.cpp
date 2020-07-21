@@ -180,6 +180,7 @@ struct difficultyStruct static_difficulty, difficulty;
 struct settings {
   string sndTheme,gfxTheme,lvlTheme;
   bool cfgRes[2];
+  int displayToUse;
   int resx;
   int resy;
   int fps;
@@ -219,7 +220,6 @@ struct vars {
   int frame;
   int halfresx;
   int halfresy;
-  GLfloat glunits_per_xpixel, glunits_per_ypixel;
   bool paused;
   int menu;
   int menuItem;
@@ -2770,39 +2770,7 @@ void spawnpowerup(char powerup, pos a, pos b)
   }
 }
 
-SDL_Surface *screen = NULL;
 
-/* function to reset our viewport after a window resize */
-void resizeWindow( int width, int height )
-{
-    /* Height / width ration */
-    GLfloat ratio;
-
-    /* Protect against a divide by zero */
-    if ( height == 0 )
-      height = 1;
-
-    ratio = ( GLfloat )width / ( GLfloat )height;
-    var.glunits_per_xpixel = (2.485281374*ratio) / setting.resx;
-    var.glunits_per_ypixel = 2.485281374 / setting.resy;
-
-
-    /* Setup our viewport. */
-    glViewport( 0, 0, ( GLsizei )width, ( GLsizei )height );
-
-    /* change to the projection matrix and set our viewing volume. */
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
-
-    /* Set our perspective */
-    gluPerspective( 45.0f, ratio, 0.1f, 10.0f );
-
-    /* Make sure we're chaning the model view and not the projection */
-    glMatrixMode( GL_MODELVIEW );
-
-    /* Reset The View */
-    glLoadIdentity();
-}
 
 void initGL() {
 
@@ -3343,6 +3311,7 @@ void writeSettings()
   if(conf.is_open())
   {
     conf << "eyecandy="<<setting.eyeCandy<<endl;
+    conf << "display="<<setting.displayToUse<<endl;
     conf << "resx="<<setting.resx<<endl;
     conf << "resy="<<setting.resy<<endl;
     conf << "showbg="<<setting.showBg<<endl;
@@ -3799,6 +3768,9 @@ int main (int argc, char *argv[]) {
         if(set=="eyecandy")
         {
           setting.eyeCandy=atoi(val.data());
+        } else if(set=="display")
+        {
+          setting.displayToUse=atoi(val.data());
         } else if(set=="resx")
         {
           setting.cfgRes[0]=1;
@@ -3897,39 +3869,16 @@ int main (int argc, char *argv[]) {
     cout << "No config file found, using default settings." << endl;
   }
 
+   SDL_Event sdlevent;
 
-  //Save current resolution so it can be restored at exit
-  // Declare display mode structure to be filled in.
-  SDL_DisplayMode currentDisplayMode;
 
-  SDL_Init(SDL_INIT_VIDEO);
-
-  // Get current display mode of all displays.
-  int numOfDisplays = SDL_GetNumVideoDisplays();
-  SDL_Rect displayBounds[numOfDisplays];
-
-  for(int i = 0; i < numOfDisplays; ++i){
-
-    int should_be_zero = SDL_GetCurrentDisplayMode(i, &currentDisplayMode);
-
-    if(should_be_zero != 0)
-    {
-      // In case of error...
-      SDL_Log("Could not get display mode for video display #%d: %s", i, SDL_GetError());
-    }
-    else
-    {
-      // On success, print the current display mode.
-      SDL_GetDisplayBounds( i, &displayBounds[i] );
-      SDL_Rect currentDisplayBounds = displayBounds[i];
-      SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. %d %d %d %d",
-    		  i, currentDisplayMode.w, currentDisplayMode.h, currentDisplayMode.refresh_rate,
-			  currentDisplayBounds.x,currentDisplayBounds.y,currentDisplayBounds.h,currentDisplayBounds.w);
-    }
+  if(!display.init(setting.fullscreen, setting.displayToUse))
+  {
+	  var.quit = 1;
   }
+   int oldResX = display.currentW;
+   int oldResY = display.currentH;
 
-   int oldResX = displayBounds[0].w;
-   int oldResY = displayBounds[0].h;
 
   /* Handle those situations where sdl gets a void resolution */
   if(oldResX < 128 || oldResY < 96)
@@ -3953,16 +3902,11 @@ int main (int argc, char *argv[]) {
     setting.resx = oldResX;
     setting.resy = oldResY;
    }
-
-   SDL_Event sdlevent;
-
-   SDL_SetRelativeMouseMode(SDL_TRUE);
-
-  if(!display.init(setting.fullscreen))
-  {
-	  var.quit = 1;
-  }
+   var.halfresx = setting.resx /2;
+   var.halfresy = setting.resy / 2;
   initGL();
+
+  SDL_SetRelativeMouseMode(SDL_TRUE);
 
   glText = new glTextClass; // instantiate the class now that settings have been read.
 
@@ -4606,8 +4550,8 @@ int main (int argc, char *argv[]) {
 
       if( sdlevent.type == SDL_MOUSEMOTION )
       {
-        mousex = (sdlevent.motion.x - var.halfresx) * var.glunits_per_xpixel;
-        mousey = (sdlevent.motion.y - var.halfresy) * var.glunits_per_ypixel * -1;
+        mousex = (sdlevent.motion.x - var.halfresx) * display.glunits_per_xpixel;
+        mousey = (sdlevent.motion.y - var.halfresy) * display.glunits_per_ypixel * -1;
         if(var.menu)
         {
           if(mousex > -0.5 && mousex < 0.5 && mousey < (-0.78)+(0.07) && mousey > (-0.78)-(0.07) )
@@ -4627,7 +4571,7 @@ int main (int argc, char *argv[]) {
           else
            var.menuItem = 0;
         } else {
-          control.movePaddle(paddle.posx + (sdlevent.motion.xrel * var.glunits_per_xpixel));
+          control.movePaddle(paddle.posx + (sdlevent.motion.xrel * display.glunits_per_xpixel));
         }
       } else if( sdlevent.type == SDL_MOUSEBUTTONDOWN )
       {
@@ -4658,7 +4602,7 @@ int main (int argc, char *argv[]) {
       {
         setting.resx = sdlevent.window.data1;
         setting.resy = sdlevent.window.data2;
-        display.resize();
+        display.resize(setting.resx, setting.resy);
       }
     }
 #ifdef WIN32
@@ -4672,9 +4616,8 @@ int main (int argc, char *argv[]) {
   if(setting.fullscreen)
 #endif
 
-
+  display.close();
   SDL_SetRelativeMouseMode(SDL_FALSE);
-  SDL_FreeSurface(screen);
   SDL_Quit();
   cout << "Thank you for playing sdl-ball ;)" << endl;
   return EXIT_SUCCESS;
