@@ -17,6 +17,7 @@
  * ************************************************************************* */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
@@ -80,6 +81,9 @@
 
 //#define debugBall 1
 //     #define DEBUG_DRAW_BALL_QUAD
+//     #define DEBUG_NO_RELATIVE_MOUSE
+//     #define DEBUG_SHOW_MOUSE_COORDINATES
+
 
 #define PO_COIN 0
 #define PO_BIGBALL    1
@@ -217,8 +221,6 @@ struct privFileStruct privFile;
 struct vars {
   bool titleScreenShow;
   int frame;
-  int halfresx;
-  int halfresy;
   bool paused;
   int menu;
   int menuItem;
@@ -3637,7 +3639,6 @@ bool screenShot()
 
 
 }
-
 int main (int argc, char *argv[]) {
   
   var.quit=0;
@@ -3903,8 +3904,7 @@ int main (int argc, char *argv[]) {
     setting.resx = oldResX;
     setting.resy = oldResY;
    }
-   var.halfresx = setting.resx /2;
-   var.halfresy = setting.resy / 2;
+
   initGL();
 
 #ifndef DEBUG_NO_RELATIVE_MOUSE
@@ -3916,7 +3916,7 @@ int main (int argc, char *argv[]) {
   soundMan.init();
 
   SDL_SetWindowIcon(display.sdlWindow,IMG_Load( useTheme("icon32.png", setting.gfxTheme).data()));
-  SDL_WarpMouseInWindow(display.sdlWindow, var.halfresx, var.halfresy);
+  SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
 
   textureManager texMgr;
 
@@ -4553,8 +4553,13 @@ int main (int argc, char *argv[]) {
 
       if( sdlevent.type == SDL_MOUSEMOTION )
       {
-        mousex = (sdlevent.motion.x - var.halfresx) * display.glunits_per_xpixel;
-        mousey = (sdlevent.motion.y - var.halfresy) * display.glunits_per_ypixel * -1;
+        mousex = (sdlevent.motion.x - display.currentW / 2) * display.glunits_per_xpixel;
+        mousey = (sdlevent.motion.y - display.currentH / 2) * display.glunits_per_ypixel * -1;
+
+#ifdef DEBUG_SHOW_MOUSE_COORDINATES
+        cout << "Mouse: " << setw(10) << mousex << "," << setw(10) << mousey;
+        cout << setw(8) << sdlevent.motion.x << "," << setw(8) << sdlevent.motion.y << endl;
+#endif
         if(var.menu)
         {
           if(mousex > -0.5 && mousex < 0.5 && mousey < (-0.78)+(0.07) && mousey > (-0.78)-(0.07) )

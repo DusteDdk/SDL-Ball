@@ -118,7 +118,7 @@ void controllerClass::btnPress()
   if(var.titleScreenShow)
   {
     var.titleScreenShow=0;
-    SDL_WarpMouseInWindow(display.sdlWindow, var.halfresx,0);
+    SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2,0);
     return;
   }
   
