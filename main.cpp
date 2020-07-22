@@ -27,7 +27,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
-//#include <SDL2/SDL_mouse.h>
 #include <cmath>
 #include <cstring>
 #include <list>
@@ -2852,7 +2851,9 @@ void pauseGame()
 
 void resumeGame()
 {
+#ifndef DEBUG_NO_RELATIVE_MOUSE
   SDL_SetRelativeMouseMode(SDL_TRUE);
+#endif
   var.paused=0;
   var.menu=0;
 }
@@ -3906,7 +3907,9 @@ int main (int argc, char *argv[]) {
    var.halfresy = setting.resy / 2;
   initGL();
 
+#ifndef DEBUG_NO_RELATIVE_MOUSE
   SDL_SetRelativeMouseMode(SDL_TRUE);
+#endif
 
   glText = new glTextClass; // instantiate the class now that settings have been read.
 
