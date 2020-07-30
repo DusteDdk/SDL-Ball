@@ -133,9 +133,12 @@ void displayClass::resize(int width, int height )
 	if ( height == 0 )
 		height = 1;
 
+	currentW = width;
+	currentH = height;
+
 	ratio = ( GLfloat )width / ( GLfloat )height;
-	glunits_per_xpixel = (2.485281374*ratio) / currentH;
-	glunits_per_ypixel = 2.485281374 / currentW;
+	glunits_per_xpixel = (2.485281374*ratio) / currentW;
+	glunits_per_ypixel = 2.485281374 / currentH;
 
 
 	/* Setup our viewport. */
