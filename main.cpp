@@ -193,7 +193,7 @@ struct settings {
   float controlAccel;
   float controlStartSpeed;
   float controlMaxSpeed;
-  bool joyEnabled, joyIsDigital;
+  bool joyEnabled, joyIsDigital, joyIsPaddle;
   int JoyCalMin, JoyCalMax, JoyCalHighJitter, JoyCalLowJitter;
 };
 
@@ -3388,6 +3388,7 @@ void writeSettings()
     conf << "shootkey="<<setting.keyShoot<<endl;
     conf << "joyenabled="<<setting.joyEnabled<<endl;
     conf << "joyisdigital="<<setting.joyIsDigital<<endl;
+    conf << "joyispaddle=" <<setting.joyIsPaddle<<endl;
     conf << "joycalhighjitter="<<setting.JoyCalHighJitter<<endl;
     conf << "joycallowjitter="<<setting.JoyCalLowJitter<<endl;
     conf << "joycalmax="<<setting.JoyCalMax<<endl;
@@ -3721,6 +3722,7 @@ int main (int argc, char *argv[]) {
   setting.controlMaxSpeed = 5;
   setting.joyEnabled = 1;
   setting.joyIsDigital = 1;
+  setting.joyIsPaddle=0;
   setting.showClock = 0;
   //Default calibaration.
   setting.JoyCalMin=-32767;
@@ -3882,6 +3884,8 @@ int main (int argc, char *argv[]) {
         } else if(set=="joyisdigital")
         {
           setting.joyIsDigital = atoi(val.data());
+        } else if(set=="joyispaddle") {
+            setting.joyIsPaddle=atoi(val.data());
         } else if(set=="joycalhighjitter")
         {
           setting.JoyCalHighJitter = atoi(val.data());

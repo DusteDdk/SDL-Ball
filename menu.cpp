@@ -1043,10 +1043,13 @@ public:
       else
         glCallList(dl+1);
       glColor4f(0,0,0,1);
-      if(setting.joyIsDigital)
+      if(setting.joyIsDigital) {
         glText->write("Digital Joystick", FONT_MENU, 1, 1.0, 0.0, -0.005);
-      else
+      } else if(setting.joyIsPaddle) {
+        glText->write("Paddle", FONT_MENU, 1, 1.0, 0.0, -0.005);
+      } else {
         glText->write("Analog Joystick", FONT_MENU, 1, 1.0, 0.0, -0.005);
+      }
       glColor4f(1,1,1,1);
 
 
@@ -1105,11 +1108,15 @@ public:
               var.menuJoyCalStage=1;
             break;
           case 6:
-            if(setting.joyIsDigital)
+            if(setting.joyIsDigital) {
+              setting.joyIsPaddle=1;
               setting.joyIsDigital=0;
-            else
+            } else if(setting.joyIsPaddle) {
+              setting.joyIsDigital=0;
+              setting.joyIsPaddle=0;
+            } else {
               setting.joyIsDigital=1;
-
+            }
             writeSettings();
             break;
         }

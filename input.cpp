@@ -70,7 +70,7 @@ controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager
     joystick = SDL_JoystickOpen(0);
     if(SDL_JoystickOpened(0))
     {
-      cout << "Using joystick: '"<<SDL_JoystickName(0)<<"' as "<<(setting.joyIsDigital ? "digital":"analog")<<"."<<endl;
+      cout << "Using joystick: '"<<SDL_JoystickName(0)<<"' as "<<(setting.joyIsDigital ? "digital":(setting.joyIsPaddle)?"paddle":"analog")<<"."<<endl;
       SDL_JoystickEventState( SDL_ENABLE );
     } else {
       cout << "Failed to open joystick: '"<<SDL_JoystickName(0)<<"'"<<endl;
@@ -191,7 +191,10 @@ bool controllerClass::get()
         itemSelectTime=0;
         gVar.shopPrevItem = 1;
       }
-      
+    } else if(setting.joyIsPaddle) {
+      GLfloat abx = (1.66/16000.0)*((float)joystickx - 16000.0);
+      movePaddle(abx);
+
     } else {
       GLfloat x = 0.0; //This is the actual traveling speed of the paddle
       if(joystickx > setting.JoyCalHighJitter)
