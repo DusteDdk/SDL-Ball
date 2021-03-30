@@ -192,8 +192,8 @@ bool controllerClass::get()
         gVar.shopPrevItem = 1;
       }
     } else if(setting.joyIsPaddle) {
-      GLfloat abx = (1.66/16000.0)*((float)joystickx - 16000.0);
-      movePaddle(abx);
+      GLfloat abx = (166/(32767.0/2.0))*(((float)joystickx)- (32767.0/2.0));
+      movePaddle(abx/100.0);
 
     } else {
       GLfloat x = 0.0; //This is the actual traveling speed of the paddle
