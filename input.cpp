@@ -48,10 +48,12 @@ class controllerClass {
   void btnPress();
   bool get();
   void calibrate();
+  bool joystickAttached();
   #ifdef WITH_WIIUSE
   bool connectMote();
   #endif
 };
+
 
 controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm)
 {
@@ -66,9 +68,8 @@ controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager
   {
     joystickLeftX = setting.controlMaxSpeed / setting.JoyCalMin;
     joystickRightX = setting.controlMaxSpeed / setting.JoyCalMax;
-    joystick = NULL;
     joystick = SDL_JoystickOpen(0);
-    if(SDL_JoystickOpened(0))
+    if(joystick)
     {
       cout << "Using joystick: '"<<SDL_JoystickName(0)<<"' as "<<(setting.joyIsDigital ? "digital":(setting.joyIsPaddle)?"paddle":"analog")<<"."<<endl;
       SDL_JoystickEventState( SDL_ENABLE );
@@ -117,7 +118,7 @@ void controllerClass::btnPress()
   if(var.titleScreenShow)
   {
     var.titleScreenShow=0;
-    SDL_WarpMouse(var.halfresx,0);
+    SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2,0);
     return;
   }
   
@@ -143,11 +144,11 @@ void controllerClass::btnPress()
 
 bool controllerClass::get()
 {
-  Uint8 *keyStates;
+  const Uint8 *keyStates;
   Uint8 keyDown[3]; //Need this since its not a good idea to write to keyStates for some reason
   shotTime += globalTicks;
   SDL_PumpEvents();
-  keyStates = SDL_GetKeyState( NULL );
+  keyStates = SDL_GetKeyboardState(NULL);
   keyDown[0] = keyStates[setting.keyLeft];
   keyDown[1] = keyStates[setting.keyRight];
   keyDown[2] = keyStates[setting.keyShoot];
@@ -155,7 +156,7 @@ bool controllerClass::get()
   itemSelectTime += globalTicks;
   //Read joystick here so we can override keypresses if the joystick is digital
   //We shouldn't need to check if the joystick is enabled, since it won't be opened if its not enabled anyway.
-  if(setting.joyEnabled && SDL_JoystickOpened(0))
+  if(setting.joyEnabled && joystick)
   {
     joystickx = SDL_JoystickGetAxis(joystick, 0);
     joysticky = SDL_JoystickGetAxis(joystick, 1);
@@ -293,7 +294,7 @@ void controllerClass::calibrate()
 {
 
   Sint16 x=0;
-  if(SDL_JoystickOpened(0))
+  if(SDL_TRUE == joystickAttached())
   {
 
     x = SDL_JoystickGetAxis(joystick, 0);
@@ -374,5 +375,10 @@ void controllerClass::calibrate()
     break;
     #endif
   }
+}
+
+bool controllerClass::joystickAttached()
+{
+	return joystick != NULL;
 }
 

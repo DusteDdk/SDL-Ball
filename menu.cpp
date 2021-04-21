@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * ************************************************************************* */
-
 struct score {
   int score;
   string level;
@@ -127,6 +126,7 @@ vector<struct themeInfo> tI; //Vector of theme info
 
 public:
   char highScores[20][255];
+  bool joystickAttached;   // Is joystick attached?
   
   menuClass()
   {
@@ -248,15 +248,13 @@ public:
   {
     if(e.key.keysym.sym != SDLK_RETURN && e.key.keysym.sym != SDLK_ESCAPE)
     {
-      if ( (e.key.keysym.unicode & 0xFF80) == 0 && e.key.keysym.unicode != 0) {
-        if(e.key.keysym.sym == SDLK_BACKSPACE)
-        {
-          if(saveGameName[saveGameSlot].length() > 0)
-            saveGameName[saveGameSlot].erase(saveGameName[saveGameSlot].length()-1);
-        } else {
-          saveGameName[saveGameSlot] += e.key.keysym.unicode;
-        }
-      }
+    	if(e.key.keysym.sym == SDLK_BACKSPACE)
+    	{
+    		if(saveGameName[saveGameSlot].length() > 0)
+    			saveGameName[saveGameSlot].erase(saveGameName[saveGameSlot].length()-1);
+    	} else {
+    		saveGameName[saveGameSlot] += e.key.keysym.sym;
+    	}
     } else {
       if(e.key.keysym.sym == SDLK_RETURN)
       {
@@ -456,7 +454,7 @@ public:
       
       //Calibrate
       glTranslatef(0.0,-0.22,0.0f);
-      if(SDL_JoystickOpened(0))
+      if(joystickAttached)
       {
         if(var.menuItem==4)
           glCallList(dl+2);
@@ -505,7 +503,7 @@ public:
             var.menu=4;
             break;
           case 4:
-            if(SDL_JoystickOpened(0))
+            if(joystickAttached)
             {
               var.menuJoyCalStage=0;
               var.menu=10;
@@ -625,7 +623,7 @@ public:
             setting.resx = 1024;
             setting.resy = 768;
 #ifndef WIN32
-            if(initScreen())
+            if(display.updateForMenu())
 #endif
               writeSettings();
             break;
@@ -633,7 +631,7 @@ public:
             setting.resx = 1600;
             setting.resy = 1200;
 #ifndef WIN32
-            if(initScreen())
+            if(display.updateForMenu())
 #endif
               writeSettings();
             break;
@@ -650,7 +648,7 @@ public:
               else
               setting.fullscreen=1;
 #ifndef WIN32
-            if(initScreen())
+            if(display.updateForMenu())
 #endif
               writeSettings();
             break;
