@@ -31,6 +31,7 @@
 4.0 Contributors and Credits
 
 5.0 Frequently Asked Questions (FAQ)
+6.0 Donate
 
 ------------------------------------
 
@@ -277,3 +278,8 @@ Yannickescu - AROS port
 5.0 Frequently Asked Questions
 Q: The paddle moves around randomly, or is stuck in one of the sides?
 A: try disabling joystick support in the settings.cfg
+
+------------------------------------
+
+6.0 Donate
+Well, if you've enjoyed SDL-Ball and want to give me a token of appreciation, consider sending a few Dogecoin to my wallet: DHu41ELvTho6SUiuNDnyQYdDmDrYiWZuvR
