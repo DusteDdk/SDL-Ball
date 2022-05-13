@@ -1,6 +1,4 @@
-ifndef PREFIX
-	PREFIX=/usr/local/
-endif
+PREFIX?=/usr/local
 
 DESTDIR?=$(PREFIX)share/games/sdl-ball/
 
