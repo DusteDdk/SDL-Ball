@@ -5,7 +5,6 @@ BINDIR?=$(PREFIX)/bin/
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
 #append -DNOSOUND to compile WITHOUT sound support
-STRIP=strip
 CXX?=g++
 
 CXXFLAGS+=-Wall `sdl-config --cflags` -DDATADIR="\"$(DATADIR)\""
@@ -23,7 +22,6 @@ all: $(SOURCES) $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $@
-	$(STRIP) $@
 
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $< -o $@
