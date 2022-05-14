@@ -1,9 +1,7 @@
 PREFIX?=/usr/local
 
-DESTDIR?=$(PREFIX)share/games/sdl-ball/
-
-DATADIR?=themes/
-BINDIR=bin/
+DATADIR?=$(PREFIX)/share/games/sdl-ball/themes/
+BINDIR?=$(PREFIX)/bin/
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
 #append -DNOSOUND to compile WITHOUT sound support
@@ -36,9 +34,8 @@ clean:
 install: $(EXECUTABLE) install-bin install-data
 
 install-bin:
-	mkdir -p $(DESTDIR)
-	cp $(EXECUTABLE) $(DESTDIR)
-	ln -s $(DESTDIR)$(EXECUTABLE) $(PREFIX)$(BINDIR)
+	mkdir -p $(DESTDIR)$(BINDIR)
+	cp $(EXECUTABLE) $(DESTDIR)$(BINDIR)
 
 install-data:
 	mkdir -p $(DESTDIR)$(DATADIR)
