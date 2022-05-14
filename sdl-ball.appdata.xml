@@ -45,4 +45,5 @@
 		<release version="1.03" date="2016-08-25" />
 		<release version="1.02" date="2014-10-01" />
 	</releases>
+	<content_rating type="oars-1.1" />
 </application>
