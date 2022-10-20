@@ -280,7 +280,7 @@ void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
     glRotatef(rot, 0,1,0);
     glCallList(glTitleList);
     
-    SDL_GL_SwapBuffers( );
+    SDL_GL_SwapWindow(display.sdlWindow );
     
     globalTicksSinceLastDraw=0;
     globalMilliTicksSinceLastDraw=0;

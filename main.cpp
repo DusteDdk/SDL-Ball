@@ -17,6 +17,7 @@
  * ************************************************************************* */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
@@ -24,14 +25,16 @@
 #include <unistd.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <cmath>
 #include <cstring>
 #include <list>
 #include <vector>
 #include <sys/stat.h>
+
+#include "display.hpp"
 
 #include <dirent.h>
 
@@ -59,10 +62,10 @@
 #endif
 #ifndef NOSOUND
   #define MIX_CHANNELS 16
-  #include <SDL/SDL_mixer.h>
+  #include <SDL2/SDL_mixer.h>
 #endif
 
-#define VERSION "1.03"
+#define VERSION "2.01"
 #define SAVEGAMEVERSION 2
 
 
@@ -78,6 +81,9 @@
 
 //#define debugBall 1
 //     #define DEBUG_DRAW_BALL_QUAD
+//     #define DEBUG_NO_RELATIVE_MOUSE
+//     #define DEBUG_SHOW_MOUSE_COORDINATES
+
 
 #define PO_COIN 0
 #define PO_BIGBALL    1
@@ -141,7 +147,6 @@
 using namespace std;
 
 void writeSettings();
-bool initScreen();
 void initNewGame();
 void pauseGame();
 void resumeGame();
@@ -178,6 +183,7 @@ struct difficultyStruct static_difficulty, difficulty;
 struct settings {
   string sndTheme,gfxTheme,lvlTheme;
   bool cfgRes[2];
+  int displayToUse;
   int resx;
   int resy;
   int fps;
@@ -189,7 +195,7 @@ struct settings {
   bool eyeCandy;
   bool particleCollide;
   //Add to menu:
-  SDLKey keyLeft, keyRight, keyShoot, keyNextPo, keyPrevPo, keyBuyPo;
+  SDL_Keycode keyLeft, keyRight, keyShoot, keyNextPo, keyPrevPo, keyBuyPo;
   float controlAccel;
   float controlStartSpeed;
   float controlMaxSpeed;
@@ -215,9 +221,6 @@ struct privFileStruct privFile;
 struct vars {
   bool titleScreenShow;
   int frame;
-  int halfresx;
-  int halfresy;
-  GLfloat glunits_per_xpixel, glunits_per_ypixel;
   bool paused;
   int menu;
   int menuItem;
@@ -275,6 +278,8 @@ struct player_struct player;
 struct player_struct SOLPlayer;
 struct vars var;
 
+displayClass display;
+
 typedef GLfloat texPos[8];
 #ifndef uint // WIN32
 typedef unsigned int uint;
@@ -298,6 +303,7 @@ struct texProp {
   
   string fileName; //Quite the fugly.. This will be set by readTexProps();
 };
+
 
 /* This function attempts to open path
    It will first look for the file in ~/.config/sdl-ball/themes/theme/path
@@ -2767,39 +2773,7 @@ void spawnpowerup(char powerup, pos a, pos b)
   }
 }
 
-SDL_Surface *screen = NULL;
 
-/* function to reset our viewport after a window resize */
-void resizeWindow( int width, int height )
-{
-    /* Height / width ration */
-    GLfloat ratio;
-
-    /* Protect against a divide by zero */
-    if ( height == 0 )
-      height = 1;
-
-    ratio = ( GLfloat )width / ( GLfloat )height;
-    var.glunits_per_xpixel = (2.485281374*ratio) / setting.resx;
-    var.glunits_per_ypixel = 2.485281374 / setting.resy;
-
-
-    /* Setup our viewport. */
-    glViewport( 0, 0, ( GLsizei )width, ( GLsizei )height );
-
-    /* change to the projection matrix and set our viewing volume. */
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
-
-    /* Set our perspective */
-    gluPerspective( 45.0f, ratio, 0.1f, 10.0f );
-
-    /* Make sure we're chaning the model view and not the projection */
-    glMatrixMode( GL_MODELVIEW );
-
-    /* Reset The View */
-    glLoadIdentity();
-}
 
 void initGL() {
 
@@ -2833,36 +2807,6 @@ float rndflt(float total, float negative)
 {
 
   return (rand()/(float(RAND_MAX)+1)*total)-negative;
-}
-
-bool initScreen()
-{
-  bool success=1;
-  int SDL_videomodeSettings = SDL_OPENGL|SDL_RESIZABLE;
-
-  if(setting.fullscreen)
-    SDL_videomodeSettings |= SDL_FULLSCREEN;
-
-  /* Free the previously allocated surface */
-  if(screen != NULL)
-  {
-    SDL_FreeSurface( screen );
-  }
-
-  screen = SDL_SetVideoMode(setting.resx,setting.resy,32, SDL_videomodeSettings);
-  resizeWindow(setting.resx,setting.resy);
-
-  if( screen == NULL )
-  {
-    cout << "Error:" << SDL_GetError() << endl;
-    success=0;
-    var.quit=1;
-  }
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-  var.halfresx = setting.resx /2;
-  var.halfresy = setting.resy / 2;
-  return(success);
 }
 
 void resetPlayerPowerups()
@@ -2906,14 +2850,14 @@ void initNewGame()
 void pauseGame()
 {
   var.paused=1;
-  SDL_WM_GrabInput(SDL_GRAB_OFF);
-  SDL_ShowCursor(SDL_ENABLE);
+  SDL_SetRelativeMouseMode(SDL_FALSE);
 }
 
 void resumeGame()
 {
-  SDL_WM_GrabInput(SDL_GRAB_ON);
-  SDL_ShowCursor(SDL_DISABLE);
+#ifndef DEBUG_NO_RELATIVE_MOUSE
+  SDL_SetRelativeMouseMode(SDL_TRUE);
+#endif
   var.paused=0;
   var.menu=0;
 }
@@ -3372,6 +3316,7 @@ void writeSettings()
   if(conf.is_open())
   {
     conf << "eyecandy="<<setting.eyeCandy<<endl;
+    conf << "display="<<setting.displayToUse<<endl;
     conf << "resx="<<setting.resx<<endl;
     conf << "resy="<<setting.resy<<endl;
     conf << "showbg="<<setting.showBg<<endl;
@@ -3697,7 +3642,6 @@ bool screenShot()
 
 
 }
-
 int main (int argc, char *argv[]) {
   
   var.quit=0;
@@ -3713,12 +3657,12 @@ int main (int argc, char *argv[]) {
   setting.sound = 1;
   setting.stereo=1;
   //Defaults for keyboard/joystick control
-  setting.keyLeft = (SDLKey)276;
-  setting.keyRight= (SDLKey)275;
-  setting.keyShoot= (SDLKey)273;
-  setting.keyNextPo=(SDLKey)SDLK_v;
-  setting.keyBuyPo =(SDLKey)SDLK_b;
-  setting.keyPrevPo=(SDLKey)SDLK_n;
+  setting.keyLeft = (SDL_Keycode)276;
+  setting.keyRight= (SDL_Keycode)275;
+  setting.keyShoot= (SDL_Keycode)273;
+  setting.keyNextPo=(SDL_Keycode)SDLK_v;
+  setting.keyBuyPo =(SDL_Keycode)SDLK_b;
+  setting.keyPrevPo=(SDL_Keycode)SDLK_n;
   setting.controlAccel = 7;
   setting.controlStartSpeed = 1.0;
   setting.controlMaxSpeed = 5;
@@ -3830,6 +3774,9 @@ int main (int argc, char *argv[]) {
         if(set=="eyecandy")
         {
           setting.eyeCandy=atoi(val.data());
+        } else if(set=="display")
+        {
+          setting.displayToUse=atoi(val.data());
         } else if(set=="resx")
         {
           setting.cfgRes[0]=1;
@@ -3864,22 +3811,22 @@ int main (int argc, char *argv[]) {
           setting.controlStartSpeed = atof(val.data());
         } else if(set=="rightkey")
         {
-          setting.keyRight = (SDLKey)atoi(val.data());
+          setting.keyRight = (SDL_Keycode)atoi(val.data());
         } else if(set=="leftkey")
         {
-          setting.keyLeft = (SDLKey)atoi(val.data());
+          setting.keyLeft = (SDL_Keycode)atoi(val.data());
         } else if(set=="shootkey")
         {
-          setting.keyShoot = (SDLKey)atoi(val.data());
+          setting.keyShoot = (SDL_Keycode)atoi(val.data());
         } else if(set=="nextkey")
         {
-          setting.keyNextPo = (SDLKey)atoi(val.data());
+          setting.keyNextPo = (SDL_Keycode)atoi(val.data());
         } else if(set=="buykey")
         {
-          setting.keyBuyPo = (SDLKey)atoi(val.data());
+          setting.keyBuyPo = (SDL_Keycode)atoi(val.data());
         } else if(set=="prevkey")
         {
-          setting.keyPrevPo = (SDLKey)atoi(val.data());
+          setting.keyPrevPo = (SDL_Keycode)atoi(val.data());
         } else if(set=="joyenabled")
         {
           setting.joyEnabled = atoi(val.data());
@@ -3930,21 +3877,17 @@ int main (int argc, char *argv[]) {
     cout << "No config file found, using default settings." << endl;
   }
 
-  //Initialize SDL
-  #ifndef NOSOUND
-  if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) <0 )
-  #else
-  if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) <0 )
-  #endif
-  {
-    printf("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
-  }
+   SDL_Event sdlevent;
 
-  //Save current resolution so it can be restored at exit
-   int oldResX = SDL_GetVideoInfo()->current_w;
-   int oldResY = SDL_GetVideoInfo()->current_h;
-   int oldColorDepth = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
-   
+
+  if(!display.init(setting.fullscreen, setting.displayToUse))
+  {
+	  var.quit = 1;
+  }
+   int oldResX = display.currentW;
+   int oldResY = display.currentH;
+
+
   /* Handle those situations where sdl gets a void resolution */
   if(oldResX < 128 || oldResY < 96)
   {
@@ -3968,23 +3911,18 @@ int main (int argc, char *argv[]) {
     setting.resy = oldResY;
    }
 
-   SDL_Event sdlevent;
-
-   SDL_WM_GrabInput(SDL_GRAB_ON);
-   SDL_ShowCursor(SDL_DISABLE);
-
-   SDL_EnableUNICODE (1);
-
-  initScreen();
   initGL();
+
+#ifndef DEBUG_NO_RELATIVE_MOUSE
+  SDL_SetRelativeMouseMode(SDL_TRUE);
+#endif
 
   glText = new glTextClass; // instantiate the class now that settings have been read.
 
   soundMan.init();
 
-  SDL_WM_SetCaption("SDL-Ball", "SDL-Ball" );
-  SDL_WM_SetIcon( IMG_Load( useTheme("icon32.png", setting.gfxTheme).data() ), 0 );
-  SDL_WarpMouse(var.halfresx, var.halfresy);
+  SDL_SetWindowIcon(display.sdlWindow,IMG_Load( useTheme("icon32.png", setting.gfxTheme).data()));
+  SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
 
   textureManager texMgr;
 
@@ -4110,6 +4048,9 @@ int main (int argc, char *argv[]) {
   #endif
 
   controllerClass control(&paddle, &bullet, &bMan);
+
+  menu.joystickAttached = control.joystickAttached();
+
 
 
   soundMan.add(SND_START,0);
@@ -4484,7 +4425,7 @@ int main (int argc, char *argv[]) {
 
         announce.draw();
         
-        SDL_GL_SwapBuffers( );
+        SDL_GL_SwapWindow(display.sdlWindow);
 
         frameAge = 0;
 
@@ -4599,19 +4540,32 @@ int main (int argc, char *argv[]) {
         else if( sdlevent.key.keysym.sym == SDLK_F11 )
         {
           if(setting.fullscreen)
-            setting.fullscreen=0;
+          {
+        	  setting.fullscreen=0;
+        	  SDL_SetWindowFullscreen(display.sdlWindow,0);
+        	  cout << "SDL_WINDOW_FULLSCREEN_DESKTOP" << endl;
+          }
           else
-            setting.fullscreen=1;
+          {
+        	  setting.fullscreen=1;
+        	  SDL_SetWindowFullscreen(display.sdlWindow,SDL_WINDOW_FULLSCREEN);
+        	  cout << "SDL_WINDOW_FULLSCREEN" << endl;
+          }
 
-          initScreen();
+
         }
 #endif
       }
 
       if( sdlevent.type == SDL_MOUSEMOTION )
       {
-        mousex = (sdlevent.motion.x - var.halfresx) * var.glunits_per_xpixel;
-        mousey = (sdlevent.motion.y - var.halfresy) * var.glunits_per_ypixel * -1;
+        mousex = (sdlevent.motion.x - display.currentW / 2) * display.glunits_per_xpixel;
+        mousey = (sdlevent.motion.y - display.currentH / 2) * display.glunits_per_ypixel * -1;
+
+#ifdef DEBUG_SHOW_MOUSE_COORDINATES
+        cout << "Mouse: " << setw(10) << mousex << "," << setw(10) << mousey;
+        cout << setw(8) << sdlevent.motion.x << "," << setw(8) << sdlevent.motion.y << endl;
+#endif
         if(var.menu)
         {
           if(mousex > -0.5 && mousex < 0.5 && mousey < (-0.78)+(0.07) && mousey > (-0.78)-(0.07) )
@@ -4631,7 +4585,7 @@ int main (int argc, char *argv[]) {
           else
            var.menuItem = 0;
         } else {
-          control.movePaddle(paddle.posx + (sdlevent.motion.xrel * var.glunits_per_xpixel));
+          control.movePaddle(paddle.posx + (sdlevent.motion.xrel * display.glunits_per_xpixel));
         }
       } else if( sdlevent.type == SDL_MOUSEBUTTONDOWN )
       {
@@ -4658,11 +4612,15 @@ int main (int argc, char *argv[]) {
       }
       if( sdlevent.type == SDL_QUIT ) {
         var.quit = 1;
-      } else if( sdlevent.type == SDL_VIDEORESIZE )
+      }
+      else if( sdlevent.type == SDL_WINDOWEVENT)
       {
-        setting.resx = sdlevent.resize.w;
-        setting.resy = sdlevent.resize.h;
-        initScreen();
+    	if( sdlevent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+    	{
+		  setting.resx = sdlevent.window.data1;
+		  setting.resy = sdlevent.window.data2;
+		  display.resize(setting.resx, setting.resy);
+    	}
       }
     }
 #ifdef WIN32
@@ -4674,12 +4632,10 @@ int main (int argc, char *argv[]) {
 
 #ifndef WIN32
   if(setting.fullscreen)
-    SDL_SetVideoMode(oldResX,oldResY,oldColorDepth, SDL_OPENGL);
 #endif
 
-  SDL_WM_GrabInput(SDL_GRAB_OFF);
-  SDL_ShowCursor(SDL_ENABLE);
-  SDL_FreeSurface(screen);
+  display.close();
+  SDL_SetRelativeMouseMode(SDL_FALSE);
   SDL_Quit();
   cout << "Thank you for playing sdl-ball ;)" << endl;
   return EXIT_SUCCESS;
